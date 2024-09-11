@@ -1,0 +1,19 @@
+{
+    "workbench.colorCustomizations": {
+        "editor.background": "#0d0a0f",
+        "editor.lineHighlightBackground": "#ffffff0a",
+        "editor.lineHighlightBorder": "#9e9e9e",
+        "editorStickyScroll.background": "#000000",
+        "editorStickyScroll.shadow": "#ffffffc0",
+        "editor.inactiveSelectionBackground": "#09831566",
+        "bookmarks.lineBackground": "#b50c5b70",
+        "editorIndentGuide": "#ffffff51",
+        "editor.selectionHighlightBorder": "#ffffff83",
+        "editor.selectionHighlightBackground": "#00eeff00",
+        "editor.renderWhitespace": "all",
+        "editor.renderControlCharacters": true,
+        "editor.findMatchBackground": "#00ff003a",
+        "editor.findMatchBorder": "#00ff0077",
+        "editor.selectionBackground": "#ff00004e"
+    }
+}

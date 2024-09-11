@@ -1,0 +1,203 @@
+{
+    "name": "VimAtHome",
+    "displayName": "VimAtHome",
+    "description": "Unstable and unhinged development fork https://github.com/Richiban/CodeFlea",
+    "publisher": "cb",
+    "repository": {
+        "url": "https://github.com/Collin-M-Brown/VimAtHome"
+    },
+    "engines": {
+        "vscode": "^1.63.0"
+    },
+    "extensionKind": [
+        "ui"
+    ],
+    "categories": [
+        "Other"
+    ],
+    "icon": "logo-small.png",
+    "keywords": [
+        "acejump",
+        "cursor",
+        "EasyMotion",
+        "focus",
+        "jump"
+    ],
+    "activationEvents": [
+        "onStartupFinished"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "configuration": {
+            "title": "CodeFlea: ",
+            "type": "",
+            "properties": {
+                "codeFlea.modes.navigateKeySequence": {
+                    "description": "The key sequence that will trigger navigation mode from edit mode",
+                    "type": "string",
+                    "default": ",."
+                },
+                "codeFlea.scrollStep": {
+                    "description": "The number of lines to scroll when scrolling the editor",
+                    "type": "number",
+                    "default": "10"
+                },
+                "codeFlea.jump.characters": {
+                    "type": "string",
+                    "default": "kjdflsahgionurvcwexmbpqtyz123456789JDFLAHGNREMBPQTY"
+                },
+                "codeFlea.jump.centerLineAfterJump": {
+                    "type": "boolean",
+                    "default": "true"
+                },
+                "codeFlea.defaultSubject": {
+                    "type": "string",
+                    "default": "WORD"
+                },
+                "codeFlea.color.command": {
+                    "type": "string",
+                    "description": "Color for character selections"
+                },
+                "codeFlea.color.extend": {
+                    "type": "string",
+                    "description": "Color for character selections"
+                },
+                "codeFlea.color.insert": {
+                    "type": "string",
+                    "description": "Color for character selections"
+                },
+                "codeFlea.color.char": {
+                    "type": "string",
+                    "default": "ff8000",
+                    "description": "Color for character selections"
+                },
+                "codeFlea.color.subWord": {
+                    "type": "string",
+                    "default": "ff6699",
+                    "description": "Color for subword selections"
+                },
+                "codeFlea.color.word": {
+                    "type": "string",
+                    "default": "964d4d",
+                    "description": "Color for word selections"
+                },
+                "codeFlea.color.customWord1": {
+                    "type": "string",
+                    "default": "34ebe5",
+                    "description": "Color for word selections"
+                },
+                "codeFlea.color.customWord2": {
+                    "type": "string",
+                    "default": "1776eb",
+                    "description": "Color for word selections"
+                },
+                "codeFlea.color.customWord3": {
+                    "type": "string",
+                    "default": "ea29ff",
+                    "description": "Color for word selections"
+                },
+                "codeFlea.color.line": {
+                    "type": "string",
+                    "default": "8feb34",
+                    "description": "Color for line selections"
+                },
+                "codeFlea.color.block": {
+                    "type": "string",
+                    "default": "aba246",
+                    "description": "Color for block selections"
+                },
+                "codeFlea.color.bracket": {
+                    "type": "string",
+                    "default": "9900ff",
+                    "description": "Color for bracket selections"
+                },
+                "codeFlea.customWordRegex1": {
+                    "type": "string",
+                    "description": "custom word regex"
+                },
+                "codeFlea.customWordRegex2": {
+                    "type": "string",
+                    "description": "custom word regex"
+                },
+                "codeFlea.customWordRegex3": {
+                    "type": "string",
+                    "description": "custom word regex"
+                }
+            }
+        },
+        "commands": [
+            {
+                "command": "codeFlea.changeToInsertMode",
+                "title": "CodeFlea: Change to Insert mode"
+            },
+            {
+                "command": "codeFlea.changeToCommandModeLast",
+                "title": "CodeFlea: Change to last used Command mode"
+            },
+            {
+                "command": "codeFlea.changeToExtendMode",
+                "title": "CodeFlea: Change to Extend mode"
+            },
+            {
+                "command": "codeFlea.changeToWordSubject",
+                "title": "CodeFlea: Change to Word Subject"
+            },
+            {
+                "command": "codeFlea.changeToCustomSubject1",
+                "title": "CodeFlea: Change to Word Subject"
+            },
+            {
+                "command": "codeFlea.changeToCustomSubject2",
+                "title": "CodeFlea: Change to Word Subject"
+            },
+            {
+                "command": "codeFlea.changeToCustomSubject3",
+                "title": "CodeFlea: Change to Word Subject"
+            },
+            {
+                "command": "codeFlea.changeToLineSubject",
+                "title": "CodeFlea: Change to Line Subject"
+            },
+            {
+                "command": "codeFlea.changeToBlockSubject",
+                "title": "CodeFlea: Change to Block Subject"
+            },
+            {
+                "command": "codeFlea.changeToSubwordSubject",
+                "title": "CodeFlea: Change to Block Subject"
+            },
+            {
+                "command": "codeFlea.changeToCharSubject",
+                "title": "CodeFlea: Change to Character Subject"
+            },
+            {
+                "command": "codeFlea.flipCaseFirstCharacter",
+                "title": "CodeFlea: Flip the case of the first character of the subject"
+            },
+            {
+                "command": "codeFlea.transformToCamelCase",
+                "title": "CodeFlea: Transform the selected text to camelCase"
+            }
+        ],
+        "keybindings": [
+            
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile",
+        "test": "node ./out/test/runTest.js",
+        "deploy": "vsce publish --yarn"
+    },
+    "devDependencies": {
+        "@types/node": "^16.11.7",
+        "@types/vscode": "^1.34.0",
+        "@typescript-eslint/eslint-plugin": "^5.42.0",
+        "@typescript-eslint/parser": "^5.42.0",
+        "eslint": "^8.26.0",
+        "typescript": "^4.9.5"
+    },
+    "version": "3.0.0"
+}
