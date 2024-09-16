@@ -112,11 +112,13 @@ export function getWordDefinitionByIndex(index: number): RegExp | undefined {
 
 loadConfig();
 let cur_color = "";
+
 export function setSelectionBackground(color: string) {
     if (cur_color === color) return;
     cur_color = color;
     const workbench = vscode.workspace.getConfiguration('workbench');
     const currentCustomizations = workbench.get('colorCustomizations') || {};
+
 
     const updatedCustomizations = {
         ...currentCustomizations,

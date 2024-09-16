@@ -14,6 +14,7 @@ import { seq } from "../utils/seq";
 import { setSelectionBackground, getCommandColor } from "../config";
 let outputchannel = vscode.window.createOutputChannel("CommandMode");
 
+
 export default class CommandMode extends modes.EditorMode {
 
     readonly cursorStyle = vscode.TextEditorCursorStyle.LineThin;
@@ -42,7 +43,7 @@ export default class CommandMode extends modes.EditorMode {
         public readonly subject: SubjectBase
     ) {
         
-        setSelectionBackground(getCommandColor());
+        // setSelectionBackground(getCommandColor());
         vscode.commands.executeCommand(
             "setContext",
             "codeFlea.subject",
@@ -54,12 +55,12 @@ export default class CommandMode extends modes.EditorMode {
             dark: {
                 borderStyle: "solid",
                 borderColor: subject.outlineColour.dark,
-                borderWidth: "1px",
+                borderWidth: "1.2px",
             },
             light: {
                 borderStyle: "solid",
                 borderColor: subject.outlineColour.light,
-                borderWidth: "1px",
+                borderWidth: "1.2px",
             },
         });
 
@@ -67,12 +68,12 @@ export default class CommandMode extends modes.EditorMode {
             dark: {
                 borderStyle: "solid none none solid",
                 borderColor: subject.outlineColour.dark,
-                borderWidth: "1px",
+                borderWidth: "1.2px",
             },
             light: {
                 borderStyle: "solid none none solid",
                 borderColor: subject.outlineColour.light,
-                borderWidth: "1px",
+                borderWidth: "1.2px",
             },
         });
 
@@ -80,12 +81,12 @@ export default class CommandMode extends modes.EditorMode {
             dark: {
                 borderStyle: "none none none solid",
                 borderColor: subject.outlineColour.dark,
-                borderWidth: "1px",
+                borderWidth: "1.2px",
             },
             light: {
                 borderStyle: "none none none solid",
                 borderColor: subject.outlineColour.light,
-                borderWidth: "1px",
+                borderWidth: "1.2px",
             },
         });
 
@@ -94,12 +95,12 @@ export default class CommandMode extends modes.EditorMode {
                 dark: {
                     borderStyle: "none none solid solid",
                     borderColor: subject.outlineColour.dark,
-                    borderWidth: "1px",
+                    borderWidth: "1.2px",
                 },
                 light: {
                     borderStyle: "none none solid solid",
                     borderColor: subject.outlineColour.light,
-                    borderWidth: "1px",
+                    borderWidth: "1.2px",
                 },
             });
     }
@@ -155,6 +156,8 @@ export default class CommandMode extends modes.EditorMode {
                 // This handles the "cyclable" subjects, e.g. "WORD" -> "INTERWORD" -> "WORD" etc
                 switch (newMode.subjectName) {
                     case "WORD":
+                        outputchannel.appendLine("setting column: " + this.context.editor.selection.active.character);
+                        common.setVirtualColumn(this.context.editor.selection.active.character);
                         return this.with({
                             subject: subjects.createFrom(
                                 this.context,
@@ -287,6 +290,7 @@ export default class CommandMode extends modes.EditorMode {
             this.context.editor.selection =
                 selections.positionToSelection(jumpPosition);
 
+            outputchannel.appendLine(`jumpToSubject: ${subjectName}`);
             return await this.changeTo({ kind: "COMMAND", subjectName });
         }
     }
@@ -325,6 +329,30 @@ export default class CommandMode extends modes.EditorMode {
 
     getSubjectName(): SubjectName {
         return this.subject.name;
+    }
+
+    async zoomJump(): Promise<vscode.Position | undefined> {
+        const combinedRange = this.context.editor.visibleRanges.reduce((acc, range) => acc.union(range));
+        const jumpLocations = this.subject
+        .iterAll(common.IterationDirection.alternate, combinedRange)
+        .counted()
+        .filter(([_, index]) => index % 3 === 0) // Select every 3rd line
+        .map(([range, _]) => range.start)
+        .toArray();
+        // outputchannel.appendLine(`zoomJump: ${jumpLocations.length} locations found`);
+            
+        const jumpInterface = new JumpInterface(this.context);
+    
+        const jumpPosition = await jumpInterface.zoomJump({
+            locations: seq(jumpLocations),
+        });
+    
+        if (jumpPosition) {
+            this.context.editor.selection = selections.positionToSelection(jumpPosition);
+            await this.fixSelection();
+        }
+    
+        return jumpPosition;
     }
 
 

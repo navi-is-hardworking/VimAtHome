@@ -23,7 +23,7 @@ export default class InsertMode extends EditorMode {
         private readonly context: common.ExtensionContext,
         private previousNavigateMode: CommandMode
     ) {
-        setSelectionBackground(getCommandColor());
+        // setSelectionBackground(getCommandColor());
         super();
     }
 
@@ -130,6 +130,17 @@ export default class InsertMode extends EditorMode {
     }
     
     getSubjectName(): SubjectName | undefined {
+        return undefined;
+    }
+
+    async zoomJump(): Promise<vscode.Position | undefined> {
+        // const jumpLocations = subjects.getJumpLocations(this.context);
+
+        // const jumpInterface = new JumpInterface(this.context);
+
+        // return await jumpInterface.zoomJump({
+        //     locations: jumpLocations,
+        // });
         return undefined;
     }
 }

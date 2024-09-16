@@ -23,14 +23,14 @@ export abstract class EditorMode implements vscode.Disposable {
     abstract readonly decorationTypeMid?: vscode.TextEditorDecorationType;
     abstract readonly decorationTypeBottom?: vscode.TextEditorDecorationType;
     abstract readonly lineNumberStyle?: vscode.TextEditorLineNumbersStyle;
-
+    
     abstract equals(previousMode: EditorMode): boolean;
     abstract changeTo(newMode: EditorModeChangeRequest): Promise<EditorMode>;
     async dispose(): Promise<void> {}
     async fixSelection(half?: "LEFT"|"RIGHT") {}
-
+    
     abstract executeSubjectCommand(command: SubjectAction): Promise<void>;
-
+    
     abstract skip(direction: Direction): Promise<void>;
     abstract skipOver(direction: string): Promise<void>;
     abstract repeatLastSkip(direction: Direction): Promise<void>;
@@ -42,4 +42,5 @@ export abstract class EditorMode implements vscode.Disposable {
     abstract pullSubject(
         subjectName: string
     ): Promise<EditorMode | undefined>;
+    abstract zoomJump(): Promise<vscode.Position | undefined>;
 }

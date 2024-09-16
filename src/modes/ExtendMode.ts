@@ -31,7 +31,7 @@ export default class ExtendMode extends EditorMode {
         previousMode: CommandMode
     ) {
         super();
-        setSelectionBackground(getExtendColor());
+        // setSelectionBackground(getExtendColor());
 
         this.wrappedMode = previousMode;
         this.decorationType = this.wrappedMode.decorationType;
@@ -217,4 +217,5 @@ export default class ExtendMode extends EditorMode {
     getSubjectName(): SubjectName {
         return this.wrappedMode.subject.name;
     }
+    async zoomJump() { return undefined; }
 }

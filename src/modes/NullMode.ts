@@ -47,5 +47,6 @@ export default class NullMode extends EditorMode {
     async jumpToSubject() { return undefined; }
     async pullSubject() { return undefined; }
     getSubjectName() { return undefined; }
+    async zoomJump() { return undefined; }
 
 }

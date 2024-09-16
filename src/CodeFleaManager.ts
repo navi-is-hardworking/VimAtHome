@@ -10,6 +10,7 @@ import * as common from "./common";
 import { SubjectName } from "./subjects/SubjectName";
 import * as modifications from "./utils/modifications";
 import { splitRange } from "./utils/decorations";
+let outputChannel = vscode.window.createOutputChannel("ManagerOutput");
 
 export default class CodeFleaManager {
     private mode: EditorMode;
@@ -255,6 +256,8 @@ export default class CodeFleaManager {
 
     async jumpToSubject(subjectName: SubjectName) {
         await vscode.commands.executeCommand("editor.action.setSelectionAnchor");
+        outputChannel.appendLine(`Jumping to subject: ${subjectName}, current subject: ${this.mode.getSubjectName()}`); 
+
         if (this.mode.getSubjectName() === subjectName) {
             await this.mode.jump();
             return;
@@ -286,5 +289,49 @@ export default class CodeFleaManager {
         this.mode.fixSelection();
 
         this.setDecorations();
+    }
+
+    async zoomJump() {
+        const zoomOutCommands = [
+            "codeFlea.changeToLineSubject",
+            "editor.action.fontZoomOut",
+            "editor.action.fontZoomOut",
+            "editor.action.fontZoomOut",
+            "workbench.action.zoomOut",
+            "workbench.action.zoomOut",
+            "workbench.action.zoomOut",
+            "codeFlea.scrollToCursor"
+        ];
+
+        await vscode.commands.executeCommand('runCommands', { commands: zoomOutCommands });
+
+        // Add a small delay to ensure the editor has updated
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        const jumpPosition = await this.mode.zoomJump();
+
+        const zoomInCommands = [
+            "editor.action.fontZoomIn",
+            "editor.action.fontZoomIn",
+            "editor.action.fontZoomIn",
+            "workbench.action.zoomIn",
+            "workbench.action.zoomIn",
+            "workbench.action.zoomIn",
+            "codeFlea.scrollToCursor"
+        ];
+
+        await vscode.commands.executeCommand('runCommands', { commands: zoomInCommands });
+
+        if (jumpPosition) {
+            this.editor.selection = new vscode.Selection(jumpPosition, jumpPosition);
+            // await this.scrollToCursorAtCenter();
+        }
+    }
+
+    async scrollToCursorAtCenter() {
+        await vscode.commands.executeCommand('revealLine', {
+            lineNumber: this.editor.selection.active.line,
+            at: 'center'
+        });
     }
 }

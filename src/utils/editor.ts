@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { char, QuickCommand } from "./quickMenus";
 import * as common from "../common";
+let outputchannel = vscode.window.createOutputChannel("vimAtHome.editor");
 
 export function quickCommandPicker(
     commands: QuickCommand[]
@@ -180,7 +181,11 @@ export function goToLine(editor: vscode.TextEditor, lineNumber: number) {
 }
 
 export function scrollToCursorAtCenter(editor: vscode.TextEditor) {
-    editor.revealRange(editor.selection, vscode.TextEditorRevealType.InCenter);
+    let tempSelection = editor.selection;
+    let start = editor.selection.start.line + 5;
+    outputchannel.appendLine(`start: ${start}`),
+    tempSelection = new vscode.Selection(start, editor.selection.start.character, start, editor.selection.start.character);
+    editor.revealRange(tempSelection, vscode.TextEditorRevealType.InCenter);
 }
 
 export function charAt(

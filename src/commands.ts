@@ -632,4 +632,10 @@ export const registeredCommands: ExtensionCommand[] = [
             }
         },
     },
+    {
+        id: "codeFlea.zoomJump",
+        execute: async (manager: CodeFleaManager) => {
+            await manager.zoomJump();
+        },
+    },
 ];

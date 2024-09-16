@@ -95,10 +95,6 @@ export default class JumpInterface {
         }
     }
 
-    private removeJumpCodes() {
-        this.context.editor.setDecorations(jumpCodeDecorationType, []);
-    }
-
     private drawJumpCodes(
         jumpLocations: (readonly [vscode.Position, string])[]
     ) {
@@ -111,4 +107,74 @@ export default class JumpInterface {
 
         this.context.editor.setDecorations(jumpCodeDecorationType, decorations);
     }
+
+    async zoomJump(jumpLocations: {
+        locations: Seq<vscode.Position>;
+    }): Promise<vscode.Position | undefined> {
+        const codedLocations = jumpLocations.locations
+            .zipWith(this.jumpCodes)
+            .toArray();
+
+        this.drawZoomJumpCodes(codedLocations);
+
+        const targetChar = await editor.inputBoxChar(
+            "Enter the zoom jump character"
+        );
+
+        this.removeJumpCodes();
+
+        if (!targetChar) {
+            return undefined;
+        }
+
+        return codedLocations.find(([location, jumpCode]) => {
+            if (jumpCode === targetChar) {
+                return location;
+            }
+        })?.[0];
+    }
+
+    private createZoomJumpDecorationOption(decorationRange: vscode.Range, text: string) {
+        const extraProps = [
+            "font-size:2em",
+            "border-radius: 0.5ch",
+            "line-height: 2.5ch",
+            "position: absolute",
+            "left: 0",  // Align to the left
+        ].join(";");
+
+        return <vscode.DecorationOptions>{
+            range: decorationRange,
+            renderOptions: {
+                before: {
+                    color: "white",
+                    backgroundColor: "blue",
+                    contentText: text,
+                    margin: `0`,
+                    padding: `0 0.5ch`,
+                    textDecoration: ";" + extraProps,
+                    border: "2px solid white",
+                },
+            },
+        };
+    }
+
+    private drawZoomJumpCodes(
+        jumpLocations: (readonly [vscode.Position, string])[]
+    ) {
+        const jumpCodeDecorations = jumpLocations.map(([position, code]) =>
+            this.createZoomJumpDecorationOption(
+                ranges.positionToRange(position),
+                code.toString()
+            )
+        );
+
+        this.context.editor.setDecorations(jumpCodeDecorationType, jumpCodeDecorations);
+    }
+
+    private removeJumpCodes() {
+        this.context.editor.setDecorations(jumpCodeDecorationType, []);
+    }
+
+
 }
