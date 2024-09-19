@@ -7,22 +7,24 @@ import * as ranges from "../utils/selectionsAndRanges";
 function createDecorationOption(decorationRange: vscode.Range, text: string) {
     const extraProps = [
         "font-size:0.85em",
-        "border-radius: 0.5ch",
-        "line-height: 1.75ch",
+        "border-radius: 0.4ch",
+        "line-height: 2ch",
+        "vertical-align: middle",
         "position: absolute",
+        "margin-top: -0.3ch",
     ].join(";");
 
     return <vscode.DecorationOptions>{
         range: decorationRange,
         renderOptions: {
             before: {
-                color: "silver",
-                backgroundColor: "navy",
+                color: "white",
+                backgroundColor: "#0a0042",
                 contentText: text,
-                margin: `-0.5ch 0.1ch 0 0`,
-                padding: `0 0.25ch`,
+                margin: `-0.5ch 0.4ch 0 0`,
+                padding: `0.25ch 0.5ch`,
                 textDecoration: ";" + extraProps,
-                border: "1px solid gray",
+                border: "1px solid white",
             },
         },
     };
@@ -32,15 +34,20 @@ const jumpCodeDecorationType = vscode.window.createTextEditorDecorationType({});
 
 export default class JumpInterface {
     private jumpCodes: string[];
+    private jumpType: string | undefined
 
     constructor(private readonly context: common.ExtensionContext) {
         this.jumpCodes = context.config.jump.characters.split("");
+        this.jumpType = undefined;
+        
     }
 
     async jump(jumpLocations: {
         kind: common.JumpPhaseType;
         locations: Seq<vscode.Position>;
     }): Promise<vscode.Position | undefined> {
+
+        // What mode am I in?
         switch (jumpLocations.kind) {
             case "dual-phase": {
                 const targetChar = await editor.inputBoxChar(

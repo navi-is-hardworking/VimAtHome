@@ -11,7 +11,7 @@ import { SubjectAction } from "../subjects/SubjectActions";
 import JumpInterface from "../handlers/JumpInterface";
 import { SubjectName } from "../subjects/SubjectName";
 import { seq } from "../utils/seq";
-import { setSelectionBackground, getCommandColor } from "../config";
+import { setSelectionBackground, getCommandColor, getWordDefinitionIndex } from "../config";
 let outputchannel = vscode.window.createOutputChannel("CommandMode");
 
 
@@ -229,14 +229,10 @@ export default class CommandMode extends modes.EditorMode {
     }
 
     async repeatLastSkip(direction: common.Direction): Promise<void> {
-        outputchannel.appendLine("repeatLastSkip");
         const lastSkip = common.getLastSkip();
         if (!lastSkip) {
             return;
         }
-        outputchannel.appendLine(`lastSkip: ${lastSkip.char}`);
-        outputchannel.appendLine(`lastSkip: ${lastSkip.subject}`);
-        outputchannel.appendLine(`lastSkip: ${lastSkip.kind}`);
         if (this.subject.name !== lastSkip.subject) {
             await vscode.commands.executeCommand(`codeFlea.changeTo${lastSkip.subject.charAt(0).toUpperCase() + lastSkip.subject.slice(1).toLowerCase()}Subject`);
         }
@@ -258,14 +254,25 @@ export default class CommandMode extends modes.EditorMode {
             .toArray();
             
         const jumpInterface = new JumpInterface(this.context);
+
+        let jumpType = this.subject.jumpPhaseType;
+        if (this.subject.name === "WORD") {
+            let wordDefinitionIndex = getWordDefinitionIndex();
+            if (wordDefinitionIndex <= 1) {
+                jumpType = "dual-phase";
+            } else {
+                jumpType = "single-phase";
+            }
+        }
     
         const jumpPosition = await jumpInterface.jump({
-            kind: this.subject.jumpPhaseType,
+            kind: jumpType,
             locations: seq(jumpLocations),
         });
     
         if (jumpPosition) {
             this.context.editor.selection = selections.positionToSelection(jumpPosition);
+            
             await this.fixSelection();
             await vscode.commands.executeCommand('revealLine', {lineNumber: this.context.editor.selection.active.line, at: 'center'});
         }
@@ -281,8 +288,19 @@ export default class CommandMode extends modes.EditorMode {
 
         const jumpInterface = new JumpInterface(this.context);
 
+        let jumpType = tempSubject.jumpPhaseType;
+
+        if (tempSubject.name === "WORD") {
+            let wordDefinitionIndex = getWordDefinitionIndex();
+            if (wordDefinitionIndex <= 1) {
+                jumpType = "dual-phase";
+            } else {
+                jumpType = "single-phase";
+            }
+        }
+
         const jumpPosition = await jumpInterface.jump({
-            kind: tempSubject.jumpPhaseType,
+            kind: jumpType,
             locations: seq(jumpLocations),
         });
 
@@ -305,8 +323,19 @@ export default class CommandMode extends modes.EditorMode {
 
         const jumpInterface = new JumpInterface(this.context);
 
+        let jumpType = tempSubject.jumpPhaseType;
+
+        if (tempSubject.name === "WORD") {
+            let wordDefinitionIndex = getWordDefinitionIndex();
+            if (wordDefinitionIndex <= 1) {
+                jumpType = "dual-phase";
+            } else {
+                jumpType = "single-phase";
+            }
+        }
+
         const jumpPosition = await jumpInterface.jump({
-            kind: tempSubject.jumpPhaseType,
+            kind: jumpType,
             locations: seq(jumpLocations),
         });
 

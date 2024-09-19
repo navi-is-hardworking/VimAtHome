@@ -3,6 +3,7 @@
 "We have Vim at home sweety."
 
 ```
+//  Place your key bindings in this file to override the defaults
 [
     {
         "key": "ctrl+;",
@@ -19,8 +20,10 @@
         "command": "runCommands",
         "args": {
             "commands": [
+                // "codeFlea.scrollEditorDown",
+                "editor.action.fontZoomReset",
+                "workbench.action.zoomReset",
                 "codeFlea.scrollToCursor",
-                "codeFlea.scrollEditorDown",
             ]
 
         },
@@ -1175,6 +1178,19 @@
         "when": "editorTextFocus"
     },
     {
+        "key": "alt+shift+d",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "editor.action.setSelectionAnchor",
+                "codeFlea.changeToCharSubject",
+                "editor.action.setSelectionAnchor",
+                "codeFlea.jumpToLineSubject"
+            ]
+        },
+        "when": "editorTextFocus && codeFlea.mode != 'COMMAND'"
+    },
+    {
         "key": "alt+shift+e",
         "command": "runCommands",
         "args": {
@@ -1704,6 +1720,18 @@
         },
     },
     {
+        "key": "ctrl+shift+j h",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "codeFlea.changeToLineSubject",
+                "editor.action.setSelectionAnchor",
+                "codeFlea.jumpToLineSubject",
+            ],
+        },
+        "when": "codeFlea.mode != 'COMMAND' && codeFlea.mode != 'EXTEND'"
+    },
+    {
         "key": "ctrl+j ctrl+h",
         "command": "runCommands",
         "args": {
@@ -1773,7 +1801,7 @@
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-                "codeFlea.changeToCharSubject",
+                "codeFlea.changeToWordSubject",
                 "codeFlea.jump",
             ],
         },
@@ -1808,12 +1836,12 @@
     {
         "key": "shift+ctrl+left",
         "command": "codeFlea.prevWordDefinition",
-        "when": "editorTextFocus && codeFlea.subject == 'WORD'"
+        "when": "editorTextFocus && codeFlea.subject == 'WORD' && codeFlea.mode == 'COMMAND'"
     },
     {
         "key": "shift+ctrl+right",
         "command": "codeFlea.nextWordDefinition",
-        "when": "editorTextFocus && codeFlea.subject == 'WORD'"
+        "when": "editorTextFocus && codeFlea.subject == 'WORD' && codeFlea.mode == 'COMMAND'"
     },
     // {
     //     "key": "ctrl+left",
@@ -1965,10 +1993,11 @@
         "args": {
             "commands": [
                 "codeFlea.changeToInsertModeMidPoint",
+                "codeFlea.changeToWordSubject",
                 "codeFlea.changeToWordSubject"
             ]
         },
-        "when": "editorTextFocus && codeFlea.subject == 'LINE'"
+        "when": "editorTextFocus && codeFlea.subject == 'LINE' && codeFlea.mode == 'COMMAND'"
     },
     {
         "key": "shift+up",
@@ -1979,7 +2008,7 @@
                 "codeFlea.changeToSubwordSubject"
             ]
         },
-        "when": "editorTextFocus && codeFlea.subject == 'WORD'"
+        "when": "editorTextFocus && codeFlea.subject == 'WORD' && codeFlea.mode == 'COMMAND'"
     },
     {
         "key": "shift+up",
@@ -1990,7 +2019,7 @@
                 "codeFlea.changeToWordSubject"
             ]
         },
-        "when": "editorTextFocus && codeFlea.subject == 'BRACKETS'"
+        "when": "editorTextFocus && codeFlea.subject == 'BRACKETS' && codeFlea.mode == 'COMMAND'"
     },
     {
         "key": "shift+up",
@@ -2001,7 +2030,7 @@
                 "codeFlea.changeToLineSubject"
             ]
         },
-        "when": "editorTextFocus && codeFlea.subject == 'BLOCK'"
+        "when": "editorTextFocus && codeFlea.subject == 'BLOCK' && codeFlea.mode == 'COMMAND'"
     },
     {
         "key": "ctrl+up",
@@ -2009,8 +2038,6 @@
         "args": {
             "commands": [
                 "codeFlea.scrollEditorUp",
-                "codeFlea.scrollEditorUp",
-                "codeFlea.scrollEditorUp"
             ]
         },
         "when": "editorTextFocus"
@@ -2021,8 +2048,6 @@
         "args": {
             "commands": [
                 "codeFlea.scrollEditorDown",
-                "codeFlea.scrollEditorDown",
-                "codeFlea.scrollEditorDown"
             ]
         },
         "when": "editorTextFocus"
@@ -2067,5 +2092,101 @@
         "key": "ctrl+1",
         "command": "workbench.action.openEditorAtIndex1",
     },
+    {
+        "key": "ctrl+2",
+        "command": "workbench.action.openEditorAtIndex2",
+    },
+    {
+        "key": "ctrl+3",
+        "command": "workbench.action.openEditorAtIndex3",
+    },
+    {
+        "key": "ctrl+4",
+        "command": "workbench.action.openEditorAtIndex4",
+    },
+    {
+        "key": "ctrl+5",
+        "command": "workbench.action.openEditorAtIndex5",
+    },
+    {
+        "key": "ctrl+6",
+        "command": "workbench.action.openEditorAtIndex6",
+    },
+    {
+        "key": "ctrl+7",
+        "command": "workbench.action.openEditorAtIndex7",
+    },
+    {
+        "key": "ctrl+8",
+        "command": "workbench.action.openEditorAtIndex8",
+    },
+    {
+        "key": "ctrl+9",
+        "command": "workbench.action.openEditorAtIndex9",
+    },
+    // {
+    //     "key": "f17",
+    //     // "command": "editor.action.fontZoomIn"
+    //     "command": "runCommands",
+    //     "args": {
+    //         "commands": [
+    //             "editor.action.fontZoomOut",
+    //             "editor.action.fontZoomOut",
+    //             "editor.action.fontZoomOut",
+    //             "workbench.action.zoomOut",
+    //             "workbench.action.zoomOut",
+    //             "workbench.action.zoomOut",
+                // "codeFlea.scrollToCursor",
+    //         ]
+    //     },
+    //     "when": "editorTextFocus"
+    // },
+    {
+        "key": "ctrl+shift+f7",
+        "command": "editor.action.fontZoomIn"
+    },
+    // {
+    //     "key": "delete",
+    //     "command": "codeFlea.openModifyMenu",
+
+    // },
+    // {
+    //     "key": "delete",
+    //     "command": "codeFlea.openModifyMenu",
+
+    // },
+    {
+        "key": "f17",
+        "command": "codeFlea.zoomJump",
+
+    },
+    {
+        "key": "ctrl+alt+p",
+        "command": "fuzzySearch.activeTextEditor",
+        "when": "editorTextFocus"
+    },
+
+    {
+        "key": "shift+end",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "codeFlea.changeToInsertModePrepend",
+                "codeFlea.changeToHalfLineSubjectRight",
+            ]
+        },
+        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+    },
+    {
+        "key": "shift+home",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "codeFlea.changeToInsertModeAppend",
+                "codeFlea.changeToHalfLineSubjectLeft",
+            ]
+        },
+        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+    }
 ]
 ```

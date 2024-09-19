@@ -19,6 +19,16 @@
 					"label": ""
 				}
 			]
+		},
+		{
+			"path": "src/modes/CommandMode.ts",
+			"bookmarks": [
+				{
+					"line": 256,
+					"column": 1,
+					"label": ""
+				}
+			]
 		}
 	]
 }

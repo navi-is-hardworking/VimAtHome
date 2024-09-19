@@ -303,6 +303,8 @@ function iterScope(
     });
 }
 export default class WordIO extends SubjectIOBase {
+    // deletableSeparators = /[.\s,=+\*\/%\(()\)]+/;
+    // deletableSeparators = /[.\s,=+\*\/%]+/;
     deletableSeparators = /^[.\s,=+\*\/%]+$/;
     defaultSeparationText = " ";
 
