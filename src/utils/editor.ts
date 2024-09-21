@@ -183,7 +183,7 @@ export function goToLine(editor: vscode.TextEditor, lineNumber: number) {
 export function scrollToCursorAtCenter(editor: vscode.TextEditor) {
     let tempSelection = editor.selection;
     let start = editor.selection.start.line + 5;
-    outputchannel.appendLine(`start: ${start}`),
+    // outputchannel.appendLine(`start: ${start}`),
     tempSelection = new vscode.Selection(start, editor.selection.start.character, start, editor.selection.start.character);
     editor.revealRange(tempSelection, vscode.TextEditorRevealType.InCenter);
 }

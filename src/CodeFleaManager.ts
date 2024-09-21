@@ -256,7 +256,7 @@ export default class CodeFleaManager {
 
     async jumpToSubject(subjectName: SubjectName) {
         await vscode.commands.executeCommand("editor.action.setSelectionAnchor");
-        outputChannel.appendLine(`Jumping to subject: ${subjectName}, current subject: ${this.mode.getSubjectName()}`); 
+        // outputChannel.appendLine(`Jumping to subject: ${subjectName}, current subject: ${this.mode.getSubjectName()}`); 
 
         if (this.mode.getSubjectName() === subjectName) {
             await this.mode.jump();

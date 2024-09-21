@@ -45,14 +45,14 @@ let selectionDump = new FixedCache(26);
 let parsedList = new FixedCache(26);
 
 export function cacheContent(content: string): void {
-    outputChannel.appendLine("attempting to cache content: " + content);
+    // outputChannel.appendLine("attempting to cache content: " + content);
     selectionDump.push(content);
 }
 
 export function parseTop(by: string) {
 
     let top: string = selectionDump.peek();
-    outputChannel.appendLine("top = " + top);
+    // outputChannel.appendLine("top = " + top);
     switch (by) {
         case "sub": {
             parseSubwords(top).forEach(item => addToParsedList(item))
@@ -126,7 +126,7 @@ function parseSubwords(text: string): string[] {
     if (currentWord && currentWord.length > 1) subwords.add(currentWord);
 
     let result = Array.from(subwords);
-    outputChannel.appendLine("subwords: " + JSON.stringify(result));
+    // outputChannel.appendLine("subwords: " + JSON.stringify(result));
     return Array.from(result);
 }
 

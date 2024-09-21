@@ -103,9 +103,9 @@ function iterHorizontally(
                 
                 
                 if (options.direction === Direction.forwards)
-                    common.setVirtualColumn(matchRange.end.character);
+                    common.setVirtualColumn(matchRange);
                 else
-                    common.setVirtualColumn(matchRange.start.character);    
+                    common.setVirtualColumn(matchRange);    
                 yield matchRange;
                 return;
             } else {
@@ -113,7 +113,7 @@ function iterHorizontally(
                 if (options.direction === Direction.forwards) {
                     if (startChar < fullLine.range.end.character) {
                         const endOfLineRange = new vscode.Range(currentLine, startChar, currentLine, fullLine.range.end.character);
-                        common.setVirtualColumn(fullLine.range.end.character);
+                        common.setVirtualColumn(fullLine.range);
                         yield endOfLineRange;
                         return;
                     }
@@ -122,7 +122,7 @@ function iterHorizontally(
                 } else {
                     if (startChar > 0) {
                         const startOfLineRange = new vscode.Range(currentLine, 0, currentLine, startChar);
-                        common.setVirtualColumn(0);
+                        common.setVirtualColumn(startOfLineRange);
                         yield startOfLineRange;
                         return;
                     }
@@ -278,7 +278,7 @@ function iterScope(
             if (wordRange) {
                 if (options.currentInclusive || !first) {
                     if (!options.isVertical) {
-                        common.setVirtualColumn(searchPosition.character);
+                        common.setVirtualColumn(wordRange);
                     }
                     yield wordRange;
                 }

@@ -52,7 +52,7 @@ function iterHorizontally(
                 (range.start.character === 0 ||
                     document.getText(range) !== "\n")
             ) {
-                setVirtualColumn(range.start.character);
+                setVirtualColumn(range);
                 yield range;
             }
              
@@ -89,11 +89,12 @@ function iterAll(
                 if (options.direction === Direction.forwards) {
                     if (columnExtreeme < range.start.character)
                         columnExtreeme = range.start.character;
-                    setVirtualColumn(columnExtreeme);
+                    // setVirtualColumn(columnExtreeme);
+                    setVirtualColumn(range);
                 }
                 else if (columnExtreeme > range.start.character) {
                     columnExtreeme = range.start.character;
-                    setVirtualColumn(columnExtreeme);
+                    setVirtualColumn(range);
                 }
                 yield range;
             }

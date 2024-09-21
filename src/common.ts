@@ -1,5 +1,6 @@
 import { Config } from "./config";
 import * as vscode from "vscode";
+import { Range } from "vscode";
 import { SubjectName } from "./subjects/SubjectName";
 
 export type TextObject = vscode.Range;
@@ -99,8 +100,8 @@ export function reverseDirection(direction: Direction) {
     return direction === Direction.forwards ? Direction.backwards : Direction.forwards;
 }
 
-export function setVirtualColumn(newColumn: number): void {
-    column = newColumn;
+export function setVirtualColumn(range: Range): void {
+    column = range.start.character + (range.end.character - range.start.character) / 2;
 }
 
 export function getVirtualColumn(): number {

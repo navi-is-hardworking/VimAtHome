@@ -43,7 +43,6 @@ export default class CommandMode extends modes.EditorMode {
         public readonly subject: SubjectBase
     ) {
         
-        // setSelectionBackground(getCommandColor());
         vscode.commands.executeCommand(
             "setContext",
             "codeFlea.subject",
@@ -51,6 +50,8 @@ export default class CommandMode extends modes.EditorMode {
         );
         super();
 
+        common.setVirtualColumn(this.context.editor.selection);
+        
         this.decorationType = vscode.window.createTextEditorDecorationType({
             dark: {
                 borderStyle: "solid",
@@ -127,6 +128,7 @@ export default class CommandMode extends modes.EditorMode {
     async changeTo(
         newMode: modes.EditorModeChangeRequest
     ): Promise<modes.EditorMode> {
+        
         switch (newMode.kind) {
             case "INSERT":
                 return new InsertMode(this.context, this);
@@ -156,8 +158,6 @@ export default class CommandMode extends modes.EditorMode {
                 // This handles the "cyclable" subjects, e.g. "WORD" -> "INTERWORD" -> "WORD" etc
                 switch (newMode.subjectName) {
                     case "WORD":
-                        outputchannel.appendLine("setting column: " + this.context.editor.selection.active.character);
-                        common.setVirtualColumn(this.context.editor.selection.active.character);
                         return this.with({
                             subject: subjects.createFrom(
                                 this.context,
@@ -308,7 +308,7 @@ export default class CommandMode extends modes.EditorMode {
             this.context.editor.selection =
                 selections.positionToSelection(jumpPosition);
 
-            outputchannel.appendLine(`jumpToSubject: ${subjectName}`);
+            // outputchannel.appendLine(`jumpToSubject: ${subjectName}`);
             return await this.changeTo({ kind: "COMMAND", subjectName });
         }
     }
