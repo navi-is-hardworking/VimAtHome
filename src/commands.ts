@@ -638,4 +638,16 @@ export const registeredCommands: ExtensionCommand[] = [
             await manager.zoomJump();
         },
     },
+    {
+        id: "codeFlea.deleteLineAbove",
+        execute: async (manager: CodeFleaManager) => {
+            await manager.deleteLineAbove();
+        },
+    },
+    {
+        id: "codeFlea.deleteLineBelow",
+        execute: async (manager: CodeFleaManager) => {
+            await manager.deleteLineBelow();
+        },
+    },
 ];

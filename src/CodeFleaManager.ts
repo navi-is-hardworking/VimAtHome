@@ -334,4 +334,54 @@ export default class CodeFleaManager {
             at: 'center'
         });
     }
+
+    async deleteLineAbove() {
+        const { editor } = this;
+        const document = editor.document;
+        
+        // Store original selections
+        const originalSelections = editor.selections;
+        
+        await editor.edit(editBuilder => {
+            for (const selection of originalSelections) {
+                const lineToDelete = Math.max(selection.start.line - 1, 0);
+                if (lineToDelete < selection.start.line) {  // Ensure we're not at the top
+                    const rangeToDelete = document.lineAt(lineToDelete).rangeIncludingLineBreak;
+                    editBuilder.delete(rangeToDelete);
+                }
+            }
+        });
+
+        // Adjust and reapply selections
+        editor.selections = originalSelections.map(selection => {
+            const newStart = new vscode.Position(
+                Math.max(selection.start.line - 1, 0),
+                selection.start.character
+            );
+            const newEnd = new vscode.Position(
+                Math.max(selection.end.line - 1, 0),
+                selection.end.character
+            );
+            return new vscode.Selection(newStart, newEnd);
+        });
+    }
+
+    async deleteLineBelow() {
+        const { editor } = this;
+        const document = editor.document;
+        
+        await editor.edit(editBuilder => {
+            for (const selection of editor.selections) {
+                const lineToDelete = Math.min(selection.end.line + 1, document.lineCount - 1);
+                if (lineToDelete > selection.end.line) {  // Ensure we're not at the bottom
+                    const rangeToDelete = document.lineAt(lineToDelete).rangeIncludingLineBreak;
+                    editBuilder.delete(rangeToDelete);
+                }
+            }
+        });
+
+        // No need to adjust selections for deleteLineBelow
+    }
+
+
 }
