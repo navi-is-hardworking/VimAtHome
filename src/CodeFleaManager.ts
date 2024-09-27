@@ -380,8 +380,69 @@ export default class CodeFleaManager {
             }
         });
 
-        // No need to adjust selections for deleteLineBelow
     }
 
-
+    async toggleCommentAtEndOfLine(): Promise<void> {
+        const document = this.editor.document;
+        const selection = this.editor.selection;
+    
+        let commentAdded = false;
+    
+        await this.editor.edit(editBuilder => {
+            for (let i = selection.start.line; i <= selection.end.line; i++) {
+                const line = document.lineAt(i);
+                const lineText = line.text;
+    
+                const commentStart = lineText.indexOf('//');
+                const pythonCommentStart = lineText.indexOf('#');
+                const htmlCommentStart = lineText.indexOf('<!--');
+    
+                if (commentStart !== -1 || pythonCommentStart !== -1 || htmlCommentStart !== -1) {
+                    let commentStartIndex = Math.min(
+                        commentStart !== -1 ? commentStart : Infinity,
+                        pythonCommentStart !== -1 ? pythonCommentStart : Infinity,
+                        htmlCommentStart !== -1 ? htmlCommentStart : Infinity
+                    );
+                    
+                    while (commentStartIndex > 0 && lineText[commentStartIndex - 1] === ' ') {
+                        commentStartIndex--;
+                    }
+    
+                    editBuilder.delete(new vscode.Range(i, commentStartIndex, i, lineText.length));
+                } else {
+                    const lineEnd = line.range.end;
+    
+                    let textToInsert = '';
+                    if (!line.isEmptyOrWhitespace && !lineText.endsWith(' ')) {
+                        textToInsert += ' ';
+                    }
+                    
+                    const languageId = document.languageId;
+                    switch (languageId) {
+                        case 'python':
+                        case 'yaml':
+                        case 'shellscript':
+                            textToInsert += '# ';
+                            break;
+                        case 'html':
+                        case 'xml':
+                            textToInsert += '<!-- ';
+                            break;
+                        default:
+                            textToInsert += '// ';
+                    }
+    
+                    editBuilder.insert(lineEnd, textToInsert);
+                    commentAdded = true;
+                }
+            }
+        });
+    
+        if (commentAdded) {
+            
+            const endPosition = document.lineAt(this.editor.selection.end.line).range.end;
+            this.editor.selection = new vscode.Selection(endPosition, endPosition);
+            await this.changeMode({ kind: "INSERT" });
+        }
+    }
 }

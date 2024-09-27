@@ -219,6 +219,13 @@ export const GoToCommands: QuickCommand[] = [
             await vscode.commands.executeCommand("codeFlea.openTerminalAtFilePath");
         },
     },
+    {
+        quickKey: char("m"),
+        label: "Toggle comment on line",
+        execute: async () => {
+            await vscode.commands.executeCommand("codeFlea.toggleCommentAtEndOfLine");
+        },
+    },
 ];
 
 export const ViewCommands: QuickCommand[] = [
@@ -300,6 +307,24 @@ export const ViewCommands: QuickCommand[] = [
         execute: async () => {
             await vscode.commands.executeCommand(
                 "workbench.action.moveEditorToPreviousGroup"
+            );
+        },
+    },
+    {
+        quickKey: char("t"),
+        label: "Open terminal in editor tab",
+        execute: async () => {
+            await vscode.commands.executeCommand(
+                "workbench.action.createTerminalEditor"
+            );
+        },
+    },
+    {
+        quickKey: char("k"),
+        label: "Open terminal in editor tab",
+        execute: async () => {
+            await vscode.commands.executeCommand(
+                "workbench.action.closeActiveEditor"
             );
         },
     },

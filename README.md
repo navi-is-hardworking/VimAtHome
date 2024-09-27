@@ -1,6 +1,7 @@
 # VimAtHome
 
-"We have Vim at home sweety."
+My own personal fork of the almighty codeFlea https://github.com/Richiban/CodeFlea
+I would recommend downloading the original as it has reasonable default keybindings and a guide. This one has no guide and the keybindings are tailored to a very specific ZMK setup.
 
 ```
 //  Place your key bindings in this file to override the defaults
@@ -897,7 +898,7 @@
                 "codeFlea.skip",
             ]
         },
-        "when": "editorTextFocus && codeFlea.mode != 'COMMAND' && codeflea.mode != 'EXTEND'"
+        "when": "editorTextFocus && codeFlea.mode != 'COMMAND' && codeFlea.mode != 'EXTEND'"
     },
     {
         "key": "shift+alt+enter",
@@ -908,7 +909,7 @@
                 "codeFlea.skipBackwards"
             ]
         },
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' && codeflea.mode == 'EXTEND'"
+        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' && codeFlea.mode == 'EXTEND'"
     },
     // {
     //     "key": "shift+alt+h",
@@ -919,7 +920,7 @@
     //               "codeFlea.skip"
     //           ]
     //       },
-    //     "when": "editorTextFocus && codeFlea.mode != 'COMMAND' && codeflea.mode != 'EXTEND'"
+    //     "when": "editorTextFocus && codeFlea.mode != 'COMMAND' && codeFlea.mode != 'EXTEND'"
     // },
     // {
     //     "key": "a",
@@ -1454,7 +1455,8 @@
             "commands": [
                 "codeFlea.changeToCharSubject",
                 "codeFlea.skipBackwards",
-                "codeFlea.changeToInsertModePrepend"
+                "codeFlea.changeToInsertModePrepend",
+                "left"
             ],
         },
     },
@@ -1805,7 +1807,7 @@
                 "codeFlea.jump",
             ],
         },
-        "when": "editorTextFocus && codeFlea.mode != 'COMMAND' && codeflea.mode != 'EXTEND'"
+        "when": "editorTextFocus && codeFlea.mode != 'COMMAND' && codeFlea.mode != 'EXTEND'"
     },
     {
         "key": "alt+;",
@@ -1918,7 +1920,7 @@
         "command": "runCommands",
         "args": {
             "commands": [
-                "editor.action.goToSelectionAnchor",
+                // "editor.action.goToSelectionAnchor",
                 "codeFlea.repeatLastSkipBackwards",
                 "codeFlea.changeToInsertModePrepend"
             ]
@@ -1930,12 +1932,12 @@
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.nextSubjectRight",
-                "codeFlea.nextSubjectRight",
+                "codeFlea.nextWordDefinition",
+                // "codeFlea.nextSubjectRight",
                 // "codeFlea.nextSubjectRight"
             ]
         },
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        "when": "editorTextFocus && codeFlea.mode == 'COMMAND'"
     },
     {
         "key": "ctrl+left",
@@ -1943,11 +1945,33 @@
         "args": {
             "commands": [
                 // "codeFlea.nextSubjectLeft",
+                "codeFlea.prevWordDefinition",
+                // "codeFlea.nextSubjectLeft"
+            ]
+        },
+        "when": "editorTextFocus && codeFlea.mode == 'COMMAND'"
+    },
+    {
+        "key": "ctrl+right",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "codeFlea.nextSubjectRight",
+                "codeFlea.nextSubjectRight"
+            ]
+        },
+        "when": "editorTextFocus && codeFlea.mode == 'EXTEND'"
+    },
+    {
+        "key": "ctrl+left",
+        "command": "runCommands",
+        "args": {
+            "commands": [
                 "codeFlea.nextSubjectLeft",
                 "codeFlea.nextSubjectLeft"
             ]
         },
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        "when": "editorTextFocus && codeFlea.mode == 'EXTEND'"
     },
     {
         "key": "down",
@@ -2167,7 +2191,7 @@
     },
 
     {
-        "key": "shift+end",
+        "key": "ctrl+shift+right",
         "command": "runCommands",
         "args": {
             "commands": [
@@ -2178,7 +2202,7 @@
         "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
     },
     {
-        "key": "shift+home",
+        "key": "ctrl+shift+left",
         "command": "runCommands",
         "args": {
             "commands": [
@@ -2187,6 +2211,38 @@
             ]
         },
         "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
-    }
+    },
+    {
+        "key": "alt+delete",
+        "command": "codeFlea.deleteLineAbove",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "shift+alt+delete",
+        "command": "codeFlea.deleteLineBelow",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "right",
+        "command": "editor.action.inlineSuggest.acceptNextWord",
+        "when": "inlineSuggestionVisible && !editorReadonly"
+    },
+    {
+        "key": "end",
+        "command": "editor.action.inlineSuggest.acceptNextLine",
+        "when": "inlineSuggestionVisible && !editorReadonly"
+    },
+    // {
+    //     "key": "shift+f18",
+    //     "command": "editor.action.inlineSuggest.acceptNextLine",
+    //     "when": "inlineSuggestionVisible && !editorReadonly"
+    // },
+    // {
+    //     "key": "end",
+    //     "command": "editor.action.inlineSuggest.acceptNextLine",
+    //     "when": "inlineSuggestionVisible && !editorReadonly"
+    // },
 ]
+
+
 ```

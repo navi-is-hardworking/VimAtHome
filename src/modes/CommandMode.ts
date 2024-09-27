@@ -383,6 +383,4 @@ export default class CommandMode extends modes.EditorMode {
     
         return jumpPosition;
     }
-
-
 }

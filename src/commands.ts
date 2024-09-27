@@ -593,7 +593,7 @@ export const registeredCommands: ExtensionCommand[] = [
     },
     {
         id: "codeFlea.pullCustomWord3",
-        execute: async (manager: CodeFleaManager) => {
+        execute: async (manager: CodeFleaManager) => { // 
             setWordDefinition(3);
             manager.pullSubject('WORD');
         },
@@ -648,6 +648,12 @@ export const registeredCommands: ExtensionCommand[] = [
         id: "codeFlea.deleteLineBelow",
         execute: async (manager: CodeFleaManager) => {
             await manager.deleteLineBelow();
+        },
+    },
+    {
+        id: "codeFlea.toggleCommentAtEndOfLine",
+        execute: async (manager: CodeFleaManager) => {
+            await manager.toggleCommentAtEndOfLine();
         },
     },
 ];
