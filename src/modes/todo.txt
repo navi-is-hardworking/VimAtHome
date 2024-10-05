@@ -1,0 +1,10 @@
+
+
+issues with folding:
+-jump
+-most subjects auto open fold really annoying
+
+
+maybe new quick menu: open commands
+goto finder/git/etc
+toggle copilot

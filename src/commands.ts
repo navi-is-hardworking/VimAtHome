@@ -656,4 +656,5 @@ export const registeredCommands: ExtensionCommand[] = [
             await manager.toggleCommentAtEndOfLine();
         },
     },
+    
 ];

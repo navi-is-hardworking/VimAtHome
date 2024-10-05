@@ -3,6 +3,7 @@ import * as editor from "../utils/editor";
 import Seq from "../utils/seq";
 import * as vscode from "vscode";
 import * as ranges from "../utils/selectionsAndRanges";
+let outputChannel = vscode.window.createOutputChannel("_Jump");
 
 function createDecorationOption(decorationRange: vscode.Range, text: string) {
     const extraProps = [
@@ -47,6 +48,7 @@ export default class JumpInterface {
         locations: Seq<vscode.Position>;
     }): Promise<vscode.Position | undefined> {
 
+        outputChannel.appendLine("JumpInterface.jump()");
         // What mode am I in?
         switch (jumpLocations.kind) {
             case "dual-phase": {

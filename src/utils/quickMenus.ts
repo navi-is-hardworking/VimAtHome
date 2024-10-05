@@ -103,6 +103,15 @@ export const ModifyCommands: QuickCommand[] = [
             );
         },
     },
+    {
+        quickKey: char("o"),
+        label: "Toggle copilot",
+        async execute() {
+            await vscode.commands.executeCommand(
+                "github.copilot.toggleCopilot"
+            );
+        },
+    },
 ];
 
 export const GoToCommands: QuickCommand[] = [
@@ -328,6 +337,24 @@ export const ViewCommands: QuickCommand[] = [
             );
         },
     },
+    {
+        quickKey: char("f"),
+        label: "Open file view",
+        execute: async () => {
+            await vscode.commands.executeCommand(
+                "workbench.view.explorer"
+            );
+        },
+    },
+    {
+        quickKey: char("g"),
+        label: "Open git view",
+        execute: async () => {
+            await vscode.commands.executeCommand(
+                "workbench.view.scm"
+            );
+        },
+    },
 ];
 
 export const SpaceCommands: QuickCommand[] = [
@@ -450,3 +477,14 @@ export const SpaceCommands: QuickCommand[] = [
         },
     },
 ];
+
+
+export const CacheCommands: QuickCommand[] = [
+    {
+        quickKey: char("0"),
+        label: "Unfold all",
+        execute: async () => {
+            await vscode.commands.executeCommand("editor.unfoldAll");
+        },
+    },
+]

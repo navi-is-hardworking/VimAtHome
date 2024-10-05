@@ -81,18 +81,20 @@ export default class CodeFleaManager {
     async executeSubjectCommand(command: SubjectAction) {
         await this.mode.executeSubjectCommand(command);
     }
-
+    
     async executeModifyCommand(command: modifications.ModifyCommand) {
         await modifications.executeModifyCommand(command);
         this.mode.fixSelection();
     }
-
+    
     async onDidChangeTextEditorSelection(
         event: vscode.TextEditorSelectionChangeEvent
     ) {
         this.clearSelections();
         this.setDecorations();
-
+        const selectedText = this.editor.document.getText(this.editor.selection);
+        outputChannel.appendLine(selectedText);
+        
         if (
             event.kind === vscode.TextEditorSelectionChangeKind.Command ||
             event.kind === undefined
@@ -100,9 +102,9 @@ export default class CodeFleaManager {
             this.editor.revealRange(this.editor.selection);
             return;
         }
-
+        
         if (this.mode instanceof InsertMode) return;
-
+        
         if (
             event.kind === vscode.TextEditorSelectionChangeKind.Mouse &&
             event.selections.length === 1 &&
@@ -111,9 +113,10 @@ export default class CodeFleaManager {
             await this.changeMode({ kind: "INSERT" });
             return;
         }
-
+        
         this.mode.fixSelection();
         this.setUI();
+        
     }
 
     async setDecorations() {
@@ -153,7 +156,10 @@ export default class CodeFleaManager {
         if (this.editor) {
             this.editor.options.cursorStyle = this.mode.cursorStyle;
             this.editor.options.lineNumbers = this.mode.lineNumberStyle;
+            common.setVirtualColumn(this.editor.selection);
         }
+
+        
 
         vscode.commands.executeCommand(
             "setContext",
@@ -239,14 +245,15 @@ export default class CodeFleaManager {
         await this.mode.skip(direction);
         this.setUI();
     }
-
+    
     async skipOver(direction: common.Direction) {
         await this.mode.skipOver(direction);
         this.setUI();
     }
-
+    
     async repeatLastSkip(direction: common.Direction) {
         await this.mode.repeatLastSkip(direction);
+        this.setUI();
     }
 
     async jump() {

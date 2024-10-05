@@ -12,8 +12,6 @@ import JumpInterface from "../handlers/JumpInterface";
 import { SubjectName } from "../subjects/SubjectName";
 import { seq } from "../utils/seq";
 import { setSelectionBackground, getCommandColor, getWordDefinitionIndex } from "../config";
-let outputchannel = vscode.window.createOutputChannel("CommandMode");
-
 
 export default class CommandMode extends modes.EditorMode {
 
@@ -247,18 +245,20 @@ export default class CommandMode extends modes.EditorMode {
 
     
     async jump(): Promise<void> {
+        // outputchannel.appendLine(`jumping`);
         const combinedRange = this.context.editor.visibleRanges.reduce((acc, range) => acc.union(range));
         const jumpLocations = this.subject
             .iterAll(common.IterationDirection.alternate, combinedRange)
             .map((range) => range.start)
             .toArray();
             
+        // outputchannel.appendLine(`jumping to ${jumpLocations.length} locations`);
         const jumpInterface = new JumpInterface(this.context);
 
         let jumpType = this.subject.jumpPhaseType;
         if (this.subject.name === "WORD") {
             let wordDefinitionIndex = getWordDefinitionIndex();
-            if (wordDefinitionIndex <= 1) {
+            if (wordDefinitionIndex == 0) {
                 jumpType = "dual-phase";
             } else {
                 jumpType = "single-phase";
@@ -273,6 +273,8 @@ export default class CommandMode extends modes.EditorMode {
         if (jumpPosition) {
             this.context.editor.selection = selections.positionToSelection(jumpPosition);
             
+            common.setVirtualColumn(this.context.editor.selection);
+            // outputchannel.appendLine(`jump: ${jumpPosition.line}, ${jumpPosition.character}`);
             await this.fixSelection();
             await vscode.commands.executeCommand('revealLine', {lineNumber: this.context.editor.selection.active.line, at: 'center'});
         }
@@ -285,6 +287,7 @@ export default class CommandMode extends modes.EditorMode {
             .iterAll(common.IterationDirection.alternate, combinedRange)
             .map((range) => range.start)
             .toArray();
+        // outputchannel.appendLine(`jumping to (subject) ${jumpLocations.length} locations`);
 
         const jumpInterface = new JumpInterface(this.context);
 
