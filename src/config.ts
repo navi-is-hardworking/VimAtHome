@@ -33,7 +33,7 @@ export type Config = {
 };
 
 export function loadConfig(): Config {
-    const config = vscode.workspace.getConfiguration("codeFlea");
+    const config = vscode.workspace.getConfiguration("vimAtHome");
     colorConfig = {
         char: config.get<string>("color.char") || "ff8000",
         subWord: config.get<string>("color.subWord") || "ff6699",

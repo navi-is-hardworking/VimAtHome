@@ -43,7 +43,7 @@ export default class CommandMode extends modes.EditorMode {
         
         vscode.commands.executeCommand(
             "setContext",
-            "codeFlea.subject",
+            "vimAtHome.subject",
             subject.name
         );
         super();
@@ -232,7 +232,7 @@ export default class CommandMode extends modes.EditorMode {
             return;
         }
         if (this.subject.name !== lastSkip.subject) {
-            await vscode.commands.executeCommand(`codeFlea.changeTo${lastSkip.subject.charAt(0).toUpperCase() + lastSkip.subject.slice(1).toLowerCase()}Subject`);
+            await vscode.commands.executeCommand(`vimAtHome.changeTo${lastSkip.subject.charAt(0).toUpperCase() + lastSkip.subject.slice(1).toLowerCase()}Subject`);
         }
 
         let lastDirection = lastSkip.direction;

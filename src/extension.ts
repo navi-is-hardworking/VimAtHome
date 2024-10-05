@@ -2,12 +2,12 @@ import * as vscode from "vscode";
 import { registeredCommands } from "./commands";
 import { loadConfig } from "./config";
 import * as cache from "./historyCache";
-import CodeFleaManager from "./CodeFleaManager";
-let outputChannel = vscode.window.createOutputChannel("codeFlea.extension.ts");
+import VimAtHomeManager from "./VimAtHomeManager";
+let outputChannel = vscode.window.createOutputChannel("vimAtHome.extension.ts");
 
 export function activate(context: vscode.ExtensionContext) {
     const config = loadConfig();
-    const manager = new CodeFleaManager(config);
+    const manager = new VimAtHomeManager(config);
     const editor = vscode.window.activeTextEditor;
     
     
@@ -37,7 +37,7 @@ export function activate(context: vscode.ExtensionContext) {
     });
     
     vscode.workspace.onDidChangeConfiguration(event => {
-        if (event.affectsConfiguration("codeFlea")) {
+        if (event.affectsConfiguration("vimAtHome")) {
             loadConfig();
         }
     });

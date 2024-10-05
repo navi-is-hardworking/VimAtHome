@@ -1,10 +1,11 @@
 # VimAtHome
 
-My own personal fork of the almighty codeFlea https://github.com/Richiban/CodeFlea
-I would recommend downloading the original as it has reasonable default keybindings and a guide. This one has no guide and the keybindings are tailored to a very specific ZMK setup.
+Personal development fork of the codeFlea https://github.com/Richiban/codeflea
+This is primarily for personal use and has no built in keybindings or guide.
+I would recommend using the original but you are welcome to use this if you wish.
+
 
 ```
-//  Place your key bindings in this file to override the defaults
 [
     {
         "key": "ctrl+;",
@@ -21,10 +22,10 @@ I would recommend downloading the original as it has reasonable default keybindi
         "command": "runCommands",
         "args": {
             "commands": [
-                // "codeFlea.scrollEditorDown",
+                // "vimAtHome.scrollEditorDown",
                 "editor.action.fontZoomReset",
                 "workbench.action.zoomReset",
-                "codeFlea.scrollToCursor",
+                "vimAtHome.scrollToCursor",
             ]
 
         },
@@ -208,283 +209,283 @@ I would recommend downloading the original as it has reasonable default keybindi
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     {
         "key": "b",
-        "command": "-codeFlea.changeToBlockSubject",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.changeToBlockSubject",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "q",
-        "command": "-codeFlea.changeToSubwordSubject",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.changeToSubwordSubject",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "`",
-        "command": "-codeFlea.changeToCharSubject",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.changeToCharSubject",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "v",
-        "command": "-codeFlea.changeToExtendMode",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND'"
+        "command": "-vimAtHome.changeToExtendMode",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
     {
         "key": ",",
-        "command": "-codeFlea.changeToInsertMode",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.changeToInsertMode",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "v",
-        "command": "-codeFlea.changeToWordSubject",
-        "when": "editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.changeToWordSubject",
+        "when": "editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "x",
-        "command": "-codeFlea.changeToLineSubject",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.changeToLineSubject",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "w",
-        "command": "-codeFlea.changeToWordSubject",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.changeToWordSubject",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "backspace",
         "command": "-cursorUndo",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "r",
         "command": "-editor.action.quickFix",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "shift+k",
-        "command": "-codeFlea.addSubjectDown",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.addSubjectDown",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "shift+down",
-        "command": "-codeFlea.addSubjectDown",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.addSubjectDown",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "shift+j",
-        "command": "-codeFlea.addSubjectLeft",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.addSubjectLeft",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "shift+left",
-        "command": "-codeFlea.addSubjectLeft",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.addSubjectLeft",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "shift+l",
-        "command": "-codeFlea.addSubjectRight",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.addSubjectRight",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "shift+right",
-        "command": "-codeFlea.addSubjectRight",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.addSubjectRight",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "shift+i",
-        "command": "-codeFlea.addSubjectUp",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.addSubjectUp",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "shift+up",
-        "command": "-codeFlea.addSubjectUp",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.addSubjectUp",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "shift+a",
-        "command": "-codeFlea.appendNewObject",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.appendNewObject",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "c",
-        "command": "-codeFlea.change",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.change",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "n",
-        "command": "-codeFlea.changeToBracketSubject",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.changeToBracketSubject",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "escape",
-        "command": "-codeFlea.changeToCommandModeDefault",
-        "when": "textInputFocus && !actionWidgetVisible && !cancellableOperation && !editorHasMultipleSelections && !inlineSuggestionVisible && !messageVisible && !notificationToastsVisible && !parameterHintsVisible && codeFlea.mode == 'INSERT'"
+        "command": "-vimAtHome.changeToCommandModeDefault",
+        "when": "textInputFocus && !actionWidgetVisible && !cancellableOperation && !editorHasMultipleSelections && !inlineSuggestionVisible && !messageVisible && !notificationToastsVisible && !parameterHintsVisible && vimAtHome.mode == 'INSERT'"
     },
     {
         "key": "a",
-        "command": "-codeFlea.changeToInsertModeAppend",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.changeToInsertModeAppend",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "/",
-        "command": "-codeFlea.changeToInsertModeMidPoint",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.changeToInsertModeMidPoint",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "p",
-        "command": "-codeFlea.changeToInsertModePrepend",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.changeToInsertModePrepend",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "shift+/",
-        "command": "-codeFlea.changeToInsertModeSurround",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.changeToInsertModeSurround",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "shift+c",
-        "command": "-codeFlea.changeToLineEnd",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.changeToLineEnd",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": ".",
-        "command": "-codeFlea.customVsCodeCommand",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.customVsCodeCommand",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "d",
-        "command": "-codeFlea.deleteSubject",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.deleteSubject",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "shift+d",
-        "command": "-codeFlea.duplicateSubject",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.duplicateSubject",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "shift+h",
-        "command": "-codeFlea.extendToNextOccurrence",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.extendToNextOccurrence",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "shift+y",
-        "command": "-codeFlea.extendToPrevOccurrence",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.extendToPrevOccurrence",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "u",
-        "command": "-codeFlea.goToFirstSubjectInScope",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.goToFirstSubjectInScope",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "o",
-        "command": "-codeFlea.goToLastSubjectInScope",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.goToLastSubjectInScope",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "h",
-        "command": "-codeFlea.goToNextOccurrence",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.goToNextOccurrence",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "y",
-        "command": "-codeFlea.goToPrevOccurrence",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.goToPrevOccurrence",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "t",
-        "command": "-codeFlea.jump",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.jump",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "shift+;",
-        "command": "-codeFlea.newLineAbove",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.newLineAbove",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": ";",
-        "command": "-codeFlea.newLineBelow",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.newLineBelow",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "k",
-        "command": "-codeFlea.nextSubjectDown",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.nextSubjectDown",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "j",
-        "command": "-codeFlea.nextSubjectLeft",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.nextSubjectLeft",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "l",
-        "command": "-codeFlea.nextSubjectRight",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.nextSubjectRight",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "i",
-        "command": "-codeFlea.nextSubjectUp",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.nextSubjectUp",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "g",
-        "command": "-codeFlea.openGoToMenu",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.openGoToMenu",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "m",
-        "command": "-codeFlea.openModifyMenu",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.openModifyMenu",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "z",
-        "command": "-codeFlea.openViewMenu",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.openViewMenu",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "shift+p",
-        "command": "-codeFlea.prependNewObject",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.prependNewObject",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "enter",
-        "command": "-codeFlea.repeatLastSkip",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.repeatLastSkip",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "shift+enter",
-        "command": "-codeFlea.repeatLastSkipBackwards",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.repeatLastSkipBackwards",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "s",
-        "command": "-codeFlea.skip",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.skip",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "shift+s",
-        "command": "-codeFlea.skipBackwards",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.skipBackwards",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "f",
-        "command": "-codeFlea.skipOver",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.skipOver",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+k",
-        "command": "-codeFlea.swapSubjectDown",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.swapSubjectDown",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+j",
-        "command": "-codeFlea.swapSubjectLeft",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.swapSubjectLeft",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+l",
-        "command": "-codeFlea.swapSubjectRight",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.swapSubjectRight",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+i",
-        "command": "-codeFlea.swapSubjectUp",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.swapSubjectUp",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
 
     {
@@ -528,124 +529,124 @@ I would recommend downloading the original as it has reasonable default keybindi
 
     // {
     //     "key": "f20",
-    //     "command": "codeFlea.changeToInsertMode",
+    //     "command": "vimAtHome.changeToInsertMode",
     //     "when": "textInputFocus"
     // },
     {
         "key": "f20",
-        "command": "codeFlea.changeToInsertMode",
+        "command": "vimAtHome.changeToInsertMode",
     },
     {
         "key": "f17",
-        "command": "codeFlea.changeToSubwordSubject",
-        // "when": "textInputFocus && !actionWidgetVisible && !cancellableOperation && !editorHasMultipleSelections && !inlineSuggestionVisible && !messageVisible && !notificationToastsVisible && !parameterHintsVisible && codeFlea.mode == 'INSERT'"
+        "command": "vimAtHome.changeToSubwordSubject",
+        // "when": "textInputFocus && !actionWidgetVisible && !cancellableOperation && !editorHasMultipleSelections && !inlineSuggestionVisible && !messageVisible && !notificationToastsVisible && !parameterHintsVisible && vimAtHome.mode == 'INSERT'"
     },
     
     {
         "key": "shift+down",
-        "command": "codeFlea.changeToExtendMode",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' && codeFlea.mode != 'EXTEND'"
+        "command": "vimAtHome.changeToExtendMode",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && vimAtHome.mode != 'EXTEND'"
     },
     {
         "key": "shift+down",
-        "command": "codeFlea.changeToInsertMode",
-        "when": "editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.changeToInsertMode",
+        "when": "editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     
     {
         "key": "shift+left",
-        "command": "codeFlea.changeToInsertModePrepend",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND'"
+        "command": "vimAtHome.changeToInsertModePrepend",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
     {
         "key": "shift+right",
-        "command": "codeFlea.changeToInsertModeAppend",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND'"
+        "command": "vimAtHome.changeToInsertModeAppend",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
     {
         "key": "shift+up",
-        "command": "codeFlea.changeToInsertMode",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.changeToInsertMode",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "shift+right",
-        "command": "codeFlea.changeToInsertMode",
-        "when": "editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.changeToInsertMode",
+        "when": "editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "shift+left",
-        "command": "codeFlea.changeToInsertMode",
-        "when": "editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.changeToInsertMode",
+        "when": "editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     // {
     //     "key": "ctrl+left",
-    //     "command": "codeFlea.goToFirstSubjectInScope",
-    //     "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+    //     "command": "vimAtHome.goToFirstSubjectInScope",
+    //     "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     // },
     // {
     //     "key": "ctrl+right",
-    //     "command": "codeFlea.goToLastSubjectInScope",
-    //     "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+    //     "command": "vimAtHome.goToLastSubjectInScope",
+    //     "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     // },
     {
         "key": "alt+a",
-        "command": "codeFlea.changeToCharSubject",
-        // "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.changeToCharSubject",
+        // "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "alt+b",
-        "command": "codeFlea.changeToSubwordSubject",
-        // "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.changeToSubwordSubject",
+        // "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+shift+alt+b",
-        "command": "codeFlea.changeToSubwordSubject",
+        "command": "vimAtHome.changeToSubwordSubject",
         // "when": "editorTextFocus"
     },
     {
         "key": "alt+c",
-        "command": "codeFlea.changeToWordSubject",
-        // "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.changeToWordSubject",
+        // "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "alt+d",
-        "command": "codeFlea.changeToLineSubject",
-        // "when": " && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.changeToLineSubject",
+        // "when": " && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "alt+e",
-        "command": "codeFlea.changeToBlockSubject",
-        // "when": "codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.changeToBlockSubject",
+        // "when": "vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "alt+f",
-        "command": "codeFlea.changeToBracketSubject",
-        // "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.changeToBracketSubject",
+        // "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+shift+alt+e",
-        "command": "codeFlea.changeToBlockSubject",
-        // "when": "codeFlea.mode == 'COMMAND'"
+        "command": "vimAtHome.changeToBlockSubject",
+        // "when": "vimAtHome.mode == 'COMMAND'"
     },
     {
         "key": "alt+g",
-        "command": "codeFlea.changeToExtendMode",
-        // "when": "editorTextFocus && codeFlea.mode == 'COMMAND'"
+        "command": "vimAtHome.changeToExtendMode",
+        // "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
     {
         "key": "alt+h",
-        "command": "codeFlea.skip",
-        // "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.skip",
+        // "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "shift+alt+h",
-        "command": "codeFlea.skipBackwards",
-        // "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.skipBackwards",
+        // "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "enter",
-        "command": "codeFlea.repeatLastSkip",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.repeatLastSkip",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "shift+enter",
@@ -653,21 +654,21 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": { 
             "commands": [
                 "editor.action.setSelectionAnchor",
-                "codeFlea.changeToWordSubject",
-                "codeFlea.repeatLastSkip",
+                "vimAtHome.changeToWordSubject",
+                "vimAtHome.repeatLastSkip",
             ]
         },
-        "when": "editorTextFocus && codeFlea.mode != 'COMMAND' || editorTextFocus && codeFlea.mode != 'EXTEND'",
+        "when": "editorTextFocus && vimAtHome.mode != 'COMMAND' || editorTextFocus && vimAtHome.mode != 'EXTEND'",
     },
     {
         "key": "shift+enter",
-        "command": "codeFlea.repeatLastSkipBackwards",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.repeatLastSkipBackwards",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+;",
-        "command": "codeFlea.jump",
-        "when": "editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.jump",
+        "when": "editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "shift+f16",
@@ -689,7 +690,7 @@ I would recommend downloading the original as it has reasonable default keybindi
         "command": "runCommands",
         "args": { 
             "commands": [
-                "codeFlea.changeToWordSubject",
+                "vimAtHome.changeToWordSubject",
                 // "settings.cycle.tempColor"
             ]
         }
@@ -699,9 +700,9 @@ I would recommend downloading the original as it has reasonable default keybindi
         "command": "runCommands",
         "args": { 
             "commands": [
-                "codeFlea.changeToBlockSubject",
+                "vimAtHome.changeToBlockSubject",
                 // "settings.cycle.tempColor"
-                // "codeFlea.addSubjectDown"
+                // "vimAtHome.addSubjectDown"
             ]
         }
     },
@@ -710,20 +711,31 @@ I would recommend downloading the original as it has reasonable default keybindi
         "command": "runCommands",
         "args": { 
         "commands": [
-                "codeFlea.changeToInsertMode",
+                "vimAtHome.changeToInsertMode",
                 // "settings.cycle.baseColor"
             ]
         }
     },
 
+    // {
+    //     "key": "ctrl+enter",
+    //     "command": "runCommands",
+    //     "args": { 
+    //         "commands": [
+    //             "vimAtHome.changeToCharSubject",
+    //             "vimAtHome.newLineBelow"
+    //         ]
+    //     },
+    //     "when": "editorTextFocus"
+    // },
     {
         "key": "ctrl+enter",
-        "command": "codeFlea.newLineBelow",
+        "command": "vimAtHome.newLineBelow",
         "when": "editorTextFocus"
     },
     // {
     //     "key": "shift+enter",
-    //     "command": "codeFlea.newLineAbove",
+    //     "command": "vimAtHome.newLineAbove",
     //     "when": "editorTextFocus"
     // },
 
@@ -745,7 +757,7 @@ I would recommend downloading the original as it has reasonable default keybindi
                         "value": 25
                     }
                 },
-                "codeFlea.scrollToCursor",
+                "vimAtHome.scrollToCursor",
             ]
         },
         "when": "editorTextFocus"
@@ -763,7 +775,7 @@ I would recommend downloading the original as it has reasonable default keybindi
                         "value": 25
                     }
                 },
-                "codeFlea.scrollToCursor",
+                "vimAtHome.scrollToCursor",
             ]
         },
         "when": "editorTextFocus"
@@ -848,8 +860,8 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-                "codeFlea.changeToWordSubject",
-                "codeFlea.skip"
+                "vimAtHome.changeToWordSubject",
+                "vimAtHome.skip"
             ]
         },
     },
@@ -859,8 +871,8 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-                "codeFlea.changeToWordSubject",
-                "codeFlea.skipBackwards"
+                "vimAtHome.changeToWordSubject",
+                "vimAtHome.skipBackwards"
             ]
         },
     },
@@ -870,11 +882,11 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-                // "codeFlea.changeToWordSubject",
-                "codeFlea.skipBackwards"
+                // "vimAtHome.changeToWordSubject",
+                "vimAtHome.skipBackwards"
             ]
         },
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "shift+alt+enter",
@@ -882,10 +894,10 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-                "codeFlea.skip"
+                "vimAtHome.skip"
             ]
         },
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "alt+k",
@@ -893,12 +905,12 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": {
          "commands": [
                 "editor.action.setSelectionAnchor",
-                "codeFlea.changeToSubwordSubject",
-                // "codeFlea.changeToCharSubject",
-                "codeFlea.skip",
+                "vimAtHome.changeToSubwordSubject",
+                // "vimAtHome.changeToCharSubject",
+                "vimAtHome.skip",
             ]
         },
-        "when": "editorTextFocus && codeFlea.mode != 'COMMAND' && codeFlea.mode != 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode != 'COMMAND' && vimAtHome.mode != 'EXTEND'"
     },
     {
         "key": "shift+alt+enter",
@@ -906,21 +918,21 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-                "codeFlea.skipBackwards"
+                "vimAtHome.skipBackwards"
             ]
         },
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' && codeFlea.mode == 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && vimAtHome.mode == 'EXTEND'"
     },
     // {
     //     "key": "shift+alt+h",
     //     "command": "runCommands",
     //     "args": {
     //         "commands": [
-    //               "codeFlea.changeToWordSubject",
-    //               "codeFlea.skip"
+    //               "vimAtHome.changeToWordSubject",
+    //               "vimAtHome.skip"
     //           ]
     //       },
-    //     "when": "editorTextFocus && codeFlea.mode != 'COMMAND' && codeFlea.mode != 'EXTEND'"
+    //     "when": "editorTextFocus && vimAtHome.mode != 'COMMAND' && vimAtHome.mode != 'EXTEND'"
     // },
     // {
     //     "key": "a",
@@ -964,18 +976,18 @@ I would recommend downloading the original as it has reasonable default keybindi
     
     // {
     //     "key": "ctrl+right",
-    //     "command": "codeFlea.addSubjectRight",
-    //     "when": "editorTextFocus && (codeFlea.mode == 'COMMAND' || codeFlea.mode == 'Extend')"
+    //     "command": "vimAtHome.addSubjectRight",
+    //     "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'Extend')"
     // },
     // {
     //     "key": "ctrl+left",
-    //     "command": "codeFlea.addSubjectLeft",
-    //     "when": "editorTextFocus && (codeFlea.mode == 'COMMAND' || codeFlea.mode == 'Extend')"
+    //     "command": "vimAtHome.addSubjectLeft",
+    //     "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'Extend')"
     // },
     // {
     //     "key": "delete",
-    //     "command": "codeFlea.changeToHalfBracketSubjectLeft",
-    //     "when": "editorTextFocus && (codeFlea.mode == 'COMMAND' || codeFlea.mode == 'Extend')"
+    //     "command": "vimAtHome.changeToHalfBracketSubjectLeft",
+    //     "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'Extend')"
     // },
     {
         "key": "ctrl+t",
@@ -997,96 +1009,96 @@ I would recommend downloading the original as it has reasonable default keybindi
     },
     {
         "key": "ctrl+f2",
-        "command": "codeFlea.openSpaceMenu",
+        "command": "vimAtHome.openSpaceMenu",
         "when": "editorTextFocus"
     },
     {
         "key": "ctrl+f1",
-        "command": "codeFlea.openViewMenu"
+        "command": "vimAtHome.openViewMenu"
     },
-    {
-        "key": "ctrl+",
-        "command": "codeFlea.changeToWordSubject",
-        "when": "editorTextFocus"
-    },
+    // {
+    //     "key": "ctrl+",
+    //     "command": "vimAtHome.changeToWordSubject",
+    //     "when": "editorTextFocus"
+    // },
     // {
     //     "key": "ctrl+left",
     //     "command": "runCommands",
     //     "args": {
     //         "commands": [
-    //             "codeFlea.changeToCharSubject",
+    //             "vimAtHome.changeToCharSubject",
     //             // "cursorLeft",
     //         ],
     //     },
-    //     "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+    //     "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     // },
     // {
     //     "key": "ctrl+right",
     //     "command": "runCommands",
     //     "args": {
     //         "commands": [
-    //             "codeFlea.changeToInsertModeAppend",
-    //             "codeFlea.changeToCharSubject"
-    //             // "codeFlea.nextWordDefinition",
+    //             "vimAtHome.changeToInsertModeAppend",
+    //             "vimAtHome.changeToCharSubject"
+    //             // "vimAtHome.nextWordDefinition",
     //             // "cursorWordEndRight",
     //             // "cursorRight",
     //         ],
     //     },
-    //     "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+    //     "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     // },
     {
         "key": "shift+end",
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToInsertMode",
+                "vimAtHome.changeToInsertMode",
                 "cursorEndSelect"
             ]
         },
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "shift+home",
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToInsertMode",
+                "vimAtHome.changeToInsertMode",
                 "cursorBeginSelect"
             ]
         },
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "shift+home",
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToInsertMode",
+                "vimAtHome.changeToInsertMode",
                 "cursorBeginSelect"
             ]
         },
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+l",
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToLineSubject",
+                "vimAtHome.changeToLineSubject",
             ]
         },
-        "when": "editorTextFocus"// && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "when": "editorTextFocus"// && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     
     {
         "key": "ctrl+f7",
-        "command": "codeFlea.changeToWordSubject",
+        "command": "vimAtHome.changeToWordSubject",
         "when": "editorTextFocus"
     },
     {
         "key": "f7",
-        // "command": "codeFlea.changeToCommandModeDefault",
-        "command": "codeFlea.changeToWordSubject",
+        // "command": "vimAtHome.changeToCommandModeDefault",
+        "command": "vimAtHome.changeToWordSubject",
         "when": "editorTextFocus"
     },
     {
@@ -1132,28 +1144,28 @@ I would recommend downloading the original as it has reasonable default keybindi
     
     {
         "key": "shift+up",
-        "command": "codeFlea.changeToInsertModeMidPoint",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.changeToInsertModeMidPoint",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+up",
-        "command": "codeFlea.scrollEditorUp",
+        "command": "vimAtHome.scrollEditorUp",
         "when": "editorTextFocus"
     },
     {
         "key": "ctrl+down",
-        "command": "codeFlea.scrollEditorDown",
+        "command": "vimAtHome.scrollEditorDown",
         "when": "editorTextFocus"
     },
     {
         "key": "home",
-        "command": "codeFlea.goToFirstSubjectInScope",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.goToFirstSubjectInScope",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "end",
-        "command": "codeFlea.goToLastSubjectInScope",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.goToLastSubjectInScope",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+t",
@@ -1161,8 +1173,8 @@ I would recommend downloading the original as it has reasonable default keybindi
     },
     {
         "key": ";",
-        "command": "codeFlea.jump",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.jump",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
 
     {
@@ -1171,9 +1183,9 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-                "codeFlea.changeToCharSubject",
+                "vimAtHome.changeToCharSubject",
                 "editor.action.setSelectionAnchor",
-                "codeFlea.jumpToLineSubject"
+                "vimAtHome.jumpToLineSubject"
             ]
         },
         "when": "editorTextFocus"
@@ -1184,12 +1196,12 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-                "codeFlea.changeToCharSubject",
+                "vimAtHome.changeToCharSubject",
                 "editor.action.setSelectionAnchor",
-                "codeFlea.jumpToLineSubject"
+                "vimAtHome.jumpToLineSubject"
             ]
         },
-        "when": "editorTextFocus && codeFlea.mode != 'COMMAND'"
+        "when": "editorTextFocus && vimAtHome.mode != 'COMMAND'"
     },
     {
         "key": "alt+shift+e",
@@ -1197,9 +1209,9 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-                "codeFlea.changeToCharSubject",
+                "vimAtHome.changeToCharSubject",
                 "editor.action.setSelectionAnchor",
-                "codeFlea.jumpToBlockSubject"
+                "vimAtHome.jumpToBlockSubject"
             ]
         },
         "when": "editorTextFocus"
@@ -1210,9 +1222,9 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-                "codeFlea.changeToCharSubject",
+                "vimAtHome.changeToCharSubject",
                 "editor.action.setSelectionAnchor",
-                "codeFlea.jumpToBracketSubject"
+                "vimAtHome.jumpToBracketSubject"
             ]
         },
         "when": "editorTextFocus"
@@ -1223,10 +1235,10 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-                "codeFlea.jumpToLineSubject"
+                "vimAtHome.jumpToLineSubject"
             ]
         },
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+alt+f",
@@ -1234,10 +1246,10 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-                "codeFlea.jumpToBlockSubject"
+                "vimAtHome.jumpToBlockSubject"
             ]
         },
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "alt+shift+f",
@@ -1245,32 +1257,32 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-                "codeFlea.jumpToBracketSubject"
+                "vimAtHome.jumpToBracketSubject"
             ]
         },
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
 
     {
         "key": "ctrl+alt+up",
-        "command": "codeFlea.addSubjectUp",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.addSubjectUp",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+alt+down",
-        "command": "codeFlea.addSubjectDown",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.addSubjectDown",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
 
     {
         "key": "backspace",
-        "command": "codeFlea.deleteSubject",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.deleteSubject",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+shift+f17",
         "command": "search.action.focusSearchList",
-        // "when": "editorTextFocus"//&& codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        // "when": "editorTextFocus"//&& vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     // {
     //     // "key": "ctrl+t",
@@ -1319,15 +1331,19 @@ I would recommend downloading the original as it has reasonable default keybindi
     },
     {
         "key": "ctrl+k ctrl+shift+f1",
-        "command": "codeFlea.openGoToMenu"
+        "command": "vimAtHome.openGoToMenu"
     },
     {
         "key": "ctrl+k ctrl+shift+f2",
-        "command": "codeFlea.openSpaceMenu"
+        "command": "vimAtHome.openSpaceMenu"
     },
     {
         "key": "ctrl+k ctrl+shift+f3",
-        "command": "codeFlea.openViewMenu"
+        "command": "vimAtHome.openViewMenu"
+    },
+    {
+        "key": "ctrl+k ctrl+shift+f4",
+        "command": "vimAtHome.openModifyMenu"
     },
 
     {
@@ -1335,16 +1351,16 @@ I would recommend downloading the original as it has reasonable default keybindi
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToInsertMode",
+                "vimAtHome.changeToInsertMode",
                 "editor.action.selectAll",
             ],
         },
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "space",
-        "command": "-codeFlea.openSpaceMenu",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "command": "-vimAtHome.openSpaceMenu",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+w",
@@ -1358,48 +1374,48 @@ I would recommend downloading the original as it has reasonable default keybindi
     },
     {
         "key": "ctrl+;",  // Or any other key combination you prefer
-        "command": "codeFlea.openTerminalAtFilePath",
+        "command": "vimAtHome.openTerminalAtFilePath",
         // "when": "terminalFocus"
     },
     
-    {
-        "key": "alt+f17",
-        "command": "github.copilot.toggleCopilot"
-    },
+    // {
+    //     "key": "alt+f17",
+    //     "command": "github.copilot.toggleCopilot"
+    // },
 
     // {
     //     "key": "ctrl+shift+c",
-    //     "command": "codeFlea.pullWord",
+    //     "command": "vimAtHome.pullWord",
     //     "when": "editorTextFocus"
     // },
     // {
     //     "key": "ctrl+shift+alt+a",
-    //     "command": "codeFlea.pullCustomWord1",
+    //     "command": "vimAtHome.pullCustomWord1",
     //     "when": "editorTextFocus"
     // },
     // {
     //     "key": "ctrl+shift+alt+b",
-    //     "command": "codeFlea.pullCustomWord2",
+    //     "command": "vimAtHome.pullCustomWord2",
     //     "when": "editorTextFocus"
     // },
     // {
     //     "key": "ctrl+shift+alt+c",
-    //     "command": "codeFlea.pullCustomWord3",
+    //     "command": "vimAtHome.pullCustomWord3",
     //     "when": "editorTextFocus"
     // },
     // {
     //     "key": "ctrl+alt+d",
-    //     "command": "codeFlea.pullLineSubject",
+    //     "command": "vimAtHome.pullLineSubject",
     //     "when": "editorTextFocus"
     // },
     // {
     //     "key": "ctrl+alt+e",
-    //     "command": "codeFlea.pullBracketSubject",
+    //     "command": "vimAtHome.pullBracketSubject",
     //     "when": "editorTextFocus"
     // },
     // {
     //     "key": "ctrl+alt+f",
-    //     "command": "codeFlea.pullBlockSubject",
+    //     "command": "vimAtHome.pullBlockSubject",
     //     "when": "editorTextFocus"
     // },
     {
@@ -1423,7 +1439,7 @@ I would recommend downloading the original as it has reasonable default keybindi
     // Char 
     {
         "key": "ctrl+j a",
-        "command": "codeFlea.changeToCharSubject",
+        "command": "vimAtHome.changeToCharSubject",
     },
     {
         "key": "ctrl+shift+j a",
@@ -1431,8 +1447,8 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-                "codeFlea.changeToCharSubject",
-                "codeFlea.jump",
+                "vimAtHome.changeToCharSubject",
+                "vimAtHome.jump",
             ],
         },
     },
@@ -1441,10 +1457,10 @@ I would recommend downloading the original as it has reasonable default keybindi
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToCharSubject",
-                "codeFlea.skip",
-                "codeFlea.changeToInsertModeAppend"
-                // "codeFlea.changeToInsertModeAppend"
+                "vimAtHome.changeToCharSubject",
+                "vimAtHome.skip",
+                "vimAtHome.changeToInsertModeAppend"
+                // "vimAtHome.changeToInsertModeAppend"
             ],
         },
     },
@@ -1453,22 +1469,22 @@ I would recommend downloading the original as it has reasonable default keybindi
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToCharSubject",
-                "codeFlea.skipBackwards",
-                "codeFlea.changeToInsertModePrepend",
+                "vimAtHome.changeToCharSubject",
+                "vimAtHome.skipBackwards",
+                "vimAtHome.changeToInsertModePrepend",
                 "left"
             ],
         },
     },
     {
         "key": "ctrl+j alt+a",
-        "command": "codeFlea.pullCharSubject"
+        "command": "vimAtHome.pullCharSubject"
     },
     
     // Subword (b)
     {
         "key": "ctrl+j b",
-        "command": "codeFlea.changeToSubwordSubject",
+        "command": "vimAtHome.changeToSubwordSubject",
     },
     {
         "key": "ctrl+shift+j b",
@@ -1476,8 +1492,8 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-                "codeFlea.changeToSubwordSubject",
-                "codeFlea.jump",
+                "vimAtHome.changeToSubwordSubject",
+                "vimAtHome.jump",
             ],
         },
     },
@@ -1486,8 +1502,8 @@ I would recommend downloading the original as it has reasonable default keybindi
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToSubwordSubject",
-                "codeFlea.skip",
+                "vimAtHome.changeToSubwordSubject",
+                "vimAtHome.skip",
             ],
         },
     },
@@ -1496,20 +1512,20 @@ I would recommend downloading the original as it has reasonable default keybindi
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToSubwordSubject",
-                "codeFlea.skipBackwards",
+                "vimAtHome.changeToSubwordSubject",
+                "vimAtHome.skipBackwards",
             ],
         },
     },
     {
         "key": "ctrl+j alt+b",
-        "command": "codeFlea.pullSubword"
+        "command": "vimAtHome.pullSubword"
     },
 
     // Word (c)
     {
         "key": "ctrl+j c",
-        "command": "codeFlea.changeToWordSubject",
+        "command": "vimAtHome.changeToWordSubject",
     },
     {
         "key": "ctrl+shift+j c",
@@ -1517,7 +1533,7 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-                "codeFlea.jumpToWordSubject",
+                "vimAtHome.jumpToWordSubject",
             ],
         },
     },
@@ -1526,8 +1542,8 @@ I would recommend downloading the original as it has reasonable default keybindi
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToWordSubject",
-                "codeFlea.skip",
+                "vimAtHome.changeToWordSubject",
+                "vimAtHome.skip",
             ],
         },
     },
@@ -1536,20 +1552,20 @@ I would recommend downloading the original as it has reasonable default keybindi
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToWordSubject",
-                "codeFlea.skipBackwards",
+                "vimAtHome.changeToWordSubject",
+                "vimAtHome.skipBackwards",
             ],
         },
     },
     {
         "key": "ctrl+j alt+c",
-        "command": "codeFlea.pullWord"
+        "command": "vimAtHome.pullWord"
     },
 
     // CustomWord1 (d)
     {
         "key": "ctrl+j d",
-        "command": "codeFlea.changeToCustomWord1",
+        "command": "vimAtHome.changeToCustomWord1",
     },
     {
         "key": "ctrl+shift+j d",
@@ -1557,7 +1573,7 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-                "codeFlea.jumpToCustomWord1",
+                "vimAtHome.jumpToCustomWord1",
             ],
         },
     },
@@ -1566,8 +1582,8 @@ I would recommend downloading the original as it has reasonable default keybindi
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToCustomWord1",
-                "codeFlea.skip",
+                "vimAtHome.changeToCustomWord1",
+                "vimAtHome.skip",
             ],
         },
     },
@@ -1576,20 +1592,20 @@ I would recommend downloading the original as it has reasonable default keybindi
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToCustomWord1",
-                "codeFlea.skipBackwards",
+                "vimAtHome.changeToCustomWord1",
+                "vimAtHome.skipBackwards",
             ],
         },
     },
     {
         "key": "ctrl+j alt+d",
-        "command": "codeFlea.pullCustomWord1"
+        "command": "vimAtHome.pullCustomWord1"
     },
 
     // CustomWord2 (e)
     {
         "key": "ctrl+j e",
-        "command": "codeFlea.changeToCustomWord2",
+        "command": "vimAtHome.changeToCustomWord2",
     },
     {
         "key": "ctrl+shift+j e",
@@ -1597,7 +1613,7 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-                "codeFlea.jumpToCustomWord2",
+                "vimAtHome.jumpToCustomWord2",
             ],
         },
     },
@@ -1606,8 +1622,8 @@ I would recommend downloading the original as it has reasonable default keybindi
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToCustomWord2",
-                "codeFlea.skip",
+                "vimAtHome.changeToCustomWord2",
+                "vimAtHome.skip",
             ],
         },
     },
@@ -1616,20 +1632,20 @@ I would recommend downloading the original as it has reasonable default keybindi
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToCustomWord2",
-                "codeFlea.skipBackwards",
+                "vimAtHome.changeToCustomWord2",
+                "vimAtHome.skipBackwards",
             ],
         },
     },
     {
         "key": "ctrl+j alt+e",
-        "command": "codeFlea.pullCustomWord2"
+        "command": "vimAtHome.pullCustomWord2"
     },
 
     // CustomWord3 (f)
     {
         "key": "ctrl+j f",
-        "command": "codeFlea.changeToCustomWord3",
+        "command": "vimAtHome.changeToCustomWord3",
     },
     {
         "key": "ctrl+shift+j f",
@@ -1637,7 +1653,7 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-                "codeFlea.jumpToCustomWord3",
+                "vimAtHome.jumpToCustomWord3",
             ],
         },
     },
@@ -1646,8 +1662,8 @@ I would recommend downloading the original as it has reasonable default keybindi
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToCustomWord3",
-                "codeFlea.skip",
+                "vimAtHome.changeToCustomWord3",
+                "vimAtHome.skip",
             ],
         },
     },
@@ -1656,20 +1672,20 @@ I would recommend downloading the original as it has reasonable default keybindi
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToCustomWord3",
-                "codeFlea.skipBackwards",
+                "vimAtHome.changeToCustomWord3",
+                "vimAtHome.skipBackwards",
             ],
         },
     },
     {
         "key": "ctrl+j alt+f",
-        "command": "codeFlea.pullCustomWord3"
+        "command": "vimAtHome.pullCustomWord3"
     },
 
     // Bracket (g)
     {
         "key": "ctrl+j g",
-        "command": "codeFlea.changeToBracketSubject",
+        "command": "vimAtHome.changeToBracketSubject",
     },
     {
         "key": "ctrl+shift+j g",
@@ -1677,7 +1693,7 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-                "codeFlea.jumpToBracketSubject",
+                "vimAtHome.jumpToBracketSubject",
             ],
         },
     },
@@ -1686,8 +1702,8 @@ I would recommend downloading the original as it has reasonable default keybindi
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToBracketSubject",
-                "codeFlea.skip",
+                "vimAtHome.changeToBracketSubject",
+                "vimAtHome.skip",
             ],
         },
     },
@@ -1696,20 +1712,20 @@ I would recommend downloading the original as it has reasonable default keybindi
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToBracketSubject",
-                "codeFlea.skipBackwards",
+                "vimAtHome.changeToBracketSubject",
+                "vimAtHome.skipBackwards",
             ],
         },
     },
     {
         "key": "ctrl+j alt+g",
-        "command": "codeFlea.pullBracketSubject"
+        "command": "vimAtHome.pullBracketSubject"
     },
 
     // Line (h)
     {
         "key": "ctrl+j h",
-        "command": "codeFlea.changeToLineSubject",
+        "command": "vimAtHome.changeToLineSubject",
     },
     {
         "key": "ctrl+shift+j h",
@@ -1717,7 +1733,7 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-                "codeFlea.jumpToLineSubject",
+                "vimAtHome.jumpToLineSubject",
             ],
         },
     },
@@ -1726,20 +1742,20 @@ I would recommend downloading the original as it has reasonable default keybindi
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToLineSubject",
+                "vimAtHome.changeToLineSubject",
                 "editor.action.setSelectionAnchor",
-                "codeFlea.jumpToLineSubject",
+                "vimAtHome.jumpToLineSubject",
             ],
         },
-        "when": "codeFlea.mode != 'COMMAND' && codeFlea.mode != 'EXTEND'"
+        "when": "vimAtHome.mode != 'COMMAND' && vimAtHome.mode != 'EXTEND'"
     },
     {
         "key": "ctrl+j ctrl+h",
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToLineSubject",
-                "codeFlea.skip",
+                "vimAtHome.changeToLineSubject",
+                "vimAtHome.skip",
             ],
         },
     },
@@ -1748,20 +1764,20 @@ I would recommend downloading the original as it has reasonable default keybindi
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToLineSubject",
-                "codeFlea.skipBackwards",
+                "vimAtHome.changeToLineSubject",
+                "vimAtHome.skipBackwards",
             ],
         },
     },
     {
         "key": "ctrl+j alt+h",
-        "command": "codeFlea.pullLineSubject"
+        "command": "vimAtHome.pullLineSubject"
     },
 
     // File (i)
     {
         "key": "ctrl+j i",
-        "command": "codeFlea.changeToBlockSubject",
+        "command": "vimAtHome.changeToBlockSubject",
     },
     {
         "key": "ctrl+shift+j i",
@@ -1769,7 +1785,7 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-                "codeFlea.jumpToBlockSubject",
+                "vimAtHome.jumpToBlockSubject",
             ],
         },
     },
@@ -1778,8 +1794,8 @@ I would recommend downloading the original as it has reasonable default keybindi
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToBlockSubject",
-                "codeFlea.skip",
+                "vimAtHome.changeToBlockSubject",
+                "vimAtHome.skip",
             ],
         },
     },
@@ -1788,14 +1804,14 @@ I would recommend downloading the original as it has reasonable default keybindi
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToBlockSubject",
-                "codeFlea.skipBackwards",
+                "vimAtHome.changeToBlockSubject",
+                "vimAtHome.skipBackwards",
             ],
         },
     },
     {
         "key": "ctrl+j alt+i",
-        "command": "codeFlea.pullBlockSubject"
+        "command": "vimAtHome.pullBlockSubject"
     },
     {
         "key": "alt+;",
@@ -1803,11 +1819,10 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-                "codeFlea.changeToWordSubject",
-                "codeFlea.jump",
+                "vimAtHome.jump",
             ],
         },
-        "when": "editorTextFocus && codeFlea.mode != 'COMMAND' && codeFlea.mode != 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "alt+;",
@@ -1815,84 +1830,85 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-                "codeFlea.jump",
+                "vimAtHome.changeToWordSubject",
+                "vimAtHome.jump",
             ],
         },
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        "when": "editorTextFocus && (vimAtHome.mode != 'COMMAND' && vimAtHome.mode != 'EXTEND' || vimAtHome.subject == 'LINE' || vimAtHome.subject == 'BLOCK' || vimAtHome.subject == 'BRACKETS')"
     },
     {
         "key": "space",
-        "command": "codeFlea.changeToInsertMode",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND'"
+        "command": "vimAtHome.changeToInsertMode",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
     // {
     //     "key": "ctrl+left",
-    //     "command": "codeFlea.changeToBlockSubject",
-    //     "when": "editorTextFocus && codeFlea.subject == 'CHAR'"
+    //     "command": "vimAtHome.changeToBlockSubject",
+    //     "when": "editorTextFocus && vimAtHome.subject == 'CHAR'"
     // },
     // {
     //     "key": "ctrl+left",
-    //     "command": "codeFlea.changeToCharSubject",
-    //     "when": "editorTextFocus && codeFlea.subject == 'SUBWORD'"
+    //     "command": "vimAtHome.changeToCharSubject",
+    //     "when": "editorTextFocus && vimAtHome.subject == 'SUBWORD'"
     // },
     {
         "key": "shift+ctrl+left",
-        "command": "codeFlea.prevWordDefinition",
-        "when": "editorTextFocus && codeFlea.subject == 'WORD' && codeFlea.mode == 'COMMAND'"
+        "command": "vimAtHome.prevWordDefinition",
+        "when": "editorTextFocus && vimAtHome.subject == 'WORD' && vimAtHome.mode == 'COMMAND'"
     },
     {
         "key": "shift+ctrl+right",
-        "command": "codeFlea.nextWordDefinition",
-        "when": "editorTextFocus && codeFlea.subject == 'WORD' && codeFlea.mode == 'COMMAND'"
+        "command": "vimAtHome.nextWordDefinition",
+        "when": "editorTextFocus && vimAtHome.subject == 'WORD' && vimAtHome.mode == 'COMMAND'"
     },
     // {
     //     "key": "ctrl+left",
-    //     "command": "codeFlea.changeToWordSubject",
-    //     "when": "editorTextFocus && codeFlea.subject == 'BRACKETS'"
+    //     "command": "vimAtHome.changeToWordSubject",
+    //     "when": "editorTextFocus && vimAtHome.subject == 'BRACKETS'"
     // },
     // {
     //     "key": "ctrl+left",
-    //     "command": "codeFlea.changeToBracketSubject",
-    //     "when": "editorTextFocus && codeFlea.subject == 'LINE'"
+    //     "command": "vimAtHome.changeToBracketSubject",
+    //     "when": "editorTextFocus && vimAtHome.subject == 'LINE'"
     // },
     // {
     //     "key": "ctrl+left",
-    //     "command": "codeFlea.changeToLineSubject",
-    //     "when": "editorTextFocus && codeFlea.subject == 'BLOCK'"
+    //     "command": "vimAtHome.changeToLineSubject",
+    //     "when": "editorTextFocus && vimAtHome.subject == 'BLOCK'"
     // },
     // {
     //     "key": "ctrl+right",
-    //     "command": "codeFlea.changeToSubwordSubject",
-    //     "when": "editorTextFocus && codeFlea.subject == 'CHAR'"
+    //     "command": "vimAtHome.changeToSubwordSubject",
+    //     "when": "editorTextFocus && vimAtHome.subject == 'CHAR'"
     // },
     // {
     //     "key": "ctrl+right",
-    //     "command": "codeFlea.changeToWordSubject",
-    //     "when": "editorTextFocus && codeFlea.subject == 'SUBWORD'"
+    //     "command": "vimAtHome.changeToWordSubject",
+    //     "when": "editorTextFocus && vimAtHome.subject == 'SUBWORD'"
     // },
     // {
     //     "key": "ctrl+right",
-    //     "command": "codeFlea.changeToBracketSubject",
-    //     "when": "editorTextFocus && codeFlea.subject == 'BRACKETS'"
+    //     "command": "vimAtHome.changeToBracketSubject",
+    //     "when": "editorTextFocus && vimAtHome.subject == 'BRACKETS'"
     // },
     // {
     //     "key": "ctrl+right",
-    //     "command": "codeFlea.changeToBlockSubject",
-    //     "when": "editorTextFocus && codeFlea.subject == 'LINE'"
+    //     "command": "vimAtHome.changeToBlockSubject",
+    //     "when": "editorTextFocus && vimAtHome.subject == 'LINE'"
     // },
     // {
     //     "key": "ctrl+right",
-    //     "command": "codeFlea.changeToCharSubject",
-    //     "when": "editorTextFocus && codeFlea.subject == 'BLOCK'"
+    //     "command": "vimAtHome.changeToCharSubject",
+    //     "when": "editorTextFocus && vimAtHome.subject == 'BLOCK'"
     // },
     {   
         "key": "shift+alt+right",
-        "command": "codeFlea.changeToBracketSubject",
-        "when": "editorTextFocus && codeFlea.mode != 'EXTEND'"
+        "command": "vimAtHome.changeToBracketSubject",
+        "when": "editorTextFocus && vimAtHome.mode != 'EXTEND'"
     },
     {   
         "key": "shift+alt+left",
-        "command": "codeFlea.changeToSubwordSubject",
+        "command": "vimAtHome.changeToSubwordSubject",
         "when": "editorTextFocus"
     },
     // {
@@ -1901,7 +1917,7 @@ I would recommend downloading the original as it has reasonable default keybindi
     // }
     // {
     //     "key": "ctrl+shift+\\",
-    //     "command": "codeFlea.changeToBracketSubject",
+    //     "command": "vimAtHome.changeToBracketSubject",
     //     "when": "editorTextFocus"
     // },
     {
@@ -1909,11 +1925,11 @@ I would recommend downloading the original as it has reasonable default keybindi
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.repeatLastSkip",
-                "codeFlea.changeToInsertModeAppend"
+                "vimAtHome.repeatLastSkip",
+                "vimAtHome.changeToInsertModeAppend"
             ]
         },
-        "when": "editorTextFocus && codeFlea.mode != 'COMMAND' && codeFlea.mode != 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode != 'COMMAND' && vimAtHome.mode != 'EXTEND'"
     },
     {
         "key": "shift+enter",
@@ -1921,87 +1937,87 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": {
             "commands": [
                 // "editor.action.goToSelectionAnchor",
-                "codeFlea.repeatLastSkipBackwards",
-                "codeFlea.changeToInsertModePrepend"
+                "vimAtHome.repeatLastSkipBackwards",
+                "vimAtHome.changeToInsertModePrepend"
             ]
         },
-        "when": "editorTextFocus && codeFlea.mode != 'COMMAND' && codeFlea.mode != 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode != 'COMMAND' && vimAtHome.mode != 'EXTEND'"
     },
     {
         "key": "ctrl+right",
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.nextWordDefinition",
-                // "codeFlea.nextSubjectRight",
-                // "codeFlea.nextSubjectRight"
+                "vimAtHome.nextWordDefinition",
+                // "vimAtHome.nextSubjectRight",
+                // "vimAtHome.nextSubjectRight"
             ]
         },
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
     {
         "key": "ctrl+left",
         "command": "runCommands",
         "args": {
             "commands": [
-                // "codeFlea.nextSubjectLeft",
-                "codeFlea.prevWordDefinition",
-                // "codeFlea.nextSubjectLeft"
+                // "vimAtHome.nextSubjectLeft",
+                "vimAtHome.prevWordDefinition",
+                // "vimAtHome.nextSubjectLeft"
             ]
         },
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
     {
         "key": "ctrl+right",
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.nextSubjectRight",
-                "codeFlea.nextSubjectRight"
+                "vimAtHome.nextSubjectRight",
+                "vimAtHome.nextSubjectRight"
             ]
         },
-        "when": "editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+left",
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.nextSubjectLeft",
-                "codeFlea.nextSubjectLeft"
+                "vimAtHome.nextSubjectLeft",
+                "vimAtHome.nextSubjectLeft"
             ]
         },
-        "when": "editorTextFocus && codeFlea.mode == 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "down",
-        "command": "codeFlea.nextSubjectDown",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.nextSubjectDown",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "up",
-        "command": "codeFlea.nextSubjectUp",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.nextSubjectUp",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+alt+down",
-        "command": "codeFlea.addSubjectDown",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.addSubjectDown",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+alt+up",
-        "command": "codeFlea.addSubjectUp",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.addSubjectUp",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "left",
-        "command": "codeFlea.nextSubjectLeft",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.nextSubjectLeft",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "right",
-        "command": "codeFlea.nextSubjectRight",
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        "command": "vimAtHome.nextSubjectRight",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+u",
@@ -2009,59 +2025,59 @@ I would recommend downloading the original as it has reasonable default keybindi
     },
     {
         "key": "f17",
-        "command": "codeFlea.changeToExtendMode",
+        "command": "vimAtHome.changeToExtendMode",
     },
     {
         "key": "shift+up",
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToInsertModeMidPoint",
-                "codeFlea.changeToWordSubject",
-                "codeFlea.changeToWordSubject"
+                "vimAtHome.changeToInsertModeMidPoint",
+                "vimAtHome.changeToWordSubject",
+                "vimAtHome.changeToWordSubject"
             ]
         },
-        "when": "editorTextFocus && codeFlea.subject == 'LINE' && codeFlea.mode == 'COMMAND'"
+        "when": "editorTextFocus && vimAtHome.subject == 'LINE' && vimAtHome.mode == 'COMMAND'"
     },
     {
         "key": "shift+up",
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToInsertModeMidPoint",
-                "codeFlea.changeToSubwordSubject"
+                "vimAtHome.changeToInsertModeMidPoint",
+                "vimAtHome.changeToSubwordSubject"
             ]
         },
-        "when": "editorTextFocus && codeFlea.subject == 'WORD' && codeFlea.mode == 'COMMAND'"
+        "when": "editorTextFocus && vimAtHome.subject == 'WORD' && vimAtHome.mode == 'COMMAND'"
     },
     {
         "key": "shift+up",
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToInsertModeMidPoint",
-                "codeFlea.changeToWordSubject"
+                "vimAtHome.changeToInsertModeMidPoint",
+                "vimAtHome.changeToWordSubject"
             ]
         },
-        "when": "editorTextFocus && codeFlea.subject == 'BRACKETS' && codeFlea.mode == 'COMMAND'"
+        "when": "editorTextFocus && vimAtHome.subject == 'BRACKETS' && vimAtHome.mode == 'COMMAND'"
     },
     {
         "key": "shift+up",
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToInsertModeMidPoint",
-                "codeFlea.changeToLineSubject"
+                "vimAtHome.changeToInsertModeMidPoint",
+                "vimAtHome.changeToLineSubject"
             ]
         },
-        "when": "editorTextFocus && codeFlea.subject == 'BLOCK' && codeFlea.mode == 'COMMAND'"
+        "when": "editorTextFocus && vimAtHome.subject == 'BLOCK' && vimAtHome.mode == 'COMMAND'"
     },
     {
         "key": "ctrl+up",
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.scrollEditorUp",
+                "vimAtHome.scrollEditorUp",
             ]
         },
         "when": "editorTextFocus"
@@ -2071,7 +2087,7 @@ I would recommend downloading the original as it has reasonable default keybindi
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.scrollEditorDown",
+                "vimAtHome.scrollEditorDown",
             ]
         },
         "when": "editorTextFocus"
@@ -2082,17 +2098,17 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-                "codeFlea.changeToLineSubject",
-                "codeFlea.changeToInsertModeAppend",
+                "vimAtHome.changeToLineSubject",
+                "vimAtHome.changeToInsertModeAppend",
                 {
                     "command": "type",
                     "args": { "text": "," }
                 },
                 "editor.action.goToSelectionAnchor",
-                "codeFlea.changeToWordSubject"
+                "vimAtHome.changeToWordSubject"
             ]
         },
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": ";",
@@ -2100,17 +2116,17 @@ I would recommend downloading the original as it has reasonable default keybindi
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-                "codeFlea.changeToLineSubject",
-                "codeFlea.changeToInsertModeAppend",
+                "vimAtHome.changeToLineSubject",
+                "vimAtHome.changeToInsertModeAppend",
                 {
                     "command": "type",
                     "args": { "text": ";" }
                 },
                 "editor.action.goToSelectionAnchor",
-                "codeFlea.changeToWordSubject"
+                "vimAtHome.changeToWordSubject"
             ]
         },
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+1",
@@ -2160,7 +2176,7 @@ I would recommend downloading the original as it has reasonable default keybindi
     //             "workbench.action.zoomOut",
     //             "workbench.action.zoomOut",
     //             "workbench.action.zoomOut",
-                // "codeFlea.scrollToCursor",
+                // "vimAtHome.scrollToCursor",
     //         ]
     //     },
     //     "when": "editorTextFocus"
@@ -2171,17 +2187,17 @@ I would recommend downloading the original as it has reasonable default keybindi
     },
     // {
     //     "key": "delete",
-    //     "command": "codeFlea.openModifyMenu",
+    //     "command": "vimAtHome.openModifyMenu",
 
     // },
     // {
     //     "key": "delete",
-    //     "command": "codeFlea.openModifyMenu",
+    //     "command": "vimAtHome.openModifyMenu",
 
     // },
     {
         "key": "f17",
-        "command": "codeFlea.zoomJump",
+        "command": "vimAtHome.zoomJump",
 
     },
     {
@@ -2195,31 +2211,31 @@ I would recommend downloading the original as it has reasonable default keybindi
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToInsertModePrepend",
-                "codeFlea.changeToHalfLineSubjectRight",
+                "vimAtHome.changeToInsertModePrepend",
+                "vimAtHome.changeToHalfLineSubjectRight",
             ]
         },
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+shift+left",
         "command": "runCommands",
         "args": {
             "commands": [
-                "codeFlea.changeToInsertModeAppend",
-                "codeFlea.changeToHalfLineSubjectLeft",
+                "vimAtHome.changeToInsertModeAppend",
+                "vimAtHome.changeToHalfLineSubjectLeft",
             ]
         },
-        "when": "editorTextFocus && codeFlea.mode == 'COMMAND' || codeFlea.mode == 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "alt+delete",
-        "command": "codeFlea.deleteLineAbove",
+        "command": "vimAtHome.deleteLineAbove",
         "when": "editorTextFocus"
     },
     {
         "key": "shift+alt+delete",
-        "command": "codeFlea.deleteLineBelow",
+        "command": "vimAtHome.deleteLineBelow",
         "when": "editorTextFocus"
     },
     {
@@ -2242,7 +2258,78 @@ I would recommend downloading the original as it has reasonable default keybindi
     //     "command": "editor.action.inlineSuggest.acceptNextLine",
     //     "when": "inlineSuggestionVisible && !editorReadonly"
     // },
-]
 
+    // {
+    //          vimAtHome.change
+    //     vimAtHome.addSubjectRight
+    //     vimAtHome.appendNewObject
+    // }
+    {
+        "key": "ctrl+enter",
+        "command": "runCommands",
+        "args": { 
+            "commands": [
+                "vimAtHome.newLineBelow",
+                "vimAtHome.changeToInsertMode",
+            ]
+        },
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+enter",
+        "command": "runCommands",
+        "args": { 
+            "commands": [
+                "vimAtHome.newLineBelow",
+                "vimAtHome.changeToInsertMode",
+            ]
+        },
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
+    },
+    {
+        "key": "ctrl+shift+enter",
+        "command": "runCommands",
+        "args": { 
+            "commands": [
+                "vimAtHome.newLineAbove",
+                "vimAtHome.changeToInsertMode",
+            ]
+        },
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+shift+enter",
+        "command": "runCommands",
+        "args": { 
+            "commands": [
+                "vimAtHome.newLineAbove",
+                "vimAtHome.changeToInsertMode",
+            ]
+        },
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
+    },
+    {
+        "key": "ctrl+alt+j",
+        "command": "GitVision.jumpToPrevChange",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+alt+l",
+        "command": "GitVision.jumpToNextChange",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+shift+l",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "vimAtHome.changeToLineSubject",
+                "vimAtHome.changeToExtendMode",
+                "vimAtHome.jump",
+            ],
+        },
+        "when": "editorTextFocus"
+    },
+]
 
 ```

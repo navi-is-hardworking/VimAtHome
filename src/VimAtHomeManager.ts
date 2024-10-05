@@ -12,14 +12,14 @@ import * as modifications from "./utils/modifications";
 import { splitRange } from "./utils/decorations";
 let outputChannel = vscode.window.createOutputChannel("ManagerOutput");
 
-export default class CodeFleaManager {
+export default class VimAtHomeManager {
     private mode: EditorMode;
     public statusBar: vscode.StatusBarItem;
     public editor: vscode.TextEditor = undefined!;
 
     constructor(public config: Config) {
         this.statusBar = vscode.window.createStatusBarItem(
-            "codeFlea",
+            "vimAtHome",
             vscode.StatusBarAlignment.Left,
             0
         );
@@ -163,7 +163,7 @@ export default class CodeFleaManager {
 
         vscode.commands.executeCommand(
             "setContext",
-            "codeFlea.mode",
+            "vimAtHome.mode",
             this.mode.name
         );
     }
@@ -300,14 +300,14 @@ export default class CodeFleaManager {
 
     async zoomJump() {
         const zoomOutCommands = [
-            "codeFlea.changeToLineSubject",
+            "vimAtHome.changeToLineSubject",
             "editor.action.fontZoomOut",
             "editor.action.fontZoomOut",
             "editor.action.fontZoomOut",
             "workbench.action.zoomOut",
             "workbench.action.zoomOut",
             "workbench.action.zoomOut",
-            "codeFlea.scrollToCursor"
+            "vimAtHome.scrollToCursor"
         ];
 
         await vscode.commands.executeCommand('runCommands', { commands: zoomOutCommands });
@@ -324,7 +324,7 @@ export default class CodeFleaManager {
             "workbench.action.zoomIn",
             "workbench.action.zoomIn",
             "workbench.action.zoomIn",
-            "codeFlea.scrollToCursor"
+            "vimAtHome.scrollToCursor"
         ];
 
         await vscode.commands.executeCommand('runCommands', { commands: zoomInCommands });

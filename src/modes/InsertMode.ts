@@ -68,7 +68,7 @@ export default class InsertMode extends EditorMode {
         // if (this.subject.name !== lastSkip.subject) {
         const skipSubject = lastSkip.subject.charAt(0).toUpperCase() + lastSkip.subject.slice(1).toLowerCase();
         const tempCommandMode = new CommandMode(this.context, subjects.createFrom(this.context, lastSkip.subject));
-        await vscode.commands.executeCommand(`codeFlea.changeTo${skipSubject}Subject`);
+        await vscode.commands.executeCommand(`vimAtHome.changeTo${skipSubject}Subject`);
         // }
 
         let lastDirection = lastSkip.direction;

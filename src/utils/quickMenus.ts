@@ -45,7 +45,7 @@ export const ModifyCommands: QuickCommand[] = [
         label: "Transform to camel case",
         async execute() {
             await vscode.commands.executeCommand(
-                "codeFlea.transformToCamelCase"
+                "vimAtHome.transformToCamelCase"
             );
         },
     },
@@ -81,7 +81,7 @@ export const ModifyCommands: QuickCommand[] = [
         label: "Flip case of first character",
         async execute() {
             await vscode.commands.executeCommand(
-                "codeFlea.flipCaseFirstCharacter"
+                "vimAtHome.flipCaseFirstCharacter"
             );
         },
     },
@@ -225,14 +225,14 @@ export const GoToCommands: QuickCommand[] = [
         quickKey: char("o"),
         label: "Go to folder in terminal",
         execute: async () => {
-            await vscode.commands.executeCommand("codeFlea.openTerminalAtFilePath");
+            await vscode.commands.executeCommand("vimAtHome.openTerminalAtFilePath");
         },
     },
     {
         quickKey: char("m"),
         label: "Toggle comment on line",
         execute: async () => {
-            await vscode.commands.executeCommand("codeFlea.toggleCommentAtEndOfLine");
+            await vscode.commands.executeCommand("vimAtHome.toggleCommentAtEndOfLine");
         },
     },
 ];

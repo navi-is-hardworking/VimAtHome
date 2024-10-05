@@ -2,7 +2,7 @@
     "name": "VimAtHome",
     "displayName": "VimAtHome",
     "description": "Mom can we get Vim??",
-    "publisher": "cb",
+    "publisher": "collin-m-brown",
     "repository": {
         "url": "https://github.com/Collin-M-Brown/VimAtHome"
     },
@@ -29,97 +29,97 @@
     "main": "./out/extension.js",
     "contributes": {
         "configuration": {
-            "title": "CodeFlea: ",
+            "title": "VimAtHome: ",
             "type": "",
             "properties": {
-                "codeFlea.modes.navigateKeySequence": {
+                "vimAtHome.modes.navigateKeySequence": {
                     "description": "The key sequence that will trigger navigation mode from edit mode",
                     "type": "string",
                     "default": ",."
                 },
-                "codeFlea.scrollStep": {
+                "vimAtHome.scrollStep": {
                     "description": "The number of lines to scroll when scrolling the editor",
                     "type": "number",
                     "default": "10"
                 },
-                "codeFlea.jump.characters": {
+                "vimAtHome.jump.characters": {
                     "type": "string",
                     "default": "kjdflsahgionurvcwexmbpqtyz123456789JDFLAHGNREMBPQTY"
                 },
-                "codeFlea.jump.centerLineAfterJump": {
+                "vimAtHome.jump.centerLineAfterJump": {
                     "type": "boolean",
                     "default": "true"
                 },
-                "codeFlea.defaultSubject": {
+                "vimAtHome.defaultSubject": {
                     "type": "string",
                     "default": "WORD"
                 },
-                "codeFlea.color.command": {
+                "vimAtHome.color.command": {
                     "type": "string",
                     "description": "Color for character selections"
                 },
-                "codeFlea.color.extend": {
+                "vimAtHome.color.extend": {
                     "type": "string",
                     "description": "Color for character selections"
                 },
-                "codeFlea.color.insert": {
+                "vimAtHome.color.insert": {
                     "type": "string",
                     "description": "Color for character selections"
                 },
-                "codeFlea.color.char": {
+                "vimAtHome.color.char": {
                     "type": "string",
                     "default": "ff8000",
                     "description": "Color for character selections"
                 },
-                "codeFlea.color.subWord": {
+                "vimAtHome.color.subWord": {
                     "type": "string",
                     "default": "ff6699",
                     "description": "Color for subword selections"
                 },
-                "codeFlea.color.word": {
+                "vimAtHome.color.word": {
                     "type": "string",
                     "default": "964d4d",
                     "description": "Color for word selections"
                 },
-                "codeFlea.color.customWord1": {
+                "vimAtHome.color.customWord1": {
                     "type": "string",
                     "default": "34ebe5",
                     "description": "Color for word selections"
                 },
-                "codeFlea.color.customWord2": {
+                "vimAtHome.color.customWord2": {
                     "type": "string",
                     "default": "1776eb",
                     "description": "Color for word selections"
                 },
-                "codeFlea.color.customWord3": {
+                "vimAtHome.color.customWord3": {
                     "type": "string",
                     "default": "ea29ff",
                     "description": "Color for word selections"
                 },
-                "codeFlea.color.line": {
+                "vimAtHome.color.line": {
                     "type": "string",
                     "default": "8feb34",
                     "description": "Color for line selections"
                 },
-                "codeFlea.color.block": {
+                "vimAtHome.color.block": {
                     "type": "string",
                     "default": "aba246",
                     "description": "Color for block selections"
                 },
-                "codeFlea.color.bracket": {
+                "vimAtHome.color.bracket": {
                     "type": "string",
                     "default": "9900ff",
                     "description": "Color for bracket selections"
                 },
-                "codeFlea.customWordRegex1": {
+                "vimAtHome.customWordRegex1": {
                     "type": "string",
                     "description": "custom word regex"
                 },
-                "codeFlea.customWordRegex2": {
+                "vimAtHome.customWordRegex2": {
                     "type": "string",
                     "description": "custom word regex"
                 },
-                "codeFlea.customWordRegex3": {
+                "vimAtHome.customWordRegex3": {
                     "type": "string",
                     "description": "custom word regex"
                 }
@@ -127,56 +127,56 @@
         },
         "commands": [
             {
-                "command": "codeFlea.changeToInsertMode",
-                "title": "CodeFlea: Change to Insert mode"
+                "command": "vimAtHome.changeToInsertMode",
+                "title": "VimAtHome: Change to Insert mode"
             },
             {
-                "command": "codeFlea.changeToCommandModeLast",
-                "title": "CodeFlea: Change to last used Command mode"
+                "command": "vimAtHome.changeToCommandModeLast",
+                "title": "VimAtHome: Change to last used Command mode"
             },
             {
-                "command": "codeFlea.changeToExtendMode",
-                "title": "CodeFlea: Change to Extend mode"
+                "command": "vimAtHome.changeToExtendMode",
+                "title": "VimAtHome: Change to Extend mode"
             },
             {
-                "command": "codeFlea.changeToWordSubject",
-                "title": "CodeFlea: Change to Word Subject"
+                "command": "vimAtHome.changeToWordSubject",
+                "title": "VimAtHome: Change to Word Subject"
             },
             {
-                "command": "codeFlea.changeToCustomSubject1",
-                "title": "CodeFlea: Change to Word Subject"
+                "command": "vimAtHome.changeToCustomSubject1",
+                "title": "VimAtHome: Change to Word Subject"
             },
             {
-                "command": "codeFlea.changeToCustomSubject2",
-                "title": "CodeFlea: Change to Word Subject"
+                "command": "vimAtHome.changeToCustomSubject2",
+                "title": "VimAtHome: Change to Word Subject"
             },
             {
-                "command": "codeFlea.changeToCustomSubject3",
-                "title": "CodeFlea: Change to Word Subject"
+                "command": "vimAtHome.changeToCustomSubject3",
+                "title": "VimAtHome: Change to Word Subject"
             },
             {
-                "command": "codeFlea.changeToLineSubject",
-                "title": "CodeFlea: Change to Line Subject"
+                "command": "vimAtHome.changeToLineSubject",
+                "title": "VimAtHome: Change to Line Subject"
             },
             {
-                "command": "codeFlea.changeToBlockSubject",
-                "title": "CodeFlea: Change to Block Subject"
+                "command": "vimAtHome.changeToBlockSubject",
+                "title": "VimAtHome: Change to Block Subject"
             },
             {
-                "command": "codeFlea.changeToSubwordSubject",
-                "title": "CodeFlea: Change to Block Subject"
+                "command": "vimAtHome.changeToSubwordSubject",
+                "title": "VimAtHome: Change to Block Subject"
             },
             {
-                "command": "codeFlea.changeToCharSubject",
-                "title": "CodeFlea: Change to Character Subject"
+                "command": "vimAtHome.changeToCharSubject",
+                "title": "VimAtHome: Change to Character Subject"
             },
             {
-                "command": "codeFlea.flipCaseFirstCharacter",
-                "title": "CodeFlea: Flip the case of the first character of the subject"
+                "command": "vimAtHome.flipCaseFirstCharacter",
+                "title": "VimAtHome: Flip the case of the first character of the subject"
             },
             {
-                "command": "codeFlea.transformToCamelCase",
-                "title": "CodeFlea: Transform the selected text to camelCase"
+                "command": "vimAtHome.transformToCamelCase",
+                "title": "VimAtHome: Transform the selected text to camelCase"
             }
         ],
         "keybindings": [
