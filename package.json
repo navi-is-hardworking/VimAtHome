@@ -17,11 +17,6 @@
     ],
     "icon": "logo-small.png",
     "keywords": [
-        "acejump",
-        "cursor",
-        "EasyMotion",
-        "focus",
-        "jump"
     ],
     "activationEvents": [
         "onStartupFinished"
