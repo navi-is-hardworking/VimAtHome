@@ -603,11 +603,11 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "vimAtHome.changeToSubwordSubject",
         // "when": "editorTextFocus"
     },
-    {
-        "key": "alt+c",
-        "command": "vimAtHome.changeToWordSubject",
-        // "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
-    },
+    // {
+    //     "key": "alt+c",
+    //     "command": "vimAtHome.changeToWordSubject",
+    //     // "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
+    // },
     {
         "key": "alt+d",
         "command": "vimAtHome.changeToLineSubject",
@@ -1263,16 +1263,16 @@ I would recommend using the original but you are welcome to use this if you wish
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
 
-    {
-        "key": "ctrl+alt+up",
-        "command": "vimAtHome.addSubjectUp",
-        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
-    },
-    {
-        "key": "ctrl+alt+down",
-        "command": "vimAtHome.addSubjectDown",
-        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
-    },
+    // {
+    //     "key": "ctrl+alt+up",
+    //     "command": "vimAtHome.addSubjectUp",
+    //     "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
+    // },
+    // {
+    //     "key": "ctrl+alt+down",
+    //     "command": "vimAtHome.addSubjectDown",
+    //     "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
+    // },
 
     {
         "key": "backspace",
