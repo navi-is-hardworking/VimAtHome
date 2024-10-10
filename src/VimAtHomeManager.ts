@@ -159,8 +159,6 @@ export default class VimAtHomeManager {
             common.setVirtualColumn(this.editor.selection);
         }
 
-        
-
         vscode.commands.executeCommand(
             "setContext",
             "vimAtHome.mode",
@@ -298,6 +296,7 @@ export default class VimAtHomeManager {
         this.setDecorations();
     }
 
+    // KJDFLSAHGIONURVCWEXMBPTYZ
     async zoomJump() {
         const zoomOutCommands = [
             "vimAtHome.changeToLineSubject",

@@ -265,6 +265,7 @@ export default class CommandMode extends modes.EditorMode {
             }
         }
     
+        common.setLazyPassSubjectName(this.subject.name);
         const jumpPosition = await jumpInterface.jump({
             kind: jumpType,
             locations: seq(jumpLocations),
@@ -287,21 +288,19 @@ export default class CommandMode extends modes.EditorMode {
             .iterAll(common.IterationDirection.alternate, combinedRange)
             .map((range) => range.start)
             .toArray();
-        // outputchannel.appendLine(`jumping to (subject) ${jumpLocations.length} locations`);
 
-        const jumpInterface = new JumpInterface(this.context);
-
-        let jumpType = tempSubject.jumpPhaseType;
-
-        if (tempSubject.name === "WORD") {
-            let wordDefinitionIndex = getWordDefinitionIndex();
-            if (wordDefinitionIndex <= 1) {
-                jumpType = "dual-phase";
-            } else {
-                jumpType = "single-phase";
+            const jumpInterface = new JumpInterface(this.context);
+            let jumpType = tempSubject.jumpPhaseType;
+            if (tempSubject.name === "WORD") {
+                let wordDefinitionIndex = getWordDefinitionIndex();
+                if (wordDefinitionIndex <= 1) {
+                    jumpType = "dual-phase";
+                } else {
+                    jumpType = "single-phase";
+                }
             }
-        }
-
+            
+        common.setLazyPassSubjectName(subjectName);
         const jumpPosition = await jumpInterface.jump({
             kind: jumpType,
             locations: seq(jumpLocations),

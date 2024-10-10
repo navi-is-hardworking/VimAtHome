@@ -9,6 +9,9 @@ export let lastSkip: Skip | undefined = undefined;
 export let column: number = 0;
 
 export let blockCache: vscode.Range[] = [];
+export let LazyPassSubjectName: SubjectName | undefined = undefined;
+
+
 
 export type SubTextRange = {
     text: string;
@@ -118,4 +121,12 @@ export function popBlockRange(): vscode.Range | undefined {
 
 export function clearBlockCache(): void {
     blockCache = [];
+}
+
+export function setLazyPassSubjectName(subject: SubjectName): void {
+    LazyPassSubjectName = subject;
+}
+
+export function getLazyPassSubjectName(): SubjectName | undefined {
+    return LazyPassSubjectName;
 }

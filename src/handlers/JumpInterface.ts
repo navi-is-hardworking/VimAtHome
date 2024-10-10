@@ -3,7 +3,8 @@ import * as editor from "../utils/editor";
 import Seq from "../utils/seq";
 import * as vscode from "vscode";
 import * as ranges from "../utils/selectionsAndRanges";
-let outputChannel = vscode.window.createOutputChannel("_Jump");
+
+// const outputChannel = vscode.window.createOutputChannel("JumpInterface");
 
 function createDecorationOption(decorationRange: vscode.Range, text: string) {
     const extraProps = [
@@ -35,31 +36,27 @@ const jumpCodeDecorationType = vscode.window.createTextEditorDecorationType({});
 
 export default class JumpInterface {
     private jumpCodes: string[];
-    private jumpType: string | undefined
 
     constructor(private readonly context: common.ExtensionContext) {
         this.jumpCodes = context.config.jump.characters.split("");
-        this.jumpType = undefined;
-        
     }
 
     async jump(jumpLocations: {
         kind: common.JumpPhaseType;
         locations: Seq<vscode.Position>;
     }): Promise<vscode.Position | undefined> {
+        // outputChannel.appendLine("--- Starting Jump ---");
+        const currentSelection = this.context.editor.selection;
+        const currentText = this.context.editor.document.getText(currentSelection);
+        // outputChannel.appendLine(`Current selection: "${currentText}" (${currentSelection.start.line}:${currentSelection.start.character} - ${currentSelection.end.line}:${currentSelection.end.character})`);
 
-        outputChannel.appendLine("JumpInterface.jump()");
-        // What mode am I in?
+
         switch (jumpLocations.kind) {
             case "dual-phase": {
-                const targetChar = await editor.inputBoxChar(
-                    "Enter the first character"
-                );
-
-                if (!targetChar) {
+                const targetChar = await editor.inputBoxChar("Enter the first character");
+                if (!targetChar)
                     return undefined;
-                }
-
+                
                 const remainingLocations = jumpLocations.locations.filterMap(
                     (p) => {
                         const char = editor.charAt(
@@ -79,29 +76,88 @@ export default class JumpInterface {
                 });
             }
             case "single-phase": {
-                const codedLocations = jumpLocations.locations
-                    .zipWith(this.jumpCodes)
-                    .toArray();
-
+                const codedLocations = this.assignJumpCodes(jumpLocations.locations, currentSelection.active);
+    
                 this.drawJumpCodes(codedLocations);
-
+                this.logJumpLocations(codedLocations);
+    
                 const targetChar = await editor.inputBoxChar(
                     "Enter the jump character"
                 );
-
+    
                 this.removeJumpCodes();
-
-                if (!targetChar) {
+    
+                if (!targetChar)
                     return undefined;
-                }
-
-                return codedLocations.find(([location, jumpCode]) => {
-                    if (jumpCode === targetChar) {
-                        return location;
+    
+                const selectedLocation = codedLocations.find(([location, jumpCode]) => jumpCode === targetChar)?.[0];
+                
+                if (selectedLocation) {
+                    const fullSelection = this.getFullSelection(selectedLocation);
+                    // outputChannel.appendLine(`Selected jump location: ${selectedLocation.line}:${selectedLocation.character}`);
+                    // outputChannel.appendLine(`Full selection: "${fullSelection.text}" (${fullSelection.selection.start.line}:${fullSelection.selection.start.character} - ${fullSelection.selection.end.line}:${fullSelection.selection.end.character})`);
+    
+                    // Set last skip
+                    const direction = selectedLocation.line > currentSelection.active. ? common.Direction.forwards : common.Direction.backwards;
+                    const char = editor.charAt(this.context.editor.document, selectedLocation) as common.Char;
+                    
+                    let subjectName = common.getLazyPassSubjectName();
+                    if (subjectName !== undefined) {
+                        common.setLastSkip({
+                            kind: "SkipTo",
+                            char: char,
+                            subject: subjectName,
+                            direction: direction
+                        });
                     }
-                })?.[0];
+                }
+    
+                return selectedLocation;
             }
         }
+    }
+    
+
+    private assignJumpCodes(locations: Seq<vscode.Position>, cursorPosition: vscode.Position): (readonly [vscode.Position, string])[] {
+        const codedLocations: [vscode.Position, string][] = [];
+        const usedCodes = new Set<string>();
+        
+        for (const position of locations) {
+            const char = editor.charAt(this.context.editor.document, position);
+            const isBelow = position.line > cursorPosition.line;
+            let code = isBelow ? char.toLowerCase() : char.toUpperCase();
+            
+            if (this.jumpCodes.includes(code) && !usedCodes.has(code)) {
+                usedCodes.add(code);
+                codedLocations.push([position, code]);
+            } else {
+                codedLocations.push([position, '']); // Placeholder
+            }
+        }
+        
+        let jumpCodeIndex = 0;
+        for (let i = 0; i < codedLocations.length; i++) {
+            if (codedLocations[i][1] === '') {
+                while (jumpCodeIndex < this.jumpCodes.length && usedCodes.has(this.jumpCodes[jumpCodeIndex])) {
+                    jumpCodeIndex++;
+                }
+                if (jumpCodeIndex < this.jumpCodes.length) {
+                    codedLocations[i][1] = this.jumpCodes[jumpCodeIndex];
+                    usedCodes.add(this.jumpCodes[jumpCodeIndex]);
+                    jumpCodeIndex++;
+                } else {
+                    codedLocations.splice(i, 1);
+                    i--;
+                }
+            }
+        }
+        
+        return codedLocations;
+    }
+
+
+    private removeJumpCodes() {
+        this.context.editor.setDecorations(jumpCodeDecorationType, []);
     }
 
     private drawJumpCodes(
@@ -117,6 +173,41 @@ export default class JumpInterface {
         this.context.editor.setDecorations(jumpCodeDecorationType, decorations);
     }
 
+    private logJumpLocations(
+        jumpLocations: (readonly [vscode.Position, string])[]
+    ) {
+        // outputChannel.appendLine("Jump Locations:");
+        const currentSelection = this.context.editor.selection;
+
+        jumpLocations.forEach(([position, code]) => {
+            const relativePosition = this.getRelativePosition(currentSelection.active, position);
+            const fullSelection = this.getFullSelection(position);
+            // outputChannel.appendLine(`${code}: "${fullSelection.text}" (${position.line}:${position.character}, ${relativePosition})`);
+        });
+    }
+
+    private getRelativePosition(current: vscode.Position, target: vscode.Position): string {
+        const lineDiff = target.line - current.line;
+        const charDiff = target.character - current.character;
+        return `${lineDiff} lines, ${charDiff} characters`;
+    }
+
+    getFullSelection(position: vscode.Position): { selection: vscode.Selection; text: string } {
+        const wordRange = this.context.editor.document.getWordRangeAtPosition(position);
+        let selection: vscode.Selection;
+        let text: string;
+
+        if (wordRange) {
+            selection = new vscode.Selection(wordRange.start, wordRange.end);
+            text = this.context.editor.document.getText(wordRange);
+        } else {
+            selection = new vscode.Selection(position, position);
+            text = this.context.editor.document.getText(new vscode.Range(position, position.translate(0, 1)));
+        }
+
+        return { selection, text };
+    }
+
     async zoomJump(jumpLocations: {
         locations: Seq<vscode.Position>;
     }): Promise<vscode.Position | undefined> {
@@ -125,6 +216,7 @@ export default class JumpInterface {
             .toArray();
 
         this.drawZoomJumpCodes(codedLocations);
+        this.logJumpLocations(codedLocations);
 
         const targetChar = await editor.inputBoxChar(
             "Enter the zoom jump character"
@@ -136,11 +228,15 @@ export default class JumpInterface {
             return undefined;
         }
 
-        return codedLocations.find(([location, jumpCode]) => {
-            if (jumpCode === targetChar) {
-                return location;
-            }
-        })?.[0];
+        const selectedLocation = codedLocations.find(([location, jumpCode]) => jumpCode === targetChar)?.[0];
+
+        if (selectedLocation) {
+            const fullSelection = this.getFullSelection(selectedLocation);
+            // outputChannel.appendLine(`Selected zoom jump location: ${selectedLocation.line}:${selectedLocation.character}`);
+            // outputChannel.appendLine(`Full selection: "${fullSelection.text}" (${fullSelection.selection.start.line}:${fullSelection.selection.start.character} - ${fullSelection.selection.end.line}:${fullSelection.selection.end.character})`);
+        }
+
+        return selectedLocation;
     }
 
     private createZoomJumpDecorationOption(decorationRange: vscode.Range, text: string) {
@@ -180,10 +276,4 @@ export default class JumpInterface {
 
         this.context.editor.setDecorations(jumpCodeDecorationType, jumpCodeDecorations);
     }
-
-    private removeJumpCodes() {
-        this.context.editor.setDecorations(jumpCodeDecorationType, []);
-    }
-
-
 }
