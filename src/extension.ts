@@ -26,12 +26,8 @@ export function activate(context: vscode.ExtensionContext) {
 
         const selectedText = e.textEditor.document.getText(e.selections[0]);
         if (selectedText !== lastSelectedText && selectedText.length > 0) {
-            // outputChannel.appendLine(selectedText);
             lastSelectedText = selectedText;
             cache.cacheContent(selectedText);
-            // cache.parseTop("WORD"); 
-            // outputChannel.appendLine("cache = " + JSON.stringify(cache.getParsedData()));
-
         }
         outputChannel.appendLine('---');
     });

@@ -117,21 +117,29 @@ export default class JumpInterface {
         }
     }
     
-
     private assignJumpCodes(locations: Seq<vscode.Position>, cursorPosition: vscode.Position): (readonly [vscode.Position, string])[] {
         const codedLocations: [vscode.Position, string][] = [];
         const usedCodes = new Set<string>();
+        const symbolsBelow = new Set<string>();
         
         for (const position of locations) {
             const char = editor.charAt(this.context.editor.document, position);
             const isBelow = position.line > cursorPosition.line;
-            let code = isBelow ? char.toLowerCase() : char.toUpperCase();
             
-            if (this.jumpCodes.includes(code) && !usedCodes.has(code)) {
-                usedCodes.add(code);
-                codedLocations.push([position, code]);
+            if (/[a-zA-Z]/.test(char)) {
+                let code = isBelow ? char.toLowerCase() : char.toUpperCase();
+                if (!usedCodes.has(code)) {
+                    usedCodes.add(code);
+                    codedLocations.push([position, code]);
+                } else {
+                    codedLocations.push([position, '']);
+                }
+            } else if (isBelow && this.jumpCodes.includes(char) && !symbolsBelow.has(char)) {
+                symbolsBelow.add(char);
+                usedCodes.add(char);
+                codedLocations.push([position, char]);
             } else {
-                codedLocations.push([position, '']); // Placeholder
+                codedLocations.push([position, '']);
             }
         }
         
