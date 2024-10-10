@@ -98,7 +98,7 @@ export default class JumpInterface {
                     // outputChannel.appendLine(`Full selection: "${fullSelection.text}" (${fullSelection.selection.start.line}:${fullSelection.selection.start.character} - ${fullSelection.selection.end.line}:${fullSelection.selection.end.character})`);
     
                     // Set last skip
-                    const direction = selectedLocation.line > currentSelection.active. ? common.Direction.forwards : common.Direction.backwards;
+                    const direction = selectedLocation.line > currentSelection.active.line ? common.Direction.forwards : common.Direction.backwards;
                     const char = editor.charAt(this.context.editor.document, selectedLocation) as common.Char;
                     
                     let subjectName = common.getLazyPassSubjectName();
