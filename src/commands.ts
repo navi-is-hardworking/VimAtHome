@@ -6,8 +6,31 @@ import { Direction } from "./common";
 import { setWordDefinition, nextWordDefinition, prevWordDefinition } from "./config";
 import * as path from 'path';
 import { HighlightManager } from './handlers/HighlightManager';
+import * as cacheCommands from "./CacheCommands";
+
 
 const highlightManager = new HighlightManager();
+
+function fuzzyMatch(pattern: string, str: string): { matched: boolean; score: number } {
+    let score = 0;
+    let patternIdx = 0;
+    let strIdx = 0;
+    let patternLength = pattern.length;
+    let strLength = str.length;
+
+    while (patternIdx < patternLength && strIdx < strLength) {
+        if (pattern[patternIdx].toLowerCase() === str[strIdx].toLowerCase()) {
+            score += 1 / (strIdx + 1);  // Higher score for earlier matches
+            patternIdx++;
+        }
+        strIdx++;
+    }
+
+    return {
+        matched: patternIdx === patternLength,
+        score: score,
+    };
+}
 
 type ExtensionCommand = {
     id: string;
@@ -676,6 +699,32 @@ export const registeredCommands: ExtensionCommand[] = [
             highlightManager.clearAllHighlightsDirectly();
         },
     },
+
+    {
+        id: "vimAtHome.addToCache",
+        execute: async (manager: VimAtHomeManager) => {
+            cacheCommands.addToCache(manager.editor);
+        },
+    },
+    {
+        id: "vimAtHome.parseToCache",
+        execute: async (manager: VimAtHomeManager) => {
+            cacheCommands.parseToCache(manager.editor);
+        },
+    },
+    {
+        id: "vimAtHome.pasteFromCache",
+        execute: async (manager: VimAtHomeManager) => {
+            cacheCommands.pasteFromCache(manager.editor);
+        },
+    },
+    {
+        id: "vimAtHome.pasteTop",
+        execute: async (manager: VimAtHomeManager) => {
+            cacheCommands.pasteTop(manager.editor);
+        },
+    },
+    
 ];
 
 export function deactivate() {

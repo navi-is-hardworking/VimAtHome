@@ -24,12 +24,12 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.window.onDidChangeTextEditorSelection(async (e) => {
         await manager.onDidChangeTextEditorSelection(e);
 
-        const selectedText = e.textEditor.document.getText(e.selections[0]);
-        if (selectedText !== lastSelectedText && selectedText.length > 0) {
-            lastSelectedText = selectedText;
-            cache.cacheContent(selectedText);
-        }
-        outputChannel.appendLine('---');
+        // const selectedText = e.textEditor.document.getText(e.selections[0]);
+        // if (selectedText !== lastSelectedText && selectedText.length > 0) {
+        //     lastSelectedText = selectedText;
+        // }
+
+        // outputChannel.appendLine('---');
     });
     
     vscode.workspace.onDidChangeConfiguration(event => {

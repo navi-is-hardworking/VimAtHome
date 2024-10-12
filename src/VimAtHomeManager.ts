@@ -10,7 +10,11 @@ import * as common from "./common";
 import { SubjectName } from "./subjects/SubjectName";
 import * as modifications from "./utils/modifications";
 import { splitRange } from "./utils/decorations";
+import * as cache from "./historyCache";
+import * as editorUtils from "./utils/editor";
+
 let outputChannel = vscode.window.createOutputChannel("ManagerOutput");
+
 
 export default class VimAtHomeManager {
     private mode: EditorMode;
@@ -449,4 +453,6 @@ export default class VimAtHomeManager {
             await this.changeMode({ kind: "INSERT" });
         }
     }
+
+    
 }
