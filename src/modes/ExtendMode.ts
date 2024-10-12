@@ -40,6 +40,7 @@ export default class ExtendMode extends EditorMode {
 
         this.decorationType = vscode.window.createTextEditorDecorationType({
             dark: {
+                backgroundColor: "#006005af",
                 border: `1px dashed ${previousMode.subject.outlineColour.dark}`,
             },
             light: {
@@ -49,6 +50,7 @@ export default class ExtendMode extends EditorMode {
 
         this.decorationTypeTop = vscode.window.createTextEditorDecorationType({
             dark: {
+                backgroundColor: "#006005af",
                 borderStyle: "dashed none none dashed",
                 borderColor: previousMode.subject.outlineColour.dark,
                 borderWidth: "2px",
@@ -62,6 +64,7 @@ export default class ExtendMode extends EditorMode {
 
         this.decorationTypeMid = vscode.window.createTextEditorDecorationType({
             dark: {
+                backgroundColor: "#006005af",
                 borderStyle: "none none none dashed",
                 borderColor: previousMode.subject.outlineColour.dark,
                 borderWidth: "2px",
@@ -75,6 +78,7 @@ export default class ExtendMode extends EditorMode {
 
         this.decorationTypeBottom = vscode.window.createTextEditorDecorationType({
             dark: {
+                backgroundColor: "#006005af",
                 borderStyle: "none none dashed dashed",
                 borderColor: previousMode.subject.outlineColour.dark,
                 borderWidth: "2px",

@@ -7,7 +7,7 @@ export class HighlightManager {
 
     constructor() {
         this.highlightDecorationType = vscode.window.createTextEditorDecorationType({
-            backgroundColor: 'rgba(255, 255, 0, 0.3)',
+            backgroundColor: 'rgba(255, 255, 0, 0.2)',
             border: '1px solid yellow',
         });
 
@@ -31,10 +31,7 @@ export class HighlightManager {
             if (index !== -1) {
                 this.highlightedWords.set(index, word);
                 this.updateHighlights();
-                vscode.window.showInformationMessage(`Highlight ${index}: "${word}" added.`);
-            } else {
-                vscode.window.showWarningMessage('Maximum number of highlights (9) reached.');
-            }
+            } 
         }
     }
 
@@ -68,7 +65,6 @@ export class HighlightManager {
     private clearAllHighlights() {
         this.highlightedWords.clear();
         this.updateHighlights();
-        vscode.window.showInformationMessage('All highlights cleared.');
     }
 
     private removeHighlight(index: number) {
@@ -76,9 +72,6 @@ export class HighlightManager {
         if (word) {
             this.highlightedWords.delete(index);
             this.updateHighlights();
-            vscode.window.showInformationMessage(`Highlight ${index}: "${word}" removed.`);
-        } else {
-            vscode.window.showInformationMessage(`No highlight at index ${index}.`);
         }
     }
 

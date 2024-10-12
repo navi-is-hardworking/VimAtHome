@@ -4,6 +4,23 @@ Personal development fork of the codeFlea https://github.com/Richiban/codeflea
 This is primarily for personal use and has no built in keybindings or guide.
 I would recommend using the original but you are welcome to use this if you wish.
 
+```
+
+"workbench.colorCustomizations": {
+    "editor.selectionBackground": "#ffffff1e",
+}
+    
+"vimAtHome.customWordRegex1":  "[\\w\\.\\-_:\\\\\/]+", // matches full word with connectors and brackets
+"vimAtHome.customWordRegex2": "([a-zA-Z][\\w.\\-_:]*(?:<[^<>]*>)?(?:\\[(?:[^\\[\\]]|\\[[^\\[\\]]*\\])*\\]|\\((?:[^()]|\\([^()]*\\))*\\))*)",
+"vimAtHome.customWordRegex3": "(['\"])(?:(?!\\1).)*\\1",  // Matches both single and double quotes
+
+"editor.selectionBackground": "#ffffff1e",
+"vimAtHome.color.customWord1": "3381ff",
+"vimAtHome.color.customWord2": "ffff00",
+"vimAtHome.color.customWord3": "cf9700",
+"vimAtHome.color.extend": "#09831566",
+
+```
 
 ```
 
@@ -1370,7 +1387,7 @@ I would recommend using the original but you are welcome to use this if you wish
     {
         "key": "backspace",
         "command": "vimAtHome.deleteSubject",
-        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
+        "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.subject != LINE"
     },
     {
         "key": "ctrl+shift+f17",
@@ -1557,6 +1574,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
+                "vimAtHome.changeToInsertModeAppend",
                 "vimAtHome.changeToCharSubject",
                 "vimAtHome.skipBackwards",
             ],
@@ -2558,31 +2576,37 @@ I would recommend using the original but you are welcome to use this if you wish
         },
         "when": "editorTextFocus"
     },
-    // {
-    //     "key": "shift+up",
-    //     "command": "runCommands",
-    //     "args": {
-    //         "commands": [
-    //             "vimAtHome.addSubjectLeft",
-    //         ],
-    //     },
-    //     "when": "editorTextFocus"
-    // },
+    {
+        "key": "delete",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "editor.action.joinLines",
+            ],
+        },
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
+    },
+    {
+        "key": "ctrl+shift+p",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "vimAtHome.addHighlight",
+            ],
+        },
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "shift+end",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "vimAtHome.changeToInsertModePrepend",
+                "vimAtHome.changeToHalfLineSubjectRight",
+            ],
+        },
+        "when": "editorTextFocus && codeFea.mode == 'COMMAND'"
+    },
 ]
-
-```
-
-
-```
-
-"vimAtHome.customWordRegex1":  "[\\w\\.\\-_:\\\\\/]+", // matches full word with connectors and brackets
-"vimAtHome.customWordRegex2": "([a-zA-Z][\\w.\\-_:]*(?:<[^<>]*>)?(?:\\[(?:[^\\[\\]]|\\[[^\\[\\]]*\\])*\\]|\\((?:[^()]|\\([^()]*\\))*\\))*)",
-"vimAtHome.customWordRegex3": "(['\"])(?:(?!\\1).)*\\1",  // Matches both single and double quotes
-
-"vimAtHome.color.customWord1": "3381ff",
-"vimAtHome.color.customWord2": "ffff00",
-"vimAtHome.color.customWord3": "cf9700",
-"vimAtHome.color.extend": "#09831566",
-"vimAtHome.color.bracket": "ff6bf3",
 
 ```
