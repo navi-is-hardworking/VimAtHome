@@ -223,8 +223,6 @@ export default class VimAtHomeManager {
         if (command) {
             await vscode.commands.executeCommand(command);
         }
-
-        // this.mode.fixSelection();
     }
 
     async undoLastCommand() {

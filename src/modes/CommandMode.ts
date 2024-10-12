@@ -206,9 +206,8 @@ export default class CommandMode extends modes.EditorMode {
         if (skipChar > 'A' && skipChar < 'Z') {
             direction = common.reverseDirection(direction);
         }
-
+        await vscode.commands.executeCommand("editor.action.setSelectionAnchor");
         common.setLastSkip({kind: "SkipTo", char: skipChar, subject: this.subject.name, direction: direction});
-
         await this.subject.skip(direction, {kind: "SkipTo", char: skipChar, subject: this.subject.name, direction: direction});
     }
 
@@ -252,7 +251,6 @@ export default class CommandMode extends modes.EditorMode {
             .map((range) => range.start)
             .toArray();
             
-        // outputchannel.appendLine(`jumping to ${jumpLocations.length} locations`);
         const jumpInterface = new JumpInterface(this.context);
 
         let jumpType = this.subject.jumpPhaseType;
@@ -277,7 +275,7 @@ export default class CommandMode extends modes.EditorMode {
             common.setVirtualColumn(this.context.editor.selection);
             // outputchannel.appendLine(`jump: ${jumpPosition.line}, ${jumpPosition.character}`);
             await this.fixSelection();
-            await vscode.commands.executeCommand('revealLine', {lineNumber: this.context.editor.selection.active.line, at: 'center'});
+            // await vscode.commands.executeCommand('revealLine', {lineNumber: this.context.editor.selection.active.line, at: 'center'});
         }
     }
 

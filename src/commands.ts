@@ -404,7 +404,6 @@ export const registeredCommands: ExtensionCommand[] = [
         id: "vimAtHome.skip",
         execute: async (manager) => {
             // TODO: cache direction
-            await vscode.commands.executeCommand("editor.action.setSelectionAnchor");
             await manager.skip(Direction.forwards);
         },
     },
