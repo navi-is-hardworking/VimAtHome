@@ -476,6 +476,20 @@ export const SpaceCommands: QuickCommand[] = [
             await vscode.commands.executeCommand("editor.unfoldAll");
         },
     },
+    {
+        quickKey: char("m"),
+        label: "Manage Highlights",
+        execute: async () => {
+            await vscode.commands.executeCommand("vimAtHome.manageHighlights");
+        },
+    },
+    {
+        quickKey: char("c"),
+        label: "Clear Highlights",
+        execute: async () => {
+            await vscode.commands.executeCommand("vimAtHome.clearAllHighlights");
+        },
+    },
 ];
 
 

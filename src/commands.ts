@@ -5,6 +5,9 @@ import { collapseSelections } from "./utils/selectionsAndRanges";
 import { Direction } from "./common";
 import { setWordDefinition, nextWordDefinition, prevWordDefinition } from "./config";
 import * as path from 'path';
+import { HighlightManager } from './handlers/HighlightManager';
+
+const highlightManager = new HighlightManager();
 
 type ExtensionCommand = {
     id: string;
@@ -655,5 +658,26 @@ export const registeredCommands: ExtensionCommand[] = [
             await manager.toggleCommentAtEndOfLine();
         },
     },
-    
+    {
+        id: "vimAtHome.addHighlight",
+        execute: async () => {
+            await highlightManager.addHighlight();
+        },
+    },
+    {
+        id: "vimAtHome.manageHighlights",
+        execute: async () => {
+            await highlightManager.manageHighlights();
+        },
+    },
+    {
+        id: "vimAtHome.clearAllHighlights",
+        execute: async () => {
+            highlightManager.clearAllHighlightsDirectly();
+        },
+    },
 ];
+
+export function deactivate() {
+    highlightManager.dispose();
+}

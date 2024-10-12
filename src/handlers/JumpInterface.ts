@@ -23,7 +23,8 @@ function createDecorationOption(decorationRange: vscode.Range, text: string) {
                 color: "white",
                 backgroundColor: "#0a0042",
                 contentText: text,
-                margin: `-0.5ch 0.4ch 0 0`,
+                // margin: `-0.5ch 0.4ch 0 0`,
+                margin: "0 0.4em 0 0",
                 padding: `0.25ch 0.5ch`,
                 textDecoration: ";" + extraProps,
                 border: "1px solid white",
@@ -45,9 +46,8 @@ export default class JumpInterface {
         kind: common.JumpPhaseType;
         locations: Seq<vscode.Position>;
     }): Promise<vscode.Position | undefined> {
-        // outputChannel.appendLine("--- Starting Jump ---");
         const currentSelection = this.context.editor.selection;
-        const currentText = this.context.editor.document.getText(currentSelection);
+        // const currentText = this.context.editor.document.getText(currentSelection);
         // outputChannel.appendLine(`Current selection: "${currentText}" (${currentSelection.start.line}:${currentSelection.start.character} - ${currentSelection.end.line}:${currentSelection.end.character})`);
 
 
@@ -79,7 +79,7 @@ export default class JumpInterface {
                 const codedLocations = this.assignJumpCodes(jumpLocations.locations, currentSelection.active);
     
                 this.drawJumpCodes(codedLocations);
-                this.logJumpLocations(codedLocations);
+                // this.logJumpLocations(codedLocations);
     
                 const targetChar = await editor.inputBoxChar(
                     "Enter the jump character"
@@ -93,7 +93,7 @@ export default class JumpInterface {
                 const selectedLocation = codedLocations.find(([location, jumpCode]) => jumpCode === targetChar)?.[0];
                 
                 if (selectedLocation) {
-                    const fullSelection = this.getFullSelection(selectedLocation);
+                    // const fullSelection = this.getFullSelection(selectedLocation);
                     // outputChannel.appendLine(`Selected jump location: ${selectedLocation.line}:${selectedLocation.character}`);
                     // outputChannel.appendLine(`Full selection: "${fullSelection.text}" (${fullSelection.selection.start.line}:${fullSelection.selection.start.character} - ${fullSelection.selection.end.line}:${fullSelection.selection.end.character})`);
     
@@ -181,24 +181,24 @@ export default class JumpInterface {
         this.context.editor.setDecorations(jumpCodeDecorationType, decorations);
     }
 
-    private logJumpLocations(
-        jumpLocations: (readonly [vscode.Position, string])[]
-    ) {
-        // outputChannel.appendLine("Jump Locations:");
-        const currentSelection = this.context.editor.selection;
+    // private logJumpLocations(
+    //     jumpLocations: (readonly [vscode.Position, string])[]
+    // ) {
+    //     // outputChannel.appendLine("Jump Locations:");
+    //     const currentSelection = this.context.editor.selection;
 
-        jumpLocations.forEach(([position, code]) => {
-            const relativePosition = this.getRelativePosition(currentSelection.active, position);
-            const fullSelection = this.getFullSelection(position);
-            // outputChannel.appendLine(`${code}: "${fullSelection.text}" (${position.line}:${position.character}, ${relativePosition})`);
-        });
-    }
+    //     jumpLocations.forEach(([position, code]) => {
+    //         const relativePosition = this.getRelativePosition(currentSelection.active, position);
+    //         const fullSelection = this.getFullSelection(position);
+    //         // outputChannel.appendLine(`${code}: "${fullSelection.text}" (${position.line}:${position.character}, ${relativePosition})`);
+    //     });
+    // }
 
-    private getRelativePosition(current: vscode.Position, target: vscode.Position): string {
-        const lineDiff = target.line - current.line;
-        const charDiff = target.character - current.character;
-        return `${lineDiff} lines, ${charDiff} characters`;
-    }
+    // private getRelativePosition(current: vscode.Position, target: vscode.Position): string {
+    //     const lineDiff = target.line - current.line;
+    //     const charDiff = target.character - current.character;
+    //     return `${lineDiff} lines, ${charDiff} characters`;
+    // }
 
     getFullSelection(position: vscode.Position): { selection: vscode.Selection; text: string } {
         const wordRange = this.context.editor.document.getWordRangeAtPosition(position);
@@ -224,7 +224,7 @@ export default class JumpInterface {
             .toArray();
 
         this.drawZoomJumpCodes(codedLocations);
-        this.logJumpLocations(codedLocations);
+        // this.logJumpLocations(codedLocations);
 
         const targetChar = await editor.inputBoxChar(
             "Enter the zoom jump character"
@@ -239,7 +239,7 @@ export default class JumpInterface {
         const selectedLocation = codedLocations.find(([location, jumpCode]) => jumpCode === targetChar)?.[0];
 
         if (selectedLocation) {
-            const fullSelection = this.getFullSelection(selectedLocation);
+            // const fullSelection = this.getFullSelection(selectedLocation);
             // outputChannel.appendLine(`Selected zoom jump location: ${selectedLocation.line}:${selectedLocation.character}`);
             // outputChannel.appendLine(`Full selection: "${fullSelection.text}" (${fullSelection.selection.start.line}:${fullSelection.selection.start.character} - ${fullSelection.selection.end.line}:${fullSelection.selection.end.character})`);
         }
