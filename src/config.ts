@@ -44,8 +44,8 @@ export function loadConfig(): Config {
         line: config.get<string>("color.line") || "8feb34",
         block: config.get<string>("color.block") || "aba246",
         bracket: config.get<string>("color.bracket") || "9900ff",
-        command: config.get<string>("color.command") || "#ff00004e",
-        extend: config.get<string>("color.extend") || "#4dff0050",
+        command: config.get<string>("color.command") || "#650000dd",
+        extend: config.get<string>("color.extend") || "#006005af",
         insert: config.get<string>("color.insert") || "#00eeff34",
         
     };

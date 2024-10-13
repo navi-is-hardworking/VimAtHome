@@ -32,6 +32,7 @@ export default class ExtendMode extends EditorMode {
     ) {
         super();
         // setSelectionBackground(getExtendColor());
+        const extendColor = getExtendColor();
 
         this.wrappedMode = previousMode;
         this.decorationType = this.wrappedMode.decorationType;
@@ -40,7 +41,7 @@ export default class ExtendMode extends EditorMode {
 
         this.decorationType = vscode.window.createTextEditorDecorationType({
             dark: {
-                backgroundColor: "#006005af",
+                backgroundColor: extendColor,
                 border: `1px dashed ${previousMode.subject.outlineColour.dark}`,
             },
             light: {
@@ -50,7 +51,7 @@ export default class ExtendMode extends EditorMode {
 
         this.decorationTypeTop = vscode.window.createTextEditorDecorationType({
             dark: {
-                backgroundColor: "#006005af",
+                backgroundColor: extendColor,
                 borderStyle: "dashed none none dashed",
                 borderColor: previousMode.subject.outlineColour.dark,
                 borderWidth: "2px",
@@ -64,7 +65,7 @@ export default class ExtendMode extends EditorMode {
 
         this.decorationTypeMid = vscode.window.createTextEditorDecorationType({
             dark: {
-                backgroundColor: "#006005af",
+                backgroundColor: extendColor,
                 borderStyle: "none none none dashed",
                 borderColor: previousMode.subject.outlineColour.dark,
                 borderWidth: "2px",
@@ -78,7 +79,7 @@ export default class ExtendMode extends EditorMode {
 
         this.decorationTypeBottom = vscode.window.createTextEditorDecorationType({
             dark: {
-                backgroundColor: "#006005af",
+                backgroundColor: extendColor,
                 borderStyle: "none none dashed dashed",
                 borderColor: previousMode.subject.outlineColour.dark,
                 borderWidth: "2px",
@@ -222,4 +223,5 @@ export default class ExtendMode extends EditorMode {
         return this.wrappedMode.subject.name;
     }
     async zoomJump() { return undefined; }
+    async setPivot() { return undefined; }
 }
