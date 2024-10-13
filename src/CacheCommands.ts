@@ -43,7 +43,8 @@ export const parseToCache = (editor: vscode.TextEditor) => {
         { label: 'k', description: 'Parse Custom2' },
         { label: 'l', description: 'Parse Custom3' },
         { label: 'm', description: 'Parse brackets' },
-        { label: ',', description: 'Parse line' }
+        { label: ',', description: 'Parse line' },
+        { label: 'u', description: 'clearCace' }
     ];
 
     quickPick.onDidChangeValue((value) => {
@@ -105,3 +106,7 @@ export const pasteTop = (editor: vscode.TextEditor) => {
         });
     }
 };
+
+export const clearCache = (editor: vscode.TextEditor) => {
+    historyCache.clearCache();
+}

@@ -724,6 +724,18 @@ export const registeredCommands: ExtensionCommand[] = [
             cacheCommands.pasteTop(manager.editor);
         },
     },
+    {
+        id: "vimAtHome.join",
+        execute: async (manager: VimAtHomeManager) => {
+            cacheCommands.pasteTop(manager.editor);
+        },
+    },
+    {
+        id: "vimAtHome.unjoin",
+        execute: async (manager: VimAtHomeManager) => {
+            cacheCommands.pasteTop(manager.editor);
+        },
+    },
     
 ];
 

@@ -15,7 +15,12 @@ class FixedCache {
     }
 
     push(data: string) {
+        if (data.length <= 2) {
+            outputChannel.appendLine("data: " + data + " is too short, not pushing");
+            return;
+        }
         const existingIndex = this.cache.indexOf(data);
+
         if (existingIndex !== -1) {
             this.cache.splice(existingIndex, 1);
         }
@@ -36,18 +41,21 @@ class FixedCache {
     getList(): string[] {
         return [...this.cache];
     }
+
+    clear(): void {
+        this.cache = [];
+    }
 }
 
-const fixedSize = 26;
-let parsedList = new FixedCache(fixedSize);
+const fixedSize = 40;
+let parsedCache = new FixedCache(fixedSize);
 
 export function addToCache(content: string): void {
-    outputChannel.appendLine("Adding to cache: " + content);
-    parsedList.push(content);
+    // outputChannel.appendLine("Adding to cache: " + content);
+    parsedCache.push(content);
 }
 
 export function parseToCache(by: string, content: string) {
-    outputChannel.appendLine("Parsing to cache: " + content + " by " + by);
     let parsed: string[] = [];
 
     switch (by) {
@@ -82,18 +90,20 @@ export function parseToCache(by: string, content: string) {
             parsed = parseBrackets(content);
             break;
         case ",":
-            parsed = [content];
+            parsed = content.split("\n").map(item => item.trim()).filter(item => item.length > 0);
             break;
+        case "u":
+            parsedCache.clear();
+            return;
         default:
             parsed = content.split(by).map(item => item.trim()).filter(item => item.length > 0);
     }
 
-    parsed.forEach(item => parsedList.push(item));
-    outputChannel.appendLine("Parsed list: " + JSON.stringify(parsedList.getList()));
+    parsed.forEach(item => parsedCache.push(item));
 }
 
 export function getParsedData(): string[] {
-    return parsedList.getList();
+    return parsedCache.getList();
 }
 
 function parseWords(text: string): string[] {
@@ -143,4 +153,8 @@ function parseBrackets(text: string): string[] {
     }
 
     return bracketContents;
+}
+
+export function clearCache(): void {
+    parsedCache.clear();
 }
