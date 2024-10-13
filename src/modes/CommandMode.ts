@@ -12,12 +12,6 @@ import JumpInterface from "../handlers/JumpInterface";
 import { SubjectName } from "../subjects/SubjectName";
 import { seq } from "../utils/seq";
 import { setSelectionBackground, getCommandColor, getWordDefinitionIndex } from "../config";
-import * as anchorMode from "./AnchorMode";
-
-
-let pivot: vscode.Position | undefined = undefined;
-let outputChannel = vscode.window.createOutputChannel("EXTEND");
-
 
 export default class CommandMode extends modes.EditorMode {
 
@@ -395,13 +389,4 @@ export default class CommandMode extends modes.EditorMode {
     
         return jumpPosition;
     }
-
-    async setPivotPoint() {
-        // position is a constructor(line: number, character: number);
-        // pivot = this.context.editor.selection.anchor;
-        // outputChannel.appendLine("pivot set to: " + JSON.stringify(pivot));
-        anchorMode.setPivotPoint(this.context.editor.selection.anchor);
-    }
-
-    
 }

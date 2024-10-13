@@ -348,4 +348,6 @@ export default abstract class SubjectBase implements SubjectActions {
     ): Promise<vscode.Range | undefined> {
         return this.subjectIO.pullSubject(document, targetPosition, currentSelection);
     }
+
+    
 }
