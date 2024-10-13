@@ -28,42 +28,40 @@ export const addToCache = (editor: vscode.TextEditor) => {
 
 export const parseToCache = (editor: vscode.TextEditor) => {
     const selection = editor.selection;
-    const text = editor.document.getText(selection);
-    
+    const document = editor.document;
+
+    const isMultiLineSelection = selection.start.line !== selection.end.line;
+    const selectedText = isMultiLineSelection
+        ? document.getText(selection)
+        : document.lineAt(selection.start.line).text;
+
     const quickPick = vscode.window.createQuickPick();
     quickPick.items = [
-        { label: 'a', description: 'Parse subwords' },
-        { label: 's', description: 'Parse words' },
-        { label: 'd', description: 'Parse WORDS' },
-        { label: 'f', description: 'Parse brackets' }
+        { label: 'i', description: 'Parse subwords' },
+        { label: 'o', description: 'Parse words' },
+        { label: 'j', description: 'Parse Custom1' },
+        { label: 'k', description: 'Parse Custom2' },
+        { label: 'l', description: 'Parse Custom3' },
+        { label: 'm', description: 'Parse brackets' },
+        { label: ',', description: 'Parse line' }
     ];
+
     quickPick.onDidChangeValue((value) => {
         if (value.length === 1) {
             quickPick.hide();
-            switch (value) {
-                case 'a':
-                    historyCache.parseToCache('sub', text);
-                    break;
-                case 's':
-                    historyCache.parseToCache('word', text);
-                    break;
-                case 'd':
-                    historyCache.parseToCache('WORD', text);
-                    break;
-                case 'f':
-                    historyCache.parseToCache('bracket', text);
-                    break;
-            }
+            historyCache.parseToCache(value, selectedText);
         }
     });
+
     quickPick.show();
 };
 
 export const pasteFromCache = (editor: vscode.TextEditor) => {
     const items = historyCache.getParsedData();
     const quickPick = vscode.window.createQuickPick();
-    quickPick.items = items.map(item => ({ label: item }));
-    quickPick.placeholder = "Type to fuzzy search cached items...";
+
+    quickPick.items = items.slice().map(item => ({ label: item }));
+    quickPick.placeholder = "Fuzzy search cached items...";
 
     quickPick.onDidChangeValue((value) => {
         if (value) {
@@ -74,10 +72,10 @@ export const pasteFromCache = (editor: vscode.TextEditor) => {
                 })
                 .filter(result => result.matched)
                 .sort((a, b) => b.score - a.score);
-
+                
             quickPick.items = fuzzyResults.map(result => ({ label: result.item }));
         } else {
-            quickPick.items = items.map(item => ({ label: item }));
+            quickPick.items = items.slice().map(item => ({ label: item }));
         }
     });
 
@@ -95,6 +93,7 @@ export const pasteFromCache = (editor: vscode.TextEditor) => {
 
     quickPick.show();
 };
+
 
 export const pasteTop = (editor: vscode.TextEditor) => {
     const items = historyCache.getParsedData();

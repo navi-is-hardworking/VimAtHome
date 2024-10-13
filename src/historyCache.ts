@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import * as config from "./config";
 
 let outputChannel = vscode.window.createOutputChannel("HistoryCache");
 
@@ -14,7 +15,6 @@ class FixedCache {
     }
 
     push(data: string) {
-        // Remove duplicates
         const existingIndex = this.cache.indexOf(data);
         if (existingIndex !== -1) {
             this.cache.splice(existingIndex, 1);
@@ -48,20 +48,41 @@ export function addToCache(content: string): void {
 
 export function parseToCache(by: string, content: string) {
     outputChannel.appendLine("Parsing to cache: " + content + " by " + by);
+    let parsed: string[] = [];
 
-    let parsed: string[];
     switch (by) {
-        case "sub":
+        case "i":
             parsed = parseSubwords(content);
             break;
-        case "word":
+        case "o":
             parsed = parseWords(content);
             break;
-        case "WORD":
-            parsed = parseWORDS(content);
+        case "j": {
+            let regex1 = config.getWordDefinitionByIndex(1);
+            if (regex1 !== undefined) {
+                parsed = content.split(regex1).map(item => item.trim()).filter(item => item.length > 0);
+            }
+        }
+        break;
+        case "k": {
+            let regex2 = config.getWordDefinitionByIndex(2);
+            if (regex2 !== undefined) {
+                parsed = content.split(regex2).map(item => item.trim()).filter(item => item.length > 0);
+            }
+        }
             break;
-        case "bracket":
+        case "l": {
+            let regex3 = config.getWordDefinitionByIndex(3);
+            if (regex3 !== undefined) {
+                parsed = content.split(regex3).map(item => item.trim()).filter(item => item.length > 0);
+            }
+        }
+            break;
+        case "m":
             parsed = parseBrackets(content);
+            break;
+        case ",":
+            parsed = [content];
             break;
         default:
             parsed = content.split(by).map(item => item.trim()).filter(item => item.length > 0);

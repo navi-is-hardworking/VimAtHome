@@ -87,6 +87,7 @@ export function getInsertColor(): string { return colorConfig.insert; }
 
 
 export function getWordDefinitionIndex(): number { return currentWordDefinition; }
+
 export function getWordDefinition(includeLineEnds=true): RegExp | undefined { 
     if (!includeLineEnds && currentWordDefinition === 0)
         return undefined;
