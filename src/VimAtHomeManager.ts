@@ -75,7 +75,6 @@ export default class VimAtHomeManager {
 
         // newMode.kind = this.mode.kind;
         this.mode = await this.mode.changeTo(newMode);
-
         const half = newMode.kind === "INSERT" ? undefined : newMode.half;
 
         this.setUI();

@@ -88,7 +88,7 @@ export function tryMap(
         } else {
             return new vscode.Selection(
                 rangeOrSelection.end,
-                rangeOrSelection.start
+                rangeOrSelection.start,
             );
         }
     });

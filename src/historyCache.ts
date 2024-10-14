@@ -15,6 +15,7 @@ class FixedCache {
     }
 
     push(data: string) {
+        data = data.trim();
         if (data.length <= 2) {
             outputChannel.appendLine("data: " + data + " is too short, not pushing");
             return;
