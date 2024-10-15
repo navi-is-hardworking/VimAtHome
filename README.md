@@ -9,7 +9,18 @@ I would recommend using the original but you are welcome to use this if you wish
 "workbench.colorCustomizations": {
     "editor.selectionBackground": "#ffffff1e",
 }
-    
+
+"workbench.colorCustomizations": { 
+    "editor.background": "#101010",
+    // "tab.activeForeground": "#393939",
+    "tab.activeBorder": "#ffffff",
+    "tab.activeBorderTop": "#ffffff",
+    "tab.activeBackground": "#2d2d2d",
+    "tab.inactiveForeground": "#ffffff",
+    "tab.inactiveBackground": "#000000",
+},
+
+
 "vimAtHome.customWordRegex1":  "[\\w\\.\\-_:\\\\\/]+", // matches full word with connectors and brackets
 "vimAtHome.customWordRegex2": "([a-zA-Z][\\w.\\-_:]*(?:<[^<>]*>)?(?:\\[(?:[^\\[\\]]|\\[[^\\[\\]]*\\])*\\]|\\((?:[^()]|\\([^()]*\\))*\\))*)",
 "vimAtHome.customWordRegex3": "(['\"])(?:(?!\\1).)*\\1",  // Matches both single and double quotes
