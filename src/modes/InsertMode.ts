@@ -143,4 +143,7 @@ export default class InsertMode extends EditorMode {
         // });
         return undefined;
     }
+
+    async skipToCenterWord() {
+    }
 }

@@ -5,6 +5,7 @@ import * as lineUtils from "../utils/lines";
 import { rangeToPosition } from "./selectionsAndRanges";
 import { IterationOptions } from "../io/SubjectIOBase";
 import { Direction, directionToDelta } from "../common";
+import { getWordDefinition } from "../config";
 
 export type LinePair =
     | { prev: undefined; current: vscode.TextLine }
@@ -117,25 +118,30 @@ export function getNextSignificantLine(
     position: vscode.Position,
     direction: common.Direction
 ): vscode.TextLine | undefined {
+    const wordRegex = getWordDefinition(true);
+    if (!wordRegex) return undefined;
+
     for (const line of iterLines(document, {
         startingPosition: position,
         direction,
         currentInclusive: false,
     })) {
-        if (lineIsSignificant(line)) {
+        if (wordRegex.test(line.text)) {
             return line;
         }
     }
+}
+
+
+export function lineIsSignificant(line: vscode.TextLine) {
+    const wordRegex = getWordDefinition(true);
+    return wordRegex ? wordRegex.test(line.text) : false;
 }
 
 /** A "stop line" is one that is either blank or
  *  contains only punctuation */
 export function lineIsStopLine(line: vscode.TextLine) {
     return !/[a-zA-Z0-9]/.test(line.text);
-}
-
-export function lineIsSignificant(line: vscode.TextLine) {
-    return !lineIsStopLine(line);
 }
 
 function moveToChangeOfIndentation(

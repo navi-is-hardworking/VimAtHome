@@ -224,4 +224,5 @@ export default class ExtendMode extends EditorMode {
     }
     async zoomJump() { return undefined; }
     async setPivot() { return undefined; }
+    async skipToCenterWord() { }
 }

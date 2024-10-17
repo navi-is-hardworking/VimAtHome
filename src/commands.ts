@@ -447,6 +447,12 @@ export const registeredCommands: ExtensionCommand[] = [
         },
     },
     {
+        id: "vimAtHome.skipToCenterWord",
+        execute: async (manager) => {
+            await manager.skipToCenterWord();
+        },
+    },
+    {
         id: "vimAtHome.skipOverBackwards",
         execute: async (manager) => {
             await manager.skipOver(Direction.backwards);

@@ -151,6 +151,29 @@ export default class CommandMode extends modes.EditorMode {
                 }
 
                 if (newMode.subjectName !== this.subject.name) {
+                    
+                    // if (this.subject.name != 'BRACKETS' && this.subject.name != 'BRACKETS_INCLUSIVE' && newMode.subjectName === 'BRACKETS') {
+                    //     let currentLine = this.context.editor.selection.active.line;
+                    //     let lineText = this.context.editor.document.lineAt(currentLine).text;
+                    //     let leftCurly = lineText.indexOf('{');  
+                    //     let rightCurly = lineText.indexOf('}');  
+                    //     let leftParen = lineText.indexOf('('); 
+                    //     let rightParen = lineText.indexOf(')'); 
+
+
+                    //     if ((leftCurly != -1) && leftParen != -1) {
+                    //         if ((rightCurly != leftCurly + 1) && leftCurly < leftParen) {
+                    //             this.context.editor.selection = new vscode.Selection(currentLine, leftCurly, currentLine, leftCurly);
+                    //         } else {
+                    //             this.context.editor.selection = new vscode.Selection(currentLine, leftParen, currentLine, leftParen);
+                    //         }
+                    //     } else if (leftCurly != -1) {
+                    //         this.context.editor.selection = new vscode.Selection(currentLine, leftCurly, currentLine, leftCurly);
+                    //     } else if (leftParen != -1) {
+                    //         this.context.editor.selection = new vscode.Selection(currentLine, leftParen, currentLine, leftParen);
+                    //     }
+                    // }
+                    
                     return this.with({
                         subject: subjects.createFrom(
                             this.context,
@@ -169,7 +192,7 @@ export default class CommandMode extends modes.EditorMode {
                             ),
                         });
                     case "INTERWORD":
-                        return this.with({
+                        this.with({
                             subject: subjects.createFrom(this.context, "WORD"),
                         });
                     case "BRACKETS":
@@ -212,7 +235,6 @@ export default class CommandMode extends modes.EditorMode {
         if (skipChar > 'A' && skipChar < 'Z') {
             direction = common.reverseDirection(direction);
         }
-        await vscode.commands.executeCommand("editor.action.setSelectionAnchor");
         common.setLastSkip({kind: "SkipTo", char: skipChar, subject: this.subject.name, direction: direction});
         await this.subject.skip(direction, {kind: "SkipTo", char: skipChar, subject: this.subject.name, direction: direction});
     }
@@ -378,7 +400,7 @@ export default class CommandMode extends modes.EditorMode {
             
         const jumpInterface = new JumpInterface(this.context);
     
-        const jumpPosition = await jumpInterface.zoomJump({
+        const jumpPosition = await jumpInterface.zoomJump({ // testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest
             locations: seq(jumpLocations),
         });
     
@@ -388,5 +410,16 @@ export default class CommandMode extends modes.EditorMode {
         }
     
         return jumpPosition;
+    }
+
+    async skipToCenterWord() {
+        const editor = this.context.editor;
+        const currentLine = editor.selection.active.line;
+        let text = editor.document.lineAt(currentLine).text;
+        const start = text.indexOf(text.trim().charAt(0));
+        const comment = text.indexOf('//');
+        const end = Math.min(text.length, comment !== -1 ? comment : text.length);
+        const mid = Math.floor((start + end) / 2);
+        editor.selection = new vscode.Selection(currentLine, mid, currentLine, mid);
     }
 }

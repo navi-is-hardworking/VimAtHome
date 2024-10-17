@@ -257,12 +257,10 @@ export default class VimAtHomeManager {
     }
 
     async jump() {
-        await vscode.commands.executeCommand("editor.action.setSelectionAnchor");
         await this.mode.jump();
     }
 
     async jumpToSubject(subjectName: SubjectName) {
-        await vscode.commands.executeCommand("editor.action.setSelectionAnchor");
         // outputChannel.appendLine(`Jumping to subject: ${subjectName}, current subject: ${this.mode.getSubjectName()}`); 
 
         if (this.mode.getSubjectName() === subjectName) {
@@ -446,13 +444,21 @@ export default class VimAtHomeManager {
             }
         });
     
+        const endPosition = document.lineAt(this.editor.selection.end.line).range.end;
         if (commentAdded) {
-            
-            const endPosition = document.lineAt(this.editor.selection.end.line).range.end;
             this.editor.selection = new vscode.Selection(endPosition, endPosition);
             await this.changeMode({ kind: "INSERT" });
         }
     }
+    
+    async skipToCenterWord() {
+        await this.mode.skipToCenterWord();
+        this.changeMode({
+            kind: "COMMAND",
+            subjectName: "WORD",
+        })
+    }
+
 
     
 }

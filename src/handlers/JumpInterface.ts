@@ -124,7 +124,8 @@ export default class JumpInterface {
         
         for (const position of locations) {
             const char = editor.charAt(this.context.editor.document, position);
-            const isBelow = position.line > cursorPosition.line;
+            const isBelow = position.line > cursorPosition.line || 
+                            (position.line === cursorPosition.line && position.character > cursorPosition.character);
             
             if (/[a-zA-Z]/.test(char)) {
                 let code = isBelow ? char.toLowerCase() : char.toUpperCase();
