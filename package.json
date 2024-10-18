@@ -91,6 +91,21 @@
                     "default": "ea29ff",
                     "description": "Color for word selections"
                 },
+                "vimAtHome.color.customWord4": {
+                    "type": "string",
+                    "default": "34ebe5",
+                    "description": "Color for word selections"
+                },
+                "vimAtHome.color.customWord5": {
+                    "type": "string",
+                    "default": "1776eb",
+                    "description": "Color for word selections"
+                },
+                "vimAtHome.color.customWord6": {
+                    "type": "string",
+                    "default": "ea29ff",
+                    "description": "Color for word selections"
+                },
                 "vimAtHome.color.line": {
                     "type": "string",
                     "default": "8feb34",
@@ -115,6 +130,18 @@
                     "description": "custom word regex"
                 },
                 "vimAtHome.customWordRegex3": {
+                    "type": "string",
+                    "description": "custom word regex"
+                },
+                "vimAtHome.customWordRegex4": {
+                    "type": "string",
+                    "description": "custom word regex"
+                },
+                "vimAtHome.customWordRegex5": {
+                    "type": "string",
+                    "description": "custom word regex"
+                },
+                "vimAtHome.customWordRegex6": {
                     "type": "string",
                     "description": "custom word regex"
                 }

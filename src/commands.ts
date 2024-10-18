@@ -229,6 +229,59 @@ export const registeredCommands: ExtensionCommand[] = [
             manager.jumpToSubject('WORD');
         },
     },
+
+    {
+        id: "vimAtHome.changeToCustomWord4",
+        execute: async (manager: VimAtHomeManager) => {
+            setWordDefinition(4);
+            manager.changeMode({
+                kind: "COMMAND",
+                subjectName: "WORD",
+            });
+        },
+    },
+    {
+        id: "vimAtHome.jumpToCustomWord4",
+        execute: async (manager: VimAtHomeManager) => {
+            setWordDefinition(4);
+            manager.jumpToSubject('WORD');
+        },
+    },
+    {
+        id: "vimAtHome.changeToCustomWord5",
+        execute: async (manager: VimAtHomeManager) => {
+            setWordDefinition(5);
+            manager.changeMode({
+                kind: "COMMAND",
+                subjectName: "WORD",
+            });
+        },
+    },
+    {
+        id: "vimAtHome.jumpToCustomWord5",
+        execute: async (manager: VimAtHomeManager) => {
+            setWordDefinition(5);
+            manager.jumpToSubject('WORD');
+        },
+    },
+    {
+        id: "vimAtHome.changeToCustomWord6",
+        execute: async (manager: VimAtHomeManager) => {
+            setWordDefinition(6);
+            manager.changeMode({
+                kind: "COMMAND",
+                subjectName: "WORD",
+            });
+        },
+    },
+    {
+        id: "vimAtHome.jumpToCustomWord6",
+        execute: async (manager: VimAtHomeManager) => {
+            setWordDefinition(6);
+            manager.jumpToSubject('WORD');
+        },
+    },
+
     {
         id: "vimAtHome.changeToLineSubject",
         execute: async (manager: VimAtHomeManager) => {
@@ -468,6 +521,12 @@ export const registeredCommands: ExtensionCommand[] = [
         id: "vimAtHome.openGoToMenu",
         execute: async (manager) => {
             await manager.openGoToMenu();
+        },
+    },
+    {
+        id: "vimAtHome.openSubjectMenu",
+        execute: async (manager) => {
+            await manager.openSubjectMenu();
         },
     },
     {

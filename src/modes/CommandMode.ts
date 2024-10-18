@@ -413,6 +413,7 @@ export default class CommandMode extends modes.EditorMode {
     }
 
     async skipToCenterWord() {
+        
         const editor = this.context.editor;
         const currentLine = editor.selection.active.line;
         let text = editor.document.lineAt(currentLine).text;
@@ -420,6 +421,7 @@ export default class CommandMode extends modes.EditorMode {
         const comment = text.indexOf('//');
         const end = Math.min(text.length, comment !== -1 ? comment : text.length);
         const mid = Math.floor((start + end) / 2);
+        
         editor.selection = new vscode.Selection(currentLine, mid, currentLine, mid);
     }
 }

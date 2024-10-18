@@ -178,6 +178,13 @@ export default class VimAtHomeManager {
         }
     }
 
+    async openSubjectMenu() {
+        const choice = await quickCommandPicker(quickMenus.SubjectChangeCommands);
+        if (choice) {
+            await choice.execute();
+        }
+    }
+
     async openGoToMenu() {
         const choice = await quickCommandPicker(quickMenus.GoToCommands, {
             label: "Go to line...",
@@ -345,7 +352,6 @@ export default class VimAtHomeManager {
         const { editor } = this;
         const document = editor.document;
         
-        // Store original selections
         const originalSelections = editor.selections;
         
         await editor.edit(editBuilder => {
@@ -458,7 +464,4 @@ export default class VimAtHomeManager {
             subjectName: "WORD",
         })
     }
-
-
-    
 }
