@@ -12,7 +12,8 @@ I would recommend using the original but you are welcome to use this if you wish
 
 "workbench.colorCustomizations": { 
     "editor.background": "#101010",
-    // "tab.activeForeground": "#393939",
+    "editor.selectionBackground": "#62fcff1e",
+    "tab.border": "#ffffff",
     "tab.activeBorder": "#ffffff",
     "tab.activeBorderTop": "#ffffff",
     "tab.activeBackground": "#2d2d2d",
@@ -20,16 +21,20 @@ I would recommend using the original but you are welcome to use this if you wish
     "tab.inactiveBackground": "#000000",
 },
 
+"vimAtHome.customWordRegex1":  "public", // matches full word with connectors and brackets
+"vimAtHome.customWordRegex2":  "return", // matches full word with connectors and brackets
+"vimAtHome.customWordRegex3":  "private", // matches full word with connectors and brackets
+"vimAtHome.customWordRegex4":  "[\\w\\.\\-_:\\\\\/]+", // matches full word with connectors and brackets
+"vimAtHome.customWordRegex5": "([a-zA-Z][\\w.\\-_?:]*(?:<[^<>]*>)?(?:\\[(?:[^\\[\\]]|\\[[^\\[\\]]*\\])*\\]|\\((?:[^()]|\\([^()]*\\))*\\))*)",
+"vimAtHome.customWordRegex6": "(['\"])(?:(?!\\1).)*\\1",  // Matches both single and double quotes
 
-"vimAtHome.customWordRegex1":  "[\\w\\.\\-_:\\\\\/]+", // matches full word with connectors and brackets
-"vimAtHome.customWordRegex2": "([a-zA-Z][\\w.\\-_:]*(?:<[^<>]*>)?(?:\\[(?:[^\\[\\]]|\\[[^\\[\\]]*\\])*\\]|\\((?:[^()]|\\([^()]*\\))*\\))*)",
-"vimAtHome.customWordRegex3": "(['\"])(?:(?!\\1).)*\\1",  // Matches both single and double quotes
-
-"editor.selectionBackground": "#ffffff1e",
 "vimAtHome.color.customWord1": "3381ff",
 "vimAtHome.color.customWord2": "ffff00",
 "vimAtHome.color.customWord3": "cf9700",
-"vimAtHome.color.extend": "#09831566",
+"vimAtHome.color.customWord4": "3381ff",
+"vimAtHome.color.customWord5": "ffff00",
+"vimAtHome.color.customWord6": "cf9700",
+
 
 ```
 
@@ -564,7 +569,7 @@ I would recommend using the original but you are welcome to use this if you wish
    
     {
         "key": "shift+down",
-        "command": "vimAtHome.changeToExtendMode",
+        "command": "vimAtHome.skipToCenterWord",
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && vimAtHome.mode != 'EXTEND'"
     },
     {
@@ -575,12 +580,25 @@ I would recommend using the original but you are welcome to use this if you wish
    
     {
         "key": "shift+left",
-        "command": "vimAtHome.changeToInsertModePrepend",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "vimAtHome.changeToInsertModePrepend",
+                // "vimAtHome.changeToCharSubject"
+            ]
+        },
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
     {
         "key": "shift+right",
-        "command": "vimAtHome.changeToInsertModeAppend",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "vimAtHome.changeToInsertModeAppend",
+                // "cursorLeft",
+                // "vimAtHome.changeToCharSubject"
+            ]
+        },
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
     {
@@ -623,11 +641,11 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "vimAtHome.changeToSubwordSubject",
         // "when": "editorTextFocus"
     },
-    {
-        "key": "alt+c",
-        "command": "vimAtHome.changeToWordSubject",
-        // "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
-    },
+    // {
+    //     "key": "alt+c",
+    //     "command": "vimAtHome.changeToWordSubject",
+    //     // "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
+    // },
     {
         "key": "alt+d",
         "command": "vimAtHome.changeToLineSubject",
@@ -734,7 +752,6 @@ I would recommend using the original but you are welcome to use this if you wish
         "args": {
         "commands": [
                 "vimAtHome.changeToInsertMode",
-                // "settings.cycle.baseColor"
             ]
         }
    },
@@ -744,7 +761,6 @@ I would recommend using the original but you are welcome to use this if you wish
         "args": {
         "commands": [
                 "vimAtHome.changeToInsertModePrepend",
-                // "settings.cycle.baseColor"
             ]
         }
     },
@@ -754,7 +770,6 @@ I would recommend using the original but you are welcome to use this if you wish
         "args": {
         "commands": [
                 "vimAtHome.changeToInsertModeAppend",
-                // "settings.cycle.baseColor"
             ]
         }
     },
@@ -1575,6 +1590,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
+                "editor.action.setSelectionAnchor",
                 "vimAtHome.changeToCharSubject",
                 "vimAtHome.skip",
             ],
@@ -1585,6 +1601,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
+                "editor.action.setSelectionAnchor",
                 "vimAtHome.changeToInsertModeAppend",
                 "vimAtHome.changeToCharSubject",
                 "vimAtHome.skipBackwards",
@@ -2598,7 +2615,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
     {
-        "key": "ctrl+shift+p",
+        "key": "alt+shift+p",
         "command": "runCommands",
         "args": {
             "commands": [
@@ -2606,6 +2623,17 @@ I would recommend using the original but you are welcome to use this if you wish
             ],
         },
         "when": "editorTextFocus"
+    },
+    {
+        "key": "shift+home",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "vimAtHome.changeToInsertModeAppend",
+                "vimAtHome.changeToHalfLineSubjectLeft",
+            ],
+        },
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
     {
         "key": "shift+end",
@@ -2616,8 +2644,46 @@ I would recommend using the original but you are welcome to use this if you wish
                 "vimAtHome.changeToHalfLineSubjectRight",
             ],
         },
-        "when": "editorTextFocus && codeFea.mode == 'COMMAND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
+    // {
+    //     "key": "ctrl+c",
+    //     "command": "vimAtHome.addToCache",
+    //     "when": "editorTextFocus"
+    // },
+    // {
+    //     "key": "ctrl+v",
+    //     "command": "vimAtHome.pasteTop",
+    //     "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
+    // },
+    {
+        "key": "alt+c",
+        "command": "vimAtHome.parseToCache",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "alt+v",
+        "command": "vimAtHome.pasteFromCache",
+        "when": "editorTextFocus"
+    },
+    
+    {
+        "key": "alt+v",
+        "command": "vimAtHome.pasteFromCache",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "shift+f21",
+        "command": "vimAtHome.changeToExtendMode",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+shift+f6",
+        "command": "vimAtHome.openSubjectMenu",
+        "when": "editorTextFocus"
+    }
+
+
 ]
 
 ```
