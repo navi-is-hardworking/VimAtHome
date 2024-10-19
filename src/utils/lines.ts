@@ -132,7 +132,6 @@ export function getNextSignificantLine(
     }
 }
 
-
 export function lineIsSignificant(line: vscode.TextLine) {
     const wordRegex = getWordDefinition(true);
     return wordRegex ? wordRegex.test(line.text) : false;

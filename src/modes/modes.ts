@@ -43,5 +43,8 @@ export abstract class EditorMode implements vscode.Disposable {
         subjectName: string
     ): Promise<EditorMode | undefined>;
     abstract zoomJump(): Promise<vscode.Position | undefined>;
-    abstract skipToCenterWord(): Promise<void>;
+    abstract collapseToCenter(): Promise<EditorModeChangeRequest | undefined>;
+    abstract collapseToLeft(): Promise<EditorModeChangeRequest | undefined>;
+    abstract collapseToRight(): Promise<EditorModeChangeRequest | undefined>;
+
 }

@@ -12,6 +12,7 @@ import * as modifications from "./utils/modifications";
 import { splitRange } from "./utils/decorations";
 import * as cache from "./historyCache";
 import * as editorUtils from "./utils/editor";
+import * as lineUtils from "./utils/lines";
 
 let outputChannel = vscode.window.createOutputChannel("ManagerOutput");
 
@@ -457,11 +458,128 @@ export default class VimAtHomeManager {
         }
     }
     
-    async skipToCenterWord() {
-        await this.mode.skipToCenterWord();
-        this.changeMode({
-            kind: "COMMAND",
-            subjectName: "WORD",
-        })
+    async collapseToCenter() {
+        let changeRequest = await this.mode.collapseToCenter();
+        if (changeRequest)
+            this.changeMode(changeRequest)
     }
+    
+    async collapseToLeft() {
+        let changeRequest = await this.mode.collapseToLeft();
+        if (changeRequest)
+            this.changeMode(changeRequest)
+    }
+    
+    async collapseToRight() {
+        let changeRequest = await this.mode.collapseToRight();
+        if (changeRequest)
+            this.changeMode(changeRequest)
+    }
+
+    async nextIndent(direction: common.Direction) {
+        const editor = this.editor;
+        const document = editor.document;
+        const currentPosition = editor.selection.active;
+        const currentLine = document.lineAt(currentPosition.line);
+        const currentIndentation = currentLine.firstNonWhitespaceCharacterIndex;
+    
+        let targetLine: vscode.TextLine | undefined;
+        let lineIterator = lineUtils.iterLines(document, {
+            startingPosition: currentPosition,
+            direction: direction,
+            currentInclusive: false,
+        });
+    
+        let lineCount = 0;
+    
+        for (const line of lineIterator) {
+            if (!lineUtils.lineIsSignificant(line)) {
+                continue;
+            }
+            lineCount++;
+            
+            if (line.firstNonWhitespaceCharacterIndex !== currentIndentation) {
+                targetLine = line;
+                break;
+            }
+        }
+    
+        if (targetLine) {
+            const targetPosition = new vscode.Position(targetLine.lineNumber, common.getVirtualColumn());
+            editor.selection = new vscode.Selection(targetPosition, targetPosition);
+            
+            if (lineCount === 1) {
+                let secondTargetLine: vscode.TextLine | undefined;
+                let secondLineIterator = lineUtils.iterLines(document, {
+                    startingPosition: targetPosition,
+                    direction: direction,
+                    currentInclusive: false,
+                });
+                
+                let encounteredInsignificantLine = false;
+                
+                for (const line of secondLineIterator) {
+                    if (!lineUtils.lineIsSignificant(line)) {
+                        encounteredInsignificantLine = true;
+                        continue;
+                    }
+                    
+                    if (line.firstNonWhitespaceCharacterIndex !== targetLine.firstNonWhitespaceCharacterIndex) {
+                        secondTargetLine = line;
+                        break;
+                    }
+                    
+                    if (encounteredInsignificantLine) {
+                        secondTargetLine = line;
+                        break;
+                    }
+                }
+                
+                if (secondTargetLine) {
+                    const secondTargetPosition = new vscode.Position(secondTargetLine.lineNumber, common.getVirtualColumn());
+                    editor.selection = new vscode.Selection(secondTargetPosition, secondTargetPosition);
+                }
+            }
+        }
+        await this.changeMode({ kind: "COMMAND", subjectName: "WORD" });
+    }
+    
+    
+    // async nextIndent(direction: common.Direction) {
+    //     const editor = this.editor;
+    //     const document = editor.document;
+    //     const currentPosition = editor.selection.active;
+    //     const currentLine = document.lineAt(currentPosition.line);
+    //     const currentIndentation = currentLine.firstNonWhitespaceCharacterIndex;
+    
+    //     let targetLine: vscode.TextLine | undefined;
+    //     let lineIterator = lineUtils.iterLines(document, {
+    //         startingPosition: currentPosition,
+    //         direction: direction,
+    //         currentInclusive: false,
+    //     });
+    
+    //     let encounteredInsignificantLine = false;
+    
+    //     for (const line of lineIterator) {
+    //         if (!lineUtils.lineIsSignificant(line)) {
+    //             encounteredInsignificantLine = true;
+    //             continue;
+    //         }
+    
+    //         if (line.firstNonWhitespaceCharacterIndex !== currentIndentation || 
+    //             (encounteredInsignificantLine && lineUtils.lineIsSignificant(line))) {
+    //             targetLine = line;
+    //             break;
+    //         }
+    
+    //         encounteredInsignificantLine = false;
+    //     }
+    
+    //     if (targetLine) {
+    //         const targetPosition = new vscode.Position(targetLine.lineNumber, common.getVirtualColumn());
+    //         editor.selection = new vscode.Selection(targetPosition, );
+    //         await this.changeMode({ kind: "COMMAND", subjectName: "WORD" });
+    //     }
+    // }
 }

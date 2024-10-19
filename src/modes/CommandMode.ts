@@ -47,11 +47,9 @@ export default class CommandMode extends modes.EditorMode {
             subject.name
         );
         super();
-        
         const commandColor = getCommandColor();
         common.setVirtualColumn(this.context.editor.selection);
 
-        
         this.decorationType = vscode.window.createTextEditorDecorationType({
             dark: {
                 backgroundColor: commandColor,
@@ -162,7 +160,11 @@ export default class CommandMode extends modes.EditorMode {
                         let leftParen = lineText.indexOf('('); 
                         let rightParen = lineText.indexOf(')'); 
 
-                        if ((leftCurly != -1 && leftCurly <= cursorChar) || (leftParen != -1 && leftParen <= cursorChar)) {
+                        // or if there is only a  curly or paren, but that one is behind a right curly or paren
+                        if ((leftCurly != -1 && leftCurly <= cursorChar) || (leftParen != -1 && leftParen <= cursorChar) ||
+                            (leftCurly == -1 && rightCurly != -1 && leftParen != -1 && rightParen == -1) ||
+                            (leftParen == -1 && rightParen != -1 && leftCurly != -1 && rightCurly == -1)
+                        ) {
                             
                         }
                         else if ((leftCurly != -1) && leftParen != -1) {
@@ -416,16 +418,76 @@ export default class CommandMode extends modes.EditorMode {
         return jumpPosition;
     }
 
-    async skipToCenterWord() {
-        
+    async collapseToCenter(): Promise<modes.EditorModeChangeRequest> {
         const editor = this.context.editor;
-        const currentLine = editor.selection.active.line;
-        let text = editor.document.lineAt(currentLine).text;
-        const start = text.indexOf(text.trim().charAt(0));
-        const comment = text.indexOf('//');
-        const end = Math.min(text.length, comment !== -1 ? comment : text.length);
-        const mid = Math.floor((start + end) / 2);
-        
-        editor.selection = new vscode.Selection(currentLine, mid, currentLine, mid);
+        const selection = editor.selection;
+        const document = editor.document;
+    
+        if (selection.start.line !== selection.end.line) {
+            const startLine = Math.min(selection.start.line, selection.end.line);
+            const endLine = Math.max(selection.start.line, selection.end.line);
+            const middleLine = Math.floor((startLine + endLine) / 2);
+    
+            const lineText = document.lineAt(middleLine).text;
+            const start = lineText.indexOf(lineText.trim().charAt(0));
+            const comment = lineText.indexOf('//');
+            const end = Math.min(lineText.length, comment !== -1 ? comment : lineText.length);
+            const mid = Math.floor((start + end) / 2);
+    
+            editor.selection = new vscode.Selection(middleLine, mid, middleLine, mid);
+    
+            return { kind: "COMMAND", subjectName: "LINE" };
+        } else {
+            const currentLine = selection.active.line;
+            const text = document.lineAt(currentLine).text;
+            const start = text.indexOf(text.trim().charAt(0));
+            const comment = text.indexOf('//');
+            const end = Math.min(text.length, comment !== -1 ? comment : text.length);
+            const mid = Math.floor((start + end) / 2);
+            editor.selection = new vscode.Selection(currentLine, mid, currentLine, mid);
+            return { kind: "COMMAND", subjectName: "WORD" };
+        }
+    }
+
+    async collapseToLeft(): Promise<modes.EditorModeChangeRequest> {
+        const editor = this.context.editor;
+        const selection = editor.selection;
+        const document = editor.document;
+    
+        if (selection.start.line !== selection.end.line) {
+            // Multi-line selection
+            const topLine = Math.min(selection.start.line, selection.end.line);
+            const lineText = document.lineAt(topLine).text;
+            const start = lineText.indexOf(lineText.trim().charAt(0));
+    
+            editor.selection = new vscode.Selection(topLine, start, topLine, start);
+            return { kind: "COMMAND", subjectName: "LINE" };
+        } else {
+            // Single-line selection
+            const position = selection.start.isBefore(selection.end) ? selection.start : selection.end;
+            editor.selection = new vscode.Selection(position, position);
+            return { kind: "INSERT" };
+        }
+    }
+    
+    async collapseToRight(): Promise<modes.EditorModeChangeRequest> {
+        const editor = this.context.editor;
+        const selection = editor.selection;
+        const document = editor.document;
+    
+        if (selection.start.line !== selection.end.line) {
+            // Multi-line selection
+            const bottomLine = Math.max(selection.start.line, selection.end.line);
+            const lineText = document.lineAt(bottomLine).text;
+            const start = lineText.indexOf(lineText.trim().charAt(0));
+    
+            editor.selection = new vscode.Selection(bottomLine, start, bottomLine, start);
+            return { kind: "COMMAND", subjectName: "LINE" };
+        } else {
+            // Single-line selection
+            const position = selection.start.isAfter(selection.end) ? selection.start : selection.end;
+            editor.selection = new vscode.Selection(position, position);
+            return { kind: "INSERT" };
+        }
     }
 }

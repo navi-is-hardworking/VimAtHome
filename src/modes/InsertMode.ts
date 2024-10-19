@@ -7,6 +7,7 @@ import * as subjects from "../subjects/subjects";
 import { SubjectName } from "../subjects/SubjectName";
 import JumpInterface from "../handlers/JumpInterface";
 import { getCommandColor, setSelectionBackground } from "../config";
+import * as modes from "./modes";
 
 export default class InsertMode extends EditorMode {
     private keySequenceStarted: boolean = false;
@@ -134,16 +135,10 @@ export default class InsertMode extends EditorMode {
     }
 
     async zoomJump(): Promise<vscode.Position | undefined> {
-        // const jumpLocations = subjects.getJumpLocations(this.context);
-
-        // const jumpInterface = new JumpInterface(this.context);
-
-        // return await jumpInterface.zoomJump({
-        //     locations: jumpLocations,
-        // });
         return undefined;
     }
 
-    async skipToCenterWord() {
-    }
+    async collapseToCenter(): Promise<modes.EditorModeChangeRequest | undefined> { return undefined; }
+    async collapseToLeft(): Promise<modes.EditorModeChangeRequest | undefined> { return undefined; };
+    async collapseToRight(): Promise<modes.EditorModeChangeRequest | undefined> { return undefined; };
 }

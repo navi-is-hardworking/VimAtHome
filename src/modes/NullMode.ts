@@ -4,6 +4,7 @@ import ExtendMode from "./ExtendMode";
 import * as common from "../common";
 import { EditorMode, EditorModeChangeRequest } from "./modes";
 import CommandMode from "./CommandMode";
+import * as modes from "./modes";
 
 export default class NullMode extends EditorMode {
     readonly decorationType = undefined;
@@ -48,6 +49,7 @@ export default class NullMode extends EditorMode {
     async pullSubject() { return undefined; }
     getSubjectName() { return undefined; }
     async zoomJump() { return undefined; }
-    async skipToCenterWord() { }
-
+    async collapseToCenter(): Promise<modes.EditorModeChangeRequest | undefined> { return undefined; }
+    async collapseToLeft(): Promise<modes.EditorModeChangeRequest | undefined> { return undefined; };
+    async collapseToRight(): Promise<modes.EditorModeChangeRequest | undefined> { return undefined; };
 }

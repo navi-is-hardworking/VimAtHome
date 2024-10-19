@@ -500,9 +500,21 @@ export const registeredCommands: ExtensionCommand[] = [
         },
     },
     {
-        id: "vimAtHome.skipToCenterWord",
+        id: "vimAtHome.collapseToCenter",
         execute: async (manager) => {
-            await manager.skipToCenterWord();
+            await manager.collapseToCenter();
+        },
+    },
+    {
+        id: "vimAtHome.collapseToLeft",
+        execute: async (manager) => {
+            await manager.collapseToLeft();
+        },
+    },
+    {
+        id: "vimAtHome.collapseToRight",
+        execute: async (manager) => {
+            await manager.collapseToRight();
         },
     },
     {
@@ -799,6 +811,18 @@ export const registeredCommands: ExtensionCommand[] = [
         id: "vimAtHome.unjoin",
         execute: async (manager: VimAtHomeManager) => {
             cacheCommands.pasteTop(manager.editor);
+        },
+    },
+    {
+        id: "vimAtHome.nextIndentUp",
+        execute: async (manager: VimAtHomeManager) => {
+            await manager.nextIndent(Direction.backwards);
+        },
+    },
+    {
+        id: "vimAtHome.nextIndentDown",
+        execute: async (manager: VimAtHomeManager) => {
+            await manager.nextIndent(Direction.forwards);
         },
     },
     

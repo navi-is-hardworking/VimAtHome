@@ -8,6 +8,8 @@ import { SubjectAction } from "../subjects/SubjectActions";
 import CommandMode from "./CommandMode";
 import { SubjectName } from "../subjects/SubjectName";
 import { getExtendColor, setSelectionBackground } from "../config";
+import * as modes from "./modes";
+
 
 export default class ExtendMode extends EditorMode {
     private readonly wrappedMode: CommandMode;
@@ -224,5 +226,7 @@ export default class ExtendMode extends EditorMode {
     }
     async zoomJump() { return undefined; }
     async setPivot() { return undefined; }
-    async skipToCenterWord() { }
+    async collapseToCenter(): Promise<modes.EditorModeChangeRequest | undefined> { return undefined; }
+    async collapseToLeft(): Promise<modes.EditorModeChangeRequest | undefined> { return undefined; };
+    async collapseToRight(): Promise<modes.EditorModeChangeRequest | undefined> { return undefined; };
 }
