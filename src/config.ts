@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 import { SubjectName } from "./subjects/SubjectName";
 import { char } from "./utils/quickMenus";
-let outputChannel = vscode.window.createOutputChannel("VimAtHome.Config");
 
 export type ColorConfig = {
     char: string;
@@ -62,14 +61,11 @@ export function loadConfig(): Config {
     wordSet.add("\\w+");
     for (let i = 1; i <= 6; i++) {
         const customRegex = config.get<string>(`customWordRegex${i}`);
-        outputChannel.appendLine(`Custom word regex ${i}: ${customRegex}`);
         if (customRegex)
             wordSet.add(customRegex);
     }
 
     wordDefinitions = Array.from(wordSet).map(w => new RegExp(w as string));
-    outputChannel.appendLine(`Word definitions: ${JSON.stringify(wordDefinitions)}`);
-    outputChannel.appendLine(`Word definitions length: ${wordDefinitions.length}`);
     
     return {
         jump: config.get<JumpConfig>("jump")!,
@@ -105,8 +101,6 @@ export function getWordDefinitionIndex(): number { return currentWordDefinition;
 export function getWordDefinition(includeLineEnds=true): RegExp | undefined { 
     if (!includeLineEnds && currentWordDefinition === 0)
         return undefined;
-    outputChannel.appendLine(`Getting word definition ${currentWordDefinition}`);
-    outputChannel.appendLine(`regex: ${wordDefinitions[currentWordDefinition]}`);
     return wordDefinitions[currentWordDefinition]; 
 }
 export function nextWordDefinition(): void {
@@ -117,9 +111,6 @@ export function prevWordDefinition(): void {
     if (currentWordDefinition < 0) currentWordDefinition = wordDefinitions.length - 1;
 }
 export function setWordDefinition(selection: number): void {
-    outputChannel.appendLine(`Setting word definition to ${selection}`);
-    outputChannel.appendLine(`Word definitions: ${JSON.stringify(wordDefinitions)}`);
-    outputChannel.appendLine(`Word definitions length: ${wordDefinitions.length}`);
     if (selection >= 0 && selection < wordDefinitions.length)
         currentWordDefinition = selection;
 }
