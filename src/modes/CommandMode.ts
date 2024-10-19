@@ -152,27 +152,31 @@ export default class CommandMode extends modes.EditorMode {
 
                 if (newMode.subjectName !== this.subject.name) {
                     
-                    // if (this.subject.name != 'BRACKETS' && this.subject.name != 'BRACKETS_INCLUSIVE' && newMode.subjectName === 'BRACKETS') {
-                    //     let currentLine = this.context.editor.selection.active.line;
-                    //     let lineText = this.context.editor.document.lineAt(currentLine).text;
-                    //     let leftCurly = lineText.indexOf('{');  
-                    //     let rightCurly = lineText.indexOf('}');  
-                    //     let leftParen = lineText.indexOf('('); 
-                    //     let rightParen = lineText.indexOf(')'); 
+                    if (this.subject.name != 'BRACKETS' && this.subject.name != 'BRACKETS_INCLUSIVE' && newMode.subjectName === 'BRACKETS') {
+                        let currentLine = this.context.editor.selection.active.line;
+                        let cursorChar = this.context.editor.selection.active.character;
 
+                        let lineText = this.context.editor.document.lineAt(currentLine).text;
+                        let leftCurly = lineText.indexOf('{');  
+                        let rightCurly = lineText.indexOf('}');  
+                        let leftParen = lineText.indexOf('('); 
+                        let rightParen = lineText.indexOf(')'); 
 
-                    //     if ((leftCurly != -1) && leftParen != -1) {
-                    //         if ((rightCurly != leftCurly + 1) && leftCurly < leftParen) {
-                    //             this.context.editor.selection = new vscode.Selection(currentLine, leftCurly, currentLine, leftCurly);
-                    //         } else {
-                    //             this.context.editor.selection = new vscode.Selection(currentLine, leftParen, currentLine, leftParen);
-                    //         }
-                    //     } else if (leftCurly != -1) {
-                    //         this.context.editor.selection = new vscode.Selection(currentLine, leftCurly, currentLine, leftCurly);
-                    //     } else if (leftParen != -1) {
-                    //         this.context.editor.selection = new vscode.Selection(currentLine, leftParen, currentLine, leftParen);
-                    //     }
-                    // }
+                        if ((leftCurly != -1 && leftCurly <= cursorChar) || (leftParen != -1 && leftParen <= cursorChar)) {
+                            
+                        }
+                        else if ((leftCurly != -1) && leftParen != -1) {
+                            if ((rightCurly != leftCurly + 1) && leftCurly < leftParen) {
+                                this.context.editor.selection = new vscode.Selection(currentLine, leftCurly, currentLine, leftCurly);
+                            } else {
+                                this.context.editor.selection = new vscode.Selection(currentLine, leftParen, currentLine, leftParen);
+                            }
+                        } else if (leftCurly != -1) {
+                            this.context.editor.selection = new vscode.Selection(currentLine, leftCurly, currentLine, leftCurly);
+                        } else if (leftParen != -1) {
+                            this.context.editor.selection = new vscode.Selection(currentLine, leftParen, currentLine, leftParen);
+                        }
+                    }
                     
                     return this.with({
                         subject: subjects.createFrom(
