@@ -55,12 +55,12 @@ export default class CommandMode extends modes.EditorMode {
                 backgroundColor: commandColor,
                 borderStyle: "solid",
                 borderColor: subject.outlineColour.dark,
-                borderWidth: "1.2px",
+                borderWidth: "1.5px",
             },
             light: {
                 borderStyle: "solid",
                 borderColor: subject.outlineColour.light,
-                borderWidth: "1.2px",
+                borderWidth: "1.5px",
             },
         });
 
@@ -69,12 +69,12 @@ export default class CommandMode extends modes.EditorMode {
                 backgroundColor: commandColor,
                 borderStyle: "solid none none solid",
                 borderColor: subject.outlineColour.dark,
-                borderWidth: "1.2px",
+                borderWidth: "1.5px",
             },
             light: {
                 borderStyle: "solid none none solid",
                 borderColor: subject.outlineColour.light,
-                borderWidth: "1.2px",
+                borderWidth: "1.5px",
             },
         });
 
@@ -83,12 +83,12 @@ export default class CommandMode extends modes.EditorMode {
                 backgroundColor: commandColor,
                 borderStyle: "none none none solid",
                 borderColor: subject.outlineColour.dark,
-                borderWidth: "1.2px",
+                borderWidth: "1.5px",
             },
             light: {
                 borderStyle: "none none none solid",
                 borderColor: subject.outlineColour.light,
-                borderWidth: "1.2px",
+                borderWidth: "1.5px",
             },
         });
 
@@ -98,12 +98,12 @@ export default class CommandMode extends modes.EditorMode {
                     backgroundColor: commandColor,
                     borderStyle: "none none solid solid",
                     borderColor: subject.outlineColour.dark,
-                    borderWidth: "1.2px",
+                    borderWidth: "1.5px",
                 },
                 light: {
                     borderStyle: "none none solid solid",
                     borderColor: subject.outlineColour.light,
-                    borderWidth: "1.2px",
+                    borderWidth: "1.5px",
                 },
             });
     }

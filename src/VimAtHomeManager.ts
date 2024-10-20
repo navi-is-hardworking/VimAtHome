@@ -98,7 +98,6 @@ export default class VimAtHomeManager {
         this.clearSelections();
         this.setDecorations();
         const selectedText = this.editor.document.getText(this.editor.selection);
-        outputChannel.appendLine(selectedText);
         
         if (
             event.kind === vscode.TextEditorSelectionChangeKind.Command ||
@@ -476,110 +475,71 @@ export default class VimAtHomeManager {
             this.changeMode(changeRequest)
     }
 
-    async nextIndent(direction: common.Direction) {
-        const editor = this.editor;
-        const document = editor.document;
-        const currentPosition = editor.selection.active;
+    async nextSignificantBlock(direction: common.Direction) {
+        const document = this.editor.document;
+        const lineCount = document.lineCount;
+        let currentLine = this.editor.selection.active.line;
+        const increment = direction === common.Direction.forwards ? 1 : -1;
+
+        while (currentLine >= 0 && currentLine < lineCount) {
+            currentLine += increment;
+            if (currentLine < 0 || currentLine >= lineCount) break;
+            
+            const line = document.lineAt(currentLine);
+            if (lineUtils.lineIsSignificant(line)) {
+                while (currentLine >= 0 && currentLine < lineCount) {
+                    const nextLine = document.lineAt(currentLine + increment);
+                    if (!lineUtils.lineIsSignificant(nextLine)) {
+                        break;
+                    }
+                    currentLine += increment;
+                }
+                break;
+            }
+        }
+
+        await this.updateEditorPosition(currentLine);
+    }
+    
+    async nextIndentBlock(direction: common.Direction) {
+        const document = this.editor.document;
+        const currentPosition = this.editor.selection.active;
         const currentLine = document.lineAt(currentPosition.line);
         const currentIndentation = currentLine.firstNonWhitespaceCharacterIndex;
-    
+
         let targetLine: vscode.TextLine | undefined;
         let lineIterator = lineUtils.iterLines(document, {
             startingPosition: currentPosition,
             direction: direction,
             currentInclusive: false,
         });
-    
-        let lineCount = 0;
-    
+
         for (const line of lineIterator) {
-            if (!lineUtils.lineIsSignificant(line)) {
-                continue;
-            }
-            lineCount++;
-            
-            if (line.firstNonWhitespaceCharacterIndex !== currentIndentation) {
+            if (lineUtils.lineIsSignificant(line) && line.firstNonWhitespaceCharacterIndex !== currentIndentation) {
                 targetLine = line;
                 break;
             }
         }
-    
-        if (targetLine) {
-            const targetPosition = new vscode.Position(targetLine.lineNumber, common.getVirtualColumn());
-            editor.selection = new vscode.Selection(targetPosition, targetPosition);
-            
-            if (lineCount === 1) {
-                let secondTargetLine: vscode.TextLine | undefined;
-                let secondLineIterator = lineUtils.iterLines(document, {
-                    startingPosition: targetPosition,
-                    direction: direction,
-                    currentInclusive: false,
-                });
-                
-                let encounteredInsignificantLine = false;
-                
-                for (const line of secondLineIterator) {
-                    if (!lineUtils.lineIsSignificant(line)) {
-                        encounteredInsignificantLine = true;
-                        continue;
-                    }
-                    
-                    if (line.firstNonWhitespaceCharacterIndex !== targetLine.firstNonWhitespaceCharacterIndex) {
-                        secondTargetLine = line;
-                        break;
-                    }
-                    
-                    if (encounteredInsignificantLine) {
-                        secondTargetLine = line;
-                        break;
-                    }
-                }
-                
-                if (secondTargetLine) {
-                    const secondTargetPosition = new vscode.Position(secondTargetLine.lineNumber, common.getVirtualColumn());
-                    editor.selection = new vscode.Selection(secondTargetPosition, secondTargetPosition);
-                }
-            }
+
+        if (!targetLine) return;
+
+        const targetIndentation = targetLine.firstNonWhitespaceCharacterIndex;
+
+        let lastSignificantLine = targetLine;
+        for (const line of lineIterator) {
+            if (!lineUtils.lineIsSignificant(line)) continue;
+            if (line.firstNonWhitespaceCharacterIndex !== targetIndentation) break;
+            lastSignificantLine = line;
         }
+
+        await this.updateEditorPosition(lastSignificantLine.lineNumber);
+    }
+
+    private async updateEditorPosition(lineNumber: number) {
+        const newPosition = new vscode.Position(lineNumber, common.getVirtualColumn());
+        this.editor.selection = new vscode.Selection(newPosition, newPosition);
+        this.editor.revealRange(new vscode.Range(newPosition, newPosition));
         await this.changeMode({ kind: "COMMAND", subjectName: "WORD" });
     }
-    
-    
-    // async nextIndent(direction: common.Direction) {
-    //     const editor = this.editor;
-    //     const document = editor.document;
-    //     const currentPosition = editor.selection.active;
-    //     const currentLine = document.lineAt(currentPosition.line);
-    //     const currentIndentation = currentLine.firstNonWhitespaceCharacterIndex;
-    
-    //     let targetLine: vscode.TextLine | undefined;
-    //     let lineIterator = lineUtils.iterLines(document, {
-    //         startingPosition: currentPosition,
-    //         direction: direction,
-    //         currentInclusive: false,
-    //     });
-    
-    //     let encounteredInsignificantLine = false;
-    
-    //     for (const line of lineIterator) {
-    //         if (!lineUtils.lineIsSignificant(line)) {
-    //             encounteredInsignificantLine = true;
-    //             continue;
-    //         }
-    
-    //         if (line.firstNonWhitespaceCharacterIndex !== currentIndentation || 
-    //             (encounteredInsignificantLine && lineUtils.lineIsSignificant(line))) {
-    //             targetLine = line;
-    //             break;
-    //         }
-    
-    //         encounteredInsignificantLine = false;
-    //     }
-    
-    //     if (targetLine) {
-    //         const targetPosition = new vscode.Position(targetLine.lineNumber, common.getVirtualColumn());
-    //         editor.selection = new vscode.Selection(targetPosition, );
-    //         await this.changeMode({ kind: "COMMAND", subjectName: "WORD" });
-    //     }
-    // }
 }
+

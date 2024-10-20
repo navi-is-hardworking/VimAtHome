@@ -814,15 +814,27 @@ export const registeredCommands: ExtensionCommand[] = [
         },
     },
     {
+        id: "vimAtHome.nextWordBlockUp",
+        execute: async (manager: VimAtHomeManager) => {
+            await manager.nextSignificantBlock(Direction.backwards);
+        },
+    },
+    {
+        id: "vimAtHome.nextWordBlockDown",
+        execute: async (manager: VimAtHomeManager) => {
+            await manager.nextSignificantBlock(Direction.forwards);
+        },
+    },
+    {
         id: "vimAtHome.nextIndentUp",
         execute: async (manager: VimAtHomeManager) => {
-            await manager.nextIndent(Direction.backwards);
+            await manager.nextIndentBlock(Direction.backwards);
         },
     },
     {
         id: "vimAtHome.nextIndentDown",
         execute: async (manager: VimAtHomeManager) => {
-            await manager.nextIndent(Direction.forwards);
+            await manager.nextIndentBlock(Direction.forwards);
         },
     },
     
