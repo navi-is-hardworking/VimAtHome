@@ -10,8 +10,6 @@ import * as common from "./common";
 import { SubjectName } from "./subjects/SubjectName";
 import * as modifications from "./utils/modifications";
 import { splitRange } from "./utils/decorations";
-import * as cache from "./historyCache";
-import * as editorUtils from "./utils/editor";
 import * as lineUtils from "./utils/lines";
 
 let outputChannel = vscode.window.createOutputChannel("ManagerOutput");
@@ -536,10 +534,9 @@ export default class VimAtHomeManager {
     }
 
     private async updateEditorPosition(lineNumber: number) {
-        const newPosition = new vscode.Position(lineNumber, common.getVirtualColumn());
+        const virtualColumn = common.getVirtualColumn();
+        const newPosition = new vscode.Position(lineNumber, virtualColumn);
         this.editor.selection = new vscode.Selection(newPosition, newPosition);
-        this.editor.revealRange(new vscode.Range(newPosition, newPosition));
         await this.changeMode({ kind: "COMMAND", subjectName: "WORD" });
     }
 }
-

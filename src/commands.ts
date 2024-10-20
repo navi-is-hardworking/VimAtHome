@@ -7,6 +7,7 @@ import { setWordDefinition, nextWordDefinition, prevWordDefinition } from "./con
 import * as path from 'path';
 import { HighlightManager } from './handlers/HighlightManager';
 import * as cacheCommands from "./CacheCommands";
+import { setVirtualColumnNumber } from "./common";
 
 
 const highlightManager = new HighlightManager();
@@ -545,12 +546,14 @@ export const registeredCommands: ExtensionCommand[] = [
         id: "vimAtHome.goToFirstSubjectInScope",
         execute: async (manager) => {
             await manager.executeSubjectCommand("firstObjectInScope");
+            setVirtualColumnNumber(0);
         },
     },
     {
         id: "vimAtHome.goToLastSubjectInScope",
         execute: async (manager) => {
             await manager.executeSubjectCommand("lastObjectInScope");
+            setVirtualColumnNumber(150);
         },
     },
     {
