@@ -704,6 +704,27 @@ export const registeredCommands: ExtensionCommand[] = [
         },
     },
     {
+        id: "vimAtHome.pullCustomWord4",
+        execute: async (manager: VimAtHomeManager) => { // 
+            setWordDefinition(4);
+            manager.pullSubject('WORD');
+        },
+    },
+    {
+        id: "vimAtHome.pullCustomWord5",
+        execute: async (manager: VimAtHomeManager) => { // 
+            setWordDefinition(5);
+            manager.pullSubject('WORD');
+        },
+    },
+    {
+        id: "vimAtHome.pullCustomWord6",
+        execute: async (manager: VimAtHomeManager) => { // 
+            setWordDefinition(6);
+            manager.pullSubject('WORD');
+        },
+    },
+    {
         id: "vimAtHome.pullBracketSubject",
         execute: async (manager: VimAtHomeManager) => {
             manager.pullSubject('BRACKETS');
