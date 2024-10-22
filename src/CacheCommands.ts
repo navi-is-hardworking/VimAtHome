@@ -39,9 +39,9 @@ export const parseToCache = (editor: vscode.TextEditor) => {
     quickPick.items = [
         { label: 'i', description: 'Parse subwords' },
         { label: 'o', description: 'Parse words' },
-        { label: 'j', description: 'Parse Custom1' },
-        { label: 'k', description: 'Parse Custom2' },
-        { label: 'l', description: 'Parse Custom3' },
+        { label: 'j', description: 'Parse Custom4' },
+        { label: 'k', description: 'Parse Custom5' },
+        { label: 'l', description: 'Parse Custom6' },
         { label: 'm', description: 'Parse brackets' },
         { label: ',', description: 'Parse line' },
         { label: 'u', description: 'clearCace' }

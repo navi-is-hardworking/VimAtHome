@@ -861,6 +861,30 @@ export const registeredCommands: ExtensionCommand[] = [
             await manager.nextIndentBlock(Direction.forwards);
         },
     },
+    {
+        id: "vimAtHome.downN",
+        execute: async (manager: VimAtHomeManager) => {
+            await manager.moveVerticalN(Direction.forwards);
+        },
+    },
+    {
+        id: "vimAtHome.upN",
+        execute: async (manager: VimAtHomeManager) => {
+            await manager.moveVerticalN(Direction.backwards);
+        },
+    },
+    {
+        id: "vimAtHome.selectOutward",
+            execute: async (manager: VimAtHomeManager) => {
+            await manager.edgeOut(Direction.forwards);
+        },
+    },
+    {
+        id: "vimAtHome.selectInward",
+        execute: async (manager: VimAtHomeManager) => {
+            await manager.edgeOut(Direction.backwards);
+        },
+    },
     
 ];
 

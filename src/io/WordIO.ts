@@ -302,10 +302,10 @@ function iterScope(
         } while (searchPosition && searchPosition.line === startingLine);
     });
 }
+
 export default class WordIO extends SubjectIOBase {
-    // deletableSeparators = /[.\s,=+\*\/%\(()\)]+/;
-    // deletableSeparators = /[.\s,=+\*\/%]+/;
-    deletableSeparators = /^[.\s,=+\*\/%]+$/;
+    // deletableSeparators = /^[.\s,=+\*\/%]+$/;
+    deletableSeparators = /^[.\s,=+\*\/%&|!?]+$/;
     defaultSeparationText = " ";
 
     getContainingObjectAt = getContainingWordAt;

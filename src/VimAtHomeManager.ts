@@ -473,6 +473,26 @@ export default class VimAtHomeManager {
             this.changeMode(changeRequest)
     }
 
+    async moveVerticalN(direction: common.Direction) {
+        const document = this.editor.document;
+        const lineCount = document.lineCount;
+        let currentLine = this.editor.selection.active.line;
+        const increment = direction === common.Direction.forwards ? 1 : -1;
+        let n = 0;
+
+        while (currentLine >= 0 && currentLine < lineCount && n < 4) {
+            currentLine += increment;
+            if (currentLine <= 0 || currentLine >= lineCount) break;
+            const line = document.lineAt(currentLine);
+            
+            if (lineUtils.lineIsSignificant(line)) {
+                n += 1;
+            } 
+
+        }
+        await this.updateEditorPosition(currentLine);
+    }
+    
     async nextSignificantBlock(direction: common.Direction) {
         const document = this.editor.document;
         const lineCount = document.lineCount;
@@ -539,4 +559,27 @@ export default class VimAtHomeManager {
         this.editor.selection = new vscode.Selection(newPosition, newPosition);
         await this.changeMode({ kind: "COMMAND", subjectName: "WORD" });
     }
+
+    async edgeOut(direction: common.Direction): Promise<void> {
+        const editor = this.editor;
+        editor.selections = editor.selections.map(selection => {
+            const line = editor.document.lineAt(selection.start.line).text;
+            
+            if (direction === common.Direction.forwards && selection.end.character < line.length) {
+                // Expand right side
+                return new vscode.Selection(
+                    selection.start,
+                    selection.end.translate(0, 1)
+                );
+            } else if (direction === common.Direction.backwards && selection.start.character > 0) {
+                // Expand left side
+                return new vscode.Selection(
+                    selection.start.translate(0, -1),
+                    selection.end
+                );
+            }
+            return selection;
+        });
+    }
+    
 }

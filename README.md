@@ -21,9 +21,9 @@ I would recommend using the original but you are welcome to use this if you wish
     "tab.inactiveBackground": "#000000",
 },
 
-"vimAtHome.customWordRegex1":  "public", // matches full word with connectors and brackets
-"vimAtHome.customWordRegex2":  "return", // matches full word with connectors and brackets
-"vimAtHome.customWordRegex3":  "private", // matches full word with connectors and brackets
+"vimAtHome.customWordRegex1":  "\\S+", // matches full word with connectors and brackets
+"vimAtHome.customWordRegex2":  "^[\\W]{1,}$",
+"vimAtHome.customWordRegex3":  "(return)|(yield)", // matches full word with connectors and brackets
 "vimAtHome.customWordRegex4":  "[\\w\\.\\-_:\\\\\/]+", // matches full word with connectors and brackets
 "vimAtHome.customWordRegex5": "([a-zA-Z][\\w.\\-_?:]*(?:<[^<>]*>)?(?:\\[(?:[^\\[\\]]|\\[[^\\[\\]]*\\])*\\]|\\((?:[^()]|\\([^()]*\\))*\\))*)",
 "vimAtHome.customWordRegex6": "(['\"])(?:(?!\\1).)*\\1",  // Matches both single and double quotes
@@ -569,7 +569,7 @@ I would recommend using the original but you are welcome to use this if you wish
    
     {
         "key": "shift+down",
-        "command": "vimAtHome.collapseToCenter",
+        "command": "vimAtHome.changeToBracketSubject",
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && vimAtHome.mode != 'EXTEND'"
     },
     // {
@@ -1303,6 +1303,7 @@ I would recommend using the original but you are welcome to use this if you wish
             "commands": [
                 "editor.action.setSelectionAnchor",
                 "vimAtHome.changeToCharSubject",
+                "vimAtHome.changeToExtendMode",
                 "vimAtHome.skip",
             ],
         },
@@ -1315,6 +1316,7 @@ I would recommend using the original but you are welcome to use this if you wish
                 "editor.action.setSelectionAnchor",
                 "vimAtHome.changeToInsertModeAppend",
                 "vimAtHome.changeToCharSubject",
+                "vimAtHome.changeToExtendMode",
                 "vimAtHome.skipBackwards",
             ],
         },
@@ -1405,10 +1407,10 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "vimAtHome.pullWord"
     },
  
-    // CustomWord1 (d)
+    // CustomWord4 (d)
     {
         "key": "ctrl+j d",
-        "command": "vimAtHome.changeToCustomWord1",
+        "command": "vimAtHome.changeToCustomWord4",
     },
     {
         "key": "ctrl+shift+j d",
@@ -1416,7 +1418,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-               "vimAtHome.jumpToCustomWord1",
+               "vimAtHome.jumpToCustomWord4",
             ],
         },
     },
@@ -1425,7 +1427,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "vimAtHome.changeToCustomWord1",
+                "vimAtHome.changeToCustomWord4",
                 "vimAtHome.skip",
             ],
         },
@@ -1435,20 +1437,20 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "vimAtHome.changeToCustomWord1",
+                "vimAtHome.changeToCustomWord4",
                 "vimAtHome.skipBackwards",
             ],
         },
     },
     {
         "key": "ctrl+j alt+d",
-        "command": "vimAtHome.pullCustomWord1"
+        "command": "vimAtHome.pullCustomWord4"
     },
  
-    // CustomWord2 (e)
+    // CustomWord5 (e)
     {
         "key": "ctrl+j e",
-        "command": "vimAtHome.changeToCustomWord2",
+        "command": "vimAtHome.changeToCustomWord5",
     },
     {
         "key": "ctrl+shift+j e",
@@ -1456,7 +1458,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-                "vimAtHome.jumpToCustomWord2",
+                "vimAtHome.jumpToCustomWord5",
             ],
         },
     },
@@ -1465,7 +1467,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "vimAtHome.changeToCustomWord2",
+                "vimAtHome.changeToCustomWord5",
                 "vimAtHome.skip",
             ],
         },
@@ -1475,20 +1477,20 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "vimAtHome.changeToCustomWord2",
+                "vimAtHome.changeToCustomWord5",
                 "vimAtHome.skipBackwards",
             ],
         },
     },
     {
         "key": "ctrl+j alt+e",
-        "command": "vimAtHome.pullCustomWord2"
+        "command": "vimAtHome.pullCustomWord5"
     },
  
-    // CustomWord3 (f)
+    // CustomWord6 (f)
     {
         "key": "ctrl+j f",
-        "command": "vimAtHome.changeToCustomWord3",
+        "command": "vimAtHome.changeToCustomWord6",
     },
     {
         "key": "ctrl+shift+j f",
@@ -1496,7 +1498,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "args": {
             "commands": [
                 "editor.action.setSelectionAnchor",
-               "vimAtHome.jumpToCustomWord3",
+               "vimAtHome.jumpToCustomWord6",
             ],
         },
     },
@@ -1505,7 +1507,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "vimAtHome.changeToCustomWord3",
+                "vimAtHome.changeToCustomWord6",
                 "vimAtHome.skip",
             ],
         },
@@ -1515,14 +1517,14 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "vimAtHome.changeToCustomWord3",
+                "vimAtHome.changeToCustomWord6",
                 "vimAtHome.skipBackwards",
             ],
         },
     },
     {
         "key": "ctrl+j alt+f",
-        "command": "vimAtHome.pullCustomWord3"
+        "command": "vimAtHome.pullCustomWord6"
     },
  
     // Bracket (g)
@@ -2450,7 +2452,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "vimAtHome.nextWordBlockUp",
+                "vimAtHome.upN",
                 // "vimAtHome.nextSubjectUp",
             ]
         },
@@ -2461,7 +2463,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "vimAtHome.nextWordBlockDown",
+                "vimAtHome.downN",
                 // "vimAtHome.nextSubjectDown",
             ]
         },
@@ -2490,9 +2492,26 @@ I would recommend using the original but you are welcome to use this if you wish
                 "scrollLineDown",
                 "scrollLineDown",
                 "scrollLineDown",
-                // "vimAtHome.nextIndentDown",
-                // "vimAtHome.changeToLineSubject",
-                // "vimAtHome.nextSubjectRight",
+            ]
+        },
+        "when": "vimAtHome.mode == 'COMMAND'"
+    },
+    {
+        "key": "shift+alt+right",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "vimAtHome.selectOutward"
+            ]
+        },
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
+    },
+    {
+        "key": "shift+alt+left",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "vimAtHome.selectInward"
             ]
         },
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
