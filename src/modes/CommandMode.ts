@@ -108,6 +108,13 @@ export default class CommandMode extends modes.EditorMode {
             });
     }
 
+    async dispose(): Promise<void> {
+        this.decorationType?.dispose();
+        this.decorationTypeTop?.dispose();
+        this.decorationTypeMid?.dispose();
+        this.decorationTypeBottom?.dispose();
+    }
+
     equals(previousMode: modes.EditorMode): boolean {
         return (
             previousMode instanceof CommandMode &&
@@ -131,6 +138,7 @@ export default class CommandMode extends modes.EditorMode {
         newMode: modes.EditorModeChangeRequest
     ): Promise<modes.EditorMode> {
         
+        await this.dispose();
         switch (newMode.kind) {
             case "INSERT":
                 return new InsertMode(this.context, this);

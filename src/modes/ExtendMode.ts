@@ -94,11 +94,19 @@ export default class ExtendMode extends EditorMode {
         });
     }
 
+    async dispose(): Promise<void> {
+        this.decorationType?.dispose();
+        this.decorationTypeTop?.dispose();
+        this.decorationTypeMid?.dispose();
+        this.decorationTypeBottom?.dispose();
+    }
+    
     async fixSelection() {
         await this.wrappedMode.fixSelection();
     }
 
     async changeTo(newMode: EditorModeChangeRequest): Promise<EditorMode> {
+        await this.dispose();
         switch (newMode.kind) {
             case "INSERT":
                 return new InsertMode(this.context, this.wrappedMode);
