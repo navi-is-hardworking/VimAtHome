@@ -67,21 +67,21 @@ export function parseToCache(by: string, content: string) {
             parsed = parseWords(content);
             break;
         case "j": {
-            let regex1 = config.getWordDefinitionByIndex(1);
+            let regex1 = config.getWordDefinitionByIndex(4);
             if (regex1 !== undefined) {
                 parsed = content.split(regex1).map(item => item.trim()).filter(item => item.length > 0);
             }
         }
         break;
         case "k": {
-            let regex2 = config.getWordDefinitionByIndex(2);
+            let regex2 = config.getWordDefinitionByIndex(5);
             if (regex2 !== undefined) {
                 parsed = content.split(regex2).map(item => item.trim()).filter(item => item.length > 0);
             }
         }
             break;
         case "l": {
-            let regex3 = config.getWordDefinitionByIndex(3);
+            let regex3 = config.getWordDefinitionByIndex(6);
             if (regex3 !== undefined) {
                 parsed = content.split(regex3).map(item => item.trim()).filter(item => item.length > 0);
             }

@@ -505,6 +505,13 @@ export const CacheCommands: QuickCommand[] = [
 
 export const SubjectChangeCommands: QuickCommand[] = [
     {
+        quickKey: char("0"),
+        label: "Custom Subject 0",
+        execute: async () => {
+            await vscode.commands.executeCommand("vimAtHome.changeToWordSubject");
+        },
+    },
+    {
         quickKey: char("1"),
         label: "Custom Subject 1",
         execute: async () => {

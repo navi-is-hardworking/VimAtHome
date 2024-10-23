@@ -12,6 +12,8 @@ import JumpInterface from "../handlers/JumpInterface";
 import { SubjectName } from "../subjects/SubjectName";
 import { seq } from "../utils/seq";
 import { setSelectionBackground, getCommandColor, getWordDefinitionIndex } from "../config";
+import { collapseSelections } from "../utils/selectionsAndRanges";
+import { setWordDefinition } from "../config";
 
 export default class CommandMode extends modes.EditorMode {
 
@@ -156,8 +158,7 @@ export default class CommandMode extends modes.EditorMode {
                     return this;
                 }
 
-                if (newMode.subjectName !== this.subject.name) {
-                    
+                if (newMode.subjectName !== this.subject.name && newMode.half == undefined) {
                     if (this.subject.name != 'BRACKETS' && this.subject.name != 'BRACKETS_INCLUSIVE' && newMode.subjectName === 'BRACKETS') {
                         let currentLine = this.context.editor.selection.active.line;
                         let cursorChar = this.context.editor.selection.active.character;
@@ -446,15 +447,28 @@ export default class CommandMode extends modes.EditorMode {
     
             return { kind: "COMMAND", subjectName: "LINE" };
         } else {
-            const currentLine = selection.active.line;
-            const text = document.lineAt(currentLine).text;
-            const start = text.indexOf(text.trim().charAt(0));
-            const comment = text.indexOf('//');
-            const end = Math.min(text.length, comment !== -1 ? comment : text.length);
-            const mid = Math.floor((start + end) / 2);
-            editor.selection = new vscode.Selection(currentLine, mid, currentLine, mid);
+            collapseSelections(editor, "midpoint");
+            switch (this.subject.name) {
+                case "BLOCK":
+                case "LINE":
+                case "BRACKETS":
+                case "BRACKETS_INCLUSIVE":
+                    setWordDefinition(4);
+                    return { kind: "COMMAND", subjectName: "WORD" };
+                case "WORD":
+                    switch (getWordDefinitionIndex()) {
+                        case 4:
+                            setWordDefinition(0);
+                            break;
+                        default:
+                            setWordDefinition(1);
+                    }
             return { kind: "COMMAND", subjectName: "WORD" };
-        }
+                case "SUBWORD":
+                    return { kind: "COMMAND", subjectName: "CHAR" };
+                }
+            }
+            return { kind: "COMMAND", subjectName: "CHAR" };
     }
 
     async collapseToLeft(): Promise<modes.EditorModeChangeRequest> {
@@ -463,7 +477,6 @@ export default class CommandMode extends modes.EditorMode {
         const document = editor.document;
     
         if (selection.start.line !== selection.end.line) {
-            // Multi-line selection
             const topLine = Math.min(selection.start.line, selection.end.line);
             const lineText = document.lineAt(topLine).text;
             const start = lineText.indexOf(lineText.trim().charAt(0));
@@ -471,11 +484,28 @@ export default class CommandMode extends modes.EditorMode {
             editor.selection = new vscode.Selection(topLine, start, topLine, start);
             return { kind: "COMMAND", subjectName: "LINE" };
         } else {
-            // Single-line selection
             const position = selection.start.isBefore(selection.end) ? selection.start : selection.end;
             editor.selection = new vscode.Selection(position, position);
+            switch (this.subject.name) {
+                case "BLOCK":
+                case "LINE":
+                case "BRACKETS":
+                case "BRACKETS_INCLUSIVE":
+                    return { kind: "COMMAND", subjectName: "WORD" };
+                case "WORD":
+                    switch (getWordDefinitionIndex()) {
+                        case 4:
+                            setWordDefinition(0);
+                            break;
+                        default:
+                            setWordDefinition(1);
+                    }
+                    return { kind: "COMMAND", subjectName: "WORD" };
+                case "SUBWORD":
+                    return { kind: "COMMAND", subjectName: "CHAR" };
+                }
+            }
             return { kind: "INSERT" };
-        }
     }
     
     async collapseToRight(): Promise<modes.EditorModeChangeRequest> {
@@ -495,7 +525,25 @@ export default class CommandMode extends modes.EditorMode {
             // Single-line selection
             const position = selection.start.isAfter(selection.end) ? selection.start : selection.end;
             editor.selection = new vscode.Selection(position, position);
-            return { kind: "INSERT" };
+            switch (this.subject.name) {
+                case "BLOCK":
+                case "LINE":
+                case "BRACKETS":
+                case "BRACKETS_INCLUSIVE":
+                    return { kind: "COMMAND", subjectName: "WORD" };
+                case "WORD":
+                    switch (getWordDefinitionIndex()) {
+                        case 4:
+                            setWordDefinition(0);
+                            break;
+                        default:
+                            setWordDefinition(1);
+                    }
+                    return { kind: "COMMAND", subjectName: "WORD" };
+                case "SUBWORD":
+                    return { kind: "COMMAND", subjectName: "CHAR" };
+            }
         }
+            return { kind: "INSERT" };
     }
 }

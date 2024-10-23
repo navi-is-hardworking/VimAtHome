@@ -33,7 +33,6 @@ export default class ExtendMode extends EditorMode {
         previousMode: CommandMode
     ) {
         super();
-        // setSelectionBackground(getExtendColor());
         const extendColor = getExtendColor();
 
         this.wrappedMode = previousMode;

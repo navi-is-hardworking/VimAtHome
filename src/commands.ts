@@ -149,7 +149,6 @@ export const registeredCommands: ExtensionCommand[] = [
             manager.changeMode({
                 kind: "COMMAND",
                 subjectName: "WORD",
-                subjectRegex: 0,
             });
         },
     },
