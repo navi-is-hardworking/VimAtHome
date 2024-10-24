@@ -24,14 +24,14 @@ I would recommend using the original but you are welcome to use this if you wish
 "vimAtHome.customWordRegex1": "[A-Z]*[A-Za-z0-9][a-z0-9]*|[^A-Za-z0-9\\s]+", // subword
 "vimAtHome.customWordRegex2":  "^[\\W]{1,}$", // Whitespace 
 "vimAtHome.customWordRegex3":  "[^\\s(),{};][^,(){};]*", // Arguments
-"vimAtHome.customWordRegex4": "(\\w|!)(->|[\\w\\._\\-:\\\\\/]|<(?=[^>]*>).*?>|\\(\\)|\\[(?=[^\\]]*\\]).*?\\]|)*", // bigword
-"vimAtHome.customWordRegex5": "([a-zA-Z][\\w.\\-_>?:]*(?:<[^<>]*>)?(?:\\[(?:[^\\[\\]]|\\[[^\\[\\]]*\\])*\\]|\\((?:[^()]|\\([^()]*\\))*\\))*)", // Bigger word
-"vimAtHome.customWordRegex6": "(['\"])(?:(?!\\1).)*\\1", // Quotes
+"vimAtHome.customWordRegex4": "(!?\\w)(->|[\\w\\._\\-:\\\\\/]|<(?=[^>]*>).*?>|\\(\\)|\\[(?=[^\\]]*\\]).*?\\]|)*", // bigword
+"vimAtHome.customWordRegex5": "([a-zA-Z][\\w.\\-_>?:]*(?:<[^<>]*>)?(?:\\[(?:[^\\[\\]]|\\[[^\\[\\]]*\\])*\\]|\\((?:[^()]|\\([^()]*\\))*\\))*)",
+"vimAtHome.customWordRegex6": "(['\"])(?:(?!\\1).)*\\1",
 
 "vimAtHome.color.customWord1": "3381ff",
 "vimAtHome.color.customWord2": "ffff00",
 "vimAtHome.color.customWord3": "cf9700",
-"vimAtHome.color.customWord4": "3381ff",
+"vimAtHome.color.customWord4": "f40000",
 "vimAtHome.color.customWord5": "ffff00",
 "vimAtHome.color.customWord6": "cf9700",
 
