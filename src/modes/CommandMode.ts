@@ -162,26 +162,47 @@ export default class CommandMode extends modes.EditorMode {
                     if (this.subject.name != 'BRACKETS' && this.subject.name != 'BRACKETS_INCLUSIVE' && newMode.subjectName === 'BRACKETS') {
                         let currentLine = this.context.editor.selection.active.line;
                         let cursorChar = this.context.editor.selection.active.character;
-
+                
                         let lineText = this.context.editor.document.lineAt(currentLine).text;
+                        let leftSquare = lineText.indexOf('[');  
+                        let rightSquare = lineText.indexOf(']');  
                         let leftCurly = lineText.indexOf('{');  
                         let rightCurly = lineText.indexOf('}');  
                         let leftParen = lineText.indexOf('('); 
                         let rightParen = lineText.indexOf(')'); 
-
-                        // or if there is only a  curly or paren, but that one is behind a right curly or paren
-                        if ((leftCurly != -1 && leftCurly <= cursorChar) || (leftParen != -1 && leftParen <= cursorChar) ||
+                
+                        if ((leftSquare != -1 && leftSquare <= cursorChar) ||
+                            (leftCurly != -1 && leftCurly <= cursorChar) || 
+                            (leftParen != -1 && leftParen <= cursorChar) ||
+                            (leftSquare == -1 && rightSquare != -1 && leftCurly != -1 && rightCurly == -1) ||
+                            (leftSquare == -1 && rightSquare != -1 && leftParen != -1 && rightParen == -1) ||
                             (leftCurly == -1 && rightCurly != -1 && leftParen != -1 && rightParen == -1) ||
                             (leftParen == -1 && rightParen != -1 && leftCurly != -1 && rightCurly == -1)
                         ) {
                             
                         }
-                        else if ((leftCurly != -1) && leftParen != -1) {
-                            if ((rightCurly != leftCurly + 1) && leftCurly < leftParen) {
+                        else if ((leftSquare != -1) && (leftCurly != -1) && leftParen != -1) {
+                            if ((rightSquare != leftSquare + 1) && leftSquare < leftCurly && leftSquare < leftParen) {
+                                this.context.editor.selection = new vscode.Selection(currentLine, leftSquare, currentLine, leftSquare);
+                            } else if ((rightCurly != leftCurly + 1) && leftCurly < leftParen) {
                                 this.context.editor.selection = new vscode.Selection(currentLine, leftCurly, currentLine, leftCurly);
                             } else {
                                 this.context.editor.selection = new vscode.Selection(currentLine, leftParen, currentLine, leftParen);
                             }
+                        } else if ((leftSquare != -1) && leftCurly != -1) {
+                            if ((rightSquare != leftSquare + 1) && leftSquare < leftCurly) {
+                                this.context.editor.selection = new vscode.Selection(currentLine, leftSquare, currentLine, leftSquare);
+                            } else {
+                                this.context.editor.selection = new vscode.Selection(currentLine, leftCurly, currentLine, leftCurly);
+                            }
+                        } else if ((leftSquare != -1) && leftParen != -1) {
+                            if ((rightSquare != leftSquare + 1) && leftSquare < leftParen) {
+                                this.context.editor.selection = new vscode.Selection(currentLine, leftSquare, currentLine, leftSquare);
+                            } else {
+                                this.context.editor.selection = new vscode.Selection(currentLine, leftParen, currentLine, leftParen);
+                            }
+                        } else if (leftSquare != -1) {
+                            this.context.editor.selection = new vscode.Selection(currentLine, leftSquare, currentLine, leftSquare);
                         } else if (leftCurly != -1) {
                             this.context.editor.selection = new vscode.Selection(currentLine, leftCurly, currentLine, leftCurly);
                         } else if (leftParen != -1) {
