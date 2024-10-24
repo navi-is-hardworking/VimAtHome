@@ -11,6 +11,9 @@ import { SubjectName } from "./subjects/SubjectName";
 import * as modifications from "./utils/modifications";
 import { splitRange } from "./utils/decorations";
 import * as lineUtils from "./utils/lines";
+import { getWordDefinition } from "./config";
+import WordIO from "./io/WordIO";
+import { Direction } from "./common";
 
 let outputChannel = vscode.window.createOutputChannel("ManagerOutput");
 
@@ -316,7 +319,6 @@ export default class VimAtHomeManager {
 
         await vscode.commands.executeCommand('runCommands', { commands: zoomOutCommands });
 
-        // Add a small delay to ensure the editor has updated
         await new Promise(resolve => setTimeout(resolve, 100));
 
         const jumpPosition = await this.mode.zoomJump();
@@ -335,7 +337,6 @@ export default class VimAtHomeManager {
 
         if (jumpPosition) {
             this.editor.selection = new vscode.Selection(jumpPosition, jumpPosition);
-            // await this.scrollToCursorAtCenter();
         }
     }
 
@@ -355,14 +356,13 @@ export default class VimAtHomeManager {
         await editor.edit(editBuilder => {
             for (const selection of originalSelections) {
                 const lineToDelete = Math.max(selection.start.line - 1, 0);
-                if (lineToDelete < selection.start.line) {  // Ensure we're not at the top
+                if (lineToDelete < selection.start.line) {
                     const rangeToDelete = document.lineAt(lineToDelete).rangeIncludingLineBreak;
                     editBuilder.delete(rangeToDelete);
                 }
             }
         });
 
-        // Adjust and reapply selections
         editor.selections = originalSelections.map(selection => {
             const newStart = new vscode.Position(
                 Math.max(selection.start.line - 1, 0),
@@ -383,7 +383,7 @@ export default class VimAtHomeManager {
         await editor.edit(editBuilder => {
             for (const selection of editor.selections) {
                 const lineToDelete = Math.min(selection.end.line + 1, document.lineCount - 1);
-                if (lineToDelete > selection.end.line) {  // Ensure we're not at the bottom
+                if (lineToDelete > selection.end.line) {
                     const rangeToDelete = document.lineAt(lineToDelete).rangeIncludingLineBreak;
                     editBuilder.delete(rangeToDelete);
                 }
@@ -566,13 +566,11 @@ export default class VimAtHomeManager {
             const line = editor.document.lineAt(selection.start.line).text;
             
             if (direction === common.Direction.forwards && selection.end.character < line.length) {
-                // Expand right side
                 return new vscode.Selection(
                     selection.start,
                     selection.end.translate(0, 1)
                 );
             } else if (direction === common.Direction.backwards && selection.start.character > 0) {
-                // Expand left side
                 return new vscode.Selection(
                     selection.start.translate(0, -1),
                     selection.end
@@ -581,5 +579,68 @@ export default class VimAtHomeManager {
             return selection;
         });
     }
+
+    async deleteRight(): Promise<void> {
+        const wordIO = new WordIO();
+        const { editor } = this;
     
+        await editor.edit(editBuilder => {
+            for (const selection of editor.selections) {
+                const currentWord = editor.document.getWordRangeAtPosition(selection.active, getWordDefinition());
+                if (!currentWord) continue;
+    
+                const currentLine = editor.document.lineAt(currentWord.end.line);
+                const lineEndPos = currentLine.range.end;
+                
+                const ranges = wordIO.iterAll(editor.document, {
+                    startingPosition: currentWord,
+                    direction: Direction.forwards,
+                    currentInclusive: false,
+                    bounds: currentLine.range
+                }).toArray();
+    
+                const lastRange = ranges[0];
+                if (lastRange) {
+                    const deleteEnd = Math.min(lastRange.end.character, lineEndPos.character);
+                    editBuilder.delete(new vscode.Range(
+                        currentWord.end,
+                        new vscode.Position(currentWord.end.line, deleteEnd)
+                    ));
+                } else if (currentWord.end.character < lineEndPos.character) {
+                    editBuilder.delete(new vscode.Range(currentWord.end, lineEndPos));
+                }
+            }
+        });
+    }
+    
+    async deleteLeft(): Promise<void> {
+        const wordIO = new WordIO();
+        const { editor } = this;
+    
+        await editor.edit(editBuilder => {
+            for (const selection of editor.selections) {
+                const currentWord = editor.document.getWordRangeAtPosition(selection.active, getWordDefinition());
+                if (!currentWord) continue;
+    
+                const currentLine = editor.document.lineAt(currentWord.start.line);
+                
+                const ranges = wordIO.iterAll(editor.document, {
+                    startingPosition: currentWord,
+                    direction: Direction.backwards,
+                    currentInclusive: false,
+                    bounds: currentLine.range
+                }).toArray();
+    
+                const lastRange = ranges[0];
+                if (lastRange) {
+                    editBuilder.delete(new vscode.Range(lastRange.start, currentWord.start));
+                } else if (currentWord.start.character > 0) {
+                    editBuilder.delete(new vscode.Range(currentLine.range.start, currentWord.start));
+                }
+            }
+        });
+    }
+
+            
 }
+

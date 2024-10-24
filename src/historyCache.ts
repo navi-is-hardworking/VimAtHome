@@ -51,56 +51,91 @@ class FixedCache {
 const fixedSize = 40;
 let parsedCache = new FixedCache(fixedSize);
 
-export function addToCache(content: string): void {
-    // outputChannel.appendLine("Adding to cache: " + content);
-    parsedCache.push(content);
+function safeRegexMatch(text: string, regex: RegExp | undefined, patternName: string): string[] {
+    if (!regex) {
+        outputChannel.appendLine(`No regex pattern found for ${patternName}`);
+        return [];
+    }
+
+    try {
+        const globalRegex = new RegExp(regex.source, 'g');
+        outputChannel.appendLine(`Using regex pattern for ${patternName}: ${globalRegex.source}`);
+        
+        let matches: string[] = [];
+        let match;
+        
+        while ((match = globalRegex.exec(text)) !== null) {
+            if (match[0] && match[0].trim()) {
+                matches.push(match[0].trim());
+            }
+            
+            if (match.index === globalRegex.lastIndex) {
+                globalRegex.lastIndex++;
+            }
+        }
+        
+        outputChannel.appendLine(`Found ${matches.length} matches for ${patternName}`);
+        return matches;
+    } catch (error) {
+        outputChannel.appendLine(`Error with ${patternName} regex: ${error}`);
+        return [];
+    }
 }
 
 export function parseToCache(by: string, content: string) {
     let parsed: string[] = [];
 
-    switch (by) {
-        case "i":
-            parsed = parseSubwords(content);
-            break;
-        case "o":
-            parsed = parseWords(content);
-            break;
-        case "j": {
-            let regex1 = config.getWordDefinitionByIndex(4);
-            if (regex1 !== undefined) {
-                parsed = content.split(regex1).map(item => item.trim()).filter(item => item.length > 0);
+    try {
+        switch (by) {
+            case "i":
+                parsed = parseSubwords(content);
+                break;
+            case "o":
+                parsed = parseWords(content);
+                break;
+            case "j": {
+                const regex = config.getWordDefinitionByIndex(4);
+                outputChannel.appendLine("Attempting pattern 4 (bigword)");
+                parsed = safeRegexMatch(content, regex, "bigword");
             }
-        }
-        break;
-        case "k": {
-            let regex2 = config.getWordDefinitionByIndex(5);
-            if (regex2 !== undefined) {
-                parsed = content.split(regex2).map(item => item.trim()).filter(item => item.length > 0);
+            break;
+            case "k": {
+                const regex = config.getWordDefinitionByIndex(5);
+                outputChannel.appendLine("Attempting pattern 5 (identifier)");
+                parsed = safeRegexMatch(content, regex, "identifier");
             }
-        }
             break;
-        case "l": {
-            let regex3 = config.getWordDefinitionByIndex(6);
-            if (regex3 !== undefined) {
-                parsed = content.split(regex3).map(item => item.trim()).filter(item => item.length > 0);
+            case "l": {
+                const regex = config.getWordDefinitionByIndex(6);
+                outputChannel.appendLine("Attempting pattern 6 (quoted)");
+                parsed = safeRegexMatch(content, regex, "quoted");
             }
+            break;
+            case "m":
+                parsed = parseBrackets(content);
+                break;
+            case ",":
+                parsed = content.split("\n").map(item => item.trim()).filter(item => item.length > 0);
+                break;
+            case "u":
+                parsedCache.clear();
+                return;
+            default:
+                parsed = content.split(by).map(item => item.trim()).filter(item => item.length > 0);
         }
-            break;
-        case "m":
-            parsed = parseBrackets(content);
-            break;
-        case ",":
-            parsed = content.split("\n").map(item => item.trim()).filter(item => item.length > 0);
-            break;
-        case "u":
-            parsedCache.clear();
-            return;
-        default:
-            parsed = content.split(by).map(item => item.trim()).filter(item => item.length > 0);
-    }
 
-    parsed.forEach(item => parsedCache.push(item));
+        parsed.forEach(item => {
+            if (item && item.trim()) {
+                parsedCache.push(item);
+            }
+        });
+    } catch (error) {
+        outputChannel.appendLine(`Error in parseToCache: ${error}`);
+    }
+}
+
+export function addToCache(content: string): void {
+    parsedCache.push(content);
 }
 
 export function getParsedData(): string[] {
@@ -109,10 +144,6 @@ export function getParsedData(): string[] {
 
 function parseWords(text: string): string[] {
     return text.match(/\w+/g) || [];
-}
-
-function parseWORDS(text: string): string[] {
-    return text.match(/\S+/g) || [];
 }
 
 function parseSubwords(text: string): string[] {

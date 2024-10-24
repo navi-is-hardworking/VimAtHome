@@ -884,6 +884,19 @@ export const registeredCommands: ExtensionCommand[] = [
             await manager.edgeOut(Direction.backwards);
         },
     },
+
+    {
+        id: "vimAtHome.deleteLeft",
+        execute: async (manager) => {
+            await manager.deleteLeft();
+        },
+    },
+    {
+        id: "vimAtHome.deleteRight", 
+        execute: async (manager) => {
+            await manager.deleteRight();
+        },
+    },
     
 ];
 

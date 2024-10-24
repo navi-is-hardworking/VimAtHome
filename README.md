@@ -40,6 +40,7 @@ I would recommend using the original but you are welcome to use this if you wish
 
 
 
+
 [
     {
         "key": "f16",
@@ -2932,8 +2933,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "vimAtHome.changeToHalfLineSubjectLeft",
-                "deleteRight",
+                "vimAtHome.deleteLeft"
             ]
         },
         "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND')"
@@ -2943,14 +2943,13 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "vimAtHome.changeToHalfLineSubjectRight",
-                "deleteRight",
+                "vimAtHome.deleteRight"
             ]
         },
         "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND')"
     }
-]
 
+]
  
 /*
  
