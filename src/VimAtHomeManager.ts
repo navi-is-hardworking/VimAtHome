@@ -15,8 +15,6 @@ import { getWordDefinition } from "./config";
 import WordIO from "./io/WordIO";
 import { Direction } from "./common";
 
-let outputChannel = vscode.window.createOutputChannel("ManagerOutput");
-
 
 export default class VimAtHomeManager {
     private mode: EditorMode;
@@ -269,7 +267,6 @@ export default class VimAtHomeManager {
     }
 
     async jumpToSubject(subjectName: SubjectName) {
-        // outputChannel.appendLine(`Jumping to subject: ${subjectName}, current subject: ${this.mode.getSubjectName()}`); 
 
         if (this.mode.getSubjectName() === subjectName) {
             await this.mode.jump();
