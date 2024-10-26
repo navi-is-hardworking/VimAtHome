@@ -11,9 +11,9 @@ import { SubjectAction } from "../subjects/SubjectActions";
 import JumpInterface from "../handlers/JumpInterface";
 import { SubjectName } from "../subjects/SubjectName";
 import { seq } from "../utils/seq";
-import { setSelectionBackground, getCommandColor, getWordDefinitionIndex } from "../config";
+import { setWordDefinition, getWordDefinition, getCommandColor, getWordDefinitionIndex, setCharDefinition, getWordDefinitionByIndex } from "../config";
 import { collapseSelections } from "../utils/selectionsAndRanges";
-import { setWordDefinition, getWordDefinition, getWordDefinitionByIndex } from "../config";
+// import { setWordDefinition, getWordDefinition, getWordDefinitionByIndex } from "../config";
 let outputchannel = vscode.window.createOutputChannel("VimAtHome");
 
 export default class CommandMode extends modes.EditorMode {
@@ -479,9 +479,25 @@ export default class CommandMode extends modes.EditorMode {
                         }
                     }
                     
-                    return { kind: "COMMAND", subjectName: "CHAR" };
+                    setCharDefinition();
+                    return { kind: "COMMAND", subjectName: "WORD" };
+                } else if (getWordDefinitionIndex() === 0) {
+                    const selText = document.getText(selection);
+                    const regex0 = getWordDefinitionByIndex(1);
+                    if (regex0) {
+                        regex0.lastIndex = 0;
+                        const match0 = regex0.exec(selText);
+                        const exactMatch0 = match0 && match0.index === 0 && match0[0].length === selText.length;
+                        if (!exactMatch0) {
+                            setWordDefinition(1);
+                            return { kind: "COMMAND", subjectName: "WORD" };
+                        }
+                    }
+
+                    setCharDefinition();
+                    return { kind: "COMMAND", subjectName: "WORD" };
                 } else {
-                    setWordDefinition(1);
+                    setCharDefinition();
                     return { kind: "COMMAND", subjectName: "WORD" };
                 }
             }
@@ -489,6 +505,20 @@ export default class CommandMode extends modes.EditorMode {
                 return { kind: "COMMAND", subjectName: "CHAR" };
         }
         return { kind: "COMMAND", subjectName: "CHAR" };
+    }
+    
+    splitByRegex(regex: RegExp, text: string, selection: vscode.Selection): Array<[vscode.Position, vscode.Position]> {
+        const pattern = regex instanceof RegExp ? regex.source : regex;
+        const currentRegex = new RegExp(pattern, "g");
+        const matches: Array<[vscode.Position, vscode.Position]> = [];
+        let match;
+        while (match = currentRegex.exec(text)) {
+            matches.push([
+                new vscode.Position(selection.start.line, selection.start.character + match.index),
+                new vscode.Position(selection.start.line, selection.start.character + match.index + match[0].length)
+            ]);
+        }
+        return matches;
     }
     
     async collapseToCenter(): Promise<modes.EditorModeChangeRequest> {
@@ -513,22 +543,13 @@ export default class CommandMode extends modes.EditorMode {
         const ret = this.handleWordMode(document, selection);
         const wordDefinition = getWordDefinition();
         if (!wordDefinition) return ret;
-        const pattern = wordDefinition instanceof RegExp ? wordDefinition.source : wordDefinition;
-        const currentRegex = new RegExp(pattern, "g");
-        const matches: Array<[vscode.Position, vscode.Position]> = [];
-        let match;
-        while (match = currentRegex.exec(text)) {
-            matches.push([
-                new vscode.Position(selection.start.line, selection.start.character + match.index),
-                new vscode.Position(selection.start.line, selection.start.character + match.index + match[0].length)
-            ]);
-        }
+        let matches = this.splitByRegex(wordDefinition, text, selection);
         if (matches.length) {
             const midIndex = Math.floor(matches.length / 2);
             const [start, end] = matches[midIndex];
             editor.selection = new vscode.Selection(
-                new vscode.Position(start.line, Math.floor((start.character + end.character) / 2)),
-                new vscode.Position(start.line, Math.floor((start.character + end.character) / 2))
+                new vscode.Position(start.line, Math.floor((start.character + end.character + 1) / 2)),
+                new vscode.Position(start.line, Math.floor((start.character + end.character + 1) / 2))
             );
         }
         return ret;
@@ -553,23 +574,15 @@ export default class CommandMode extends modes.EditorMode {
         const ret = this.handleWordMode(document, selection);
         const wordDefinition = getWordDefinition();
         if (!wordDefinition) return ret;
-        const pattern = wordDefinition instanceof RegExp ? wordDefinition.source : wordDefinition;
-        const currentRegex = new RegExp(pattern, "g");
-        const matches: Array<[vscode.Position, vscode.Position]> = [];
-        let match;
-        while (match = currentRegex.exec(text)) {
-            matches.push([
-                new vscode.Position(selection.start.line, selection.start.character + match.index),
-                new vscode.Position(selection.start.line, selection.start.character + match.index + match[0].length)
-            ]);
-        }
+        let matches = this.splitByRegex(wordDefinition, text, selection);
         if (matches.length) {
             const [start, end] = matches[0];  // Take first match instead of last
             editor.selection = new vscode.Selection(
-                new vscode.Position(start.line, Math.floor((start.character + end.character) / 2)),
-                new vscode.Position(start.line, Math.floor((start.character + end.character) / 2))
+                new vscode.Position(start.line, Math.floor((start.character + end.character + 1) / 2)),
+                new vscode.Position(start.line, Math.floor((start.character + end.character + 1) / 2))
             );
         }
+        
         return ret;
     }
     
@@ -591,27 +604,16 @@ export default class CommandMode extends modes.EditorMode {
         const wordDefinition = getWordDefinition();
         outputchannel.appendLine("wordDefinition is: " + wordDefinition);
         if (!wordDefinition) return ret;
-        const pattern = wordDefinition instanceof RegExp ? wordDefinition.source : wordDefinition;
-        const currentRegex = new RegExp(pattern, "g");
-        const matches: Array<[vscode.Position, vscode.Position]> = [];
-        let match;
-        while (match = currentRegex.exec(text)) {
-            matches.push([
-                new vscode.Position(selection.start.line, selection.start.character + match.index),
-                new vscode.Position(selection.start.line, selection.start.character + match.index + match[0].length)
-            ]);
-        }
+        let matches = this.splitByRegex(wordDefinition, text, selection);
         if (matches.length) {
             const [start, end] = matches[matches.length - 1];
             editor.selection = new vscode.Selection(
-                new vscode.Position(start.line, Math.floor((start.character + end.character) / 2)),
-                new vscode.Position(start.line, Math.floor((start.character + end.character) / 2))
+                new vscode.Position(start.line, Math.floor((start.character + end.character + 1) / 2)),
+                new vscode.Position(start.line, Math.floor((start.character + end.character + 1) / 2))
             );
         }
         return ret;
     }
-
-
 }
     
 

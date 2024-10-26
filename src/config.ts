@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { SubjectName } from "./subjects/SubjectName";
 import { char } from "./utils/quickMenus";
+import { join } from "path";
 
 export type ColorConfig = {
     char: string;
@@ -75,6 +76,7 @@ export function loadConfig(): Config {
 }
 export function getWordColor(): string { 
     switch (currentWordDefinition) {
+        case -1: return colorConfig.char;
         case 0: return colorConfig.word;
         case 1: return colorConfig.customWord1;
         case 2: return colorConfig.customWord2;
@@ -101,6 +103,7 @@ export function getWordDefinitionIndex(): number { return currentWordDefinition;
 export function getWordDefinition(includeLineEnds=true): RegExp | undefined { 
     if (!includeLineEnds && currentWordDefinition === 0)
         return undefined;
+    if (currentWordDefinition === -1) return /.{1}/;
     return wordDefinitions[currentWordDefinition]; 
 }
 export function nextWordDefinition(): void {
@@ -110,11 +113,20 @@ export function prevWordDefinition(): void {
     currentWordDefinition -= 1;
     if (currentWordDefinition < 0) currentWordDefinition = wordDefinitions.length - 1;
 }
+
+export function setCharDefinition(): void {
+    currentWordDefinition = -1;
+}
+
 export function setWordDefinition(selection: number): void {
     if (selection >= 0 && selection < wordDefinitions.length)
         currentWordDefinition = selection;
 }
 export function getWordDefinitionByIndex(index: number): RegExp | undefined {
+    if (index == -1) {
+        return /.{1}/;
+    }
+    
     if (index >= 0 && index < wordDefinitions.length) {
         return wordDefinitions[index];
     }
