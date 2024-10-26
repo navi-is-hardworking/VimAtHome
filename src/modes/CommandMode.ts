@@ -14,6 +14,7 @@ import { seq } from "../utils/seq";
 import { setSelectionBackground, getCommandColor, getWordDefinitionIndex } from "../config";
 import { collapseSelections } from "../utils/selectionsAndRanges";
 import { setWordDefinition, getWordDefinition, getWordDefinitionByIndex } from "../config";
+let outputchannel = vscode.window.createOutputChannel("VimAtHome");
 
 export default class CommandMode extends modes.EditorMode {
 
@@ -178,9 +179,7 @@ export default class CommandMode extends modes.EditorMode {
                             (leftSquare == -1 && rightSquare != -1 && leftParen != -1 && rightParen == -1) ||
                             (leftCurly == -1 && rightCurly != -1 && leftParen != -1 && rightParen == -1) ||
                             (leftParen == -1 && rightParen != -1 && leftCurly != -1 && rightCurly == -1)
-                        ) {
-                            
-                        }
+                        ) {}
                         else if ((leftSquare != -1) && (leftCurly != -1) && leftParen != -1) {
                             if ((rightSquare != leftSquare + 1) && leftSquare < leftCurly && leftSquare < leftParen) {
                                 this.context.editor.selection = new vscode.Selection(currentLine, leftSquare, currentLine, leftSquare);
@@ -445,7 +444,7 @@ export default class CommandMode extends modes.EditorMode {
     
         return jumpPosition;
     }
-
+    
     private handleWordMode(document: vscode.TextDocument, selection: vscode.Selection): modes.EditorModeChangeRequest {
         switch (this.subject.name) {
             case "BLOCK":
@@ -496,63 +495,123 @@ export default class CommandMode extends modes.EditorMode {
         const editor = this.context.editor;
         const selection = editor.selection;
         const document = editor.document;
-    
+        const text = document.getText(selection);
         if (selection.start.line !== selection.end.line) {
             const startLine = Math.min(selection.start.line, selection.end.line);
             const endLine = Math.max(selection.start.line, selection.end.line);
             const middleLine = Math.floor((startLine + endLine) / 2);
-    
             const lineText = document.lineAt(middleLine).text;
-            const start = lineText.indexOf(lineText.trim().charAt(0));
+            const start = lineText.indexOf(lineText.trim()[0]);
             const comment = lineText.indexOf('//');
             const end = Math.min(lineText.length, comment !== -1 ? comment : lineText.length);
             const mid = Math.floor((start + end) / 2);
-    
             editor.selection = new vscode.Selection(middleLine, mid, middleLine, mid);
-    
             return { kind: "COMMAND", subjectName: "LINE" };
-        } else {
-            collapseSelections(editor, "midpoint");
-            return this.handleWordMode(document, selection);
         }
+        collapseSelections(editor, "midpoint");
+        outputchannel.appendLine("new selection after collapseToCenter: " + editor.selection.start.line + ", " + editor.selection.start.character);
+        const ret = this.handleWordMode(document, selection);
+        const wordDefinition = getWordDefinition();
+        if (!wordDefinition) return ret;
+        const pattern = wordDefinition instanceof RegExp ? wordDefinition.source : wordDefinition;
+        const currentRegex = new RegExp(pattern, "g");
+        const matches: Array<[vscode.Position, vscode.Position]> = [];
+        let match;
+        while (match = currentRegex.exec(text)) {
+            matches.push([
+                new vscode.Position(selection.start.line, selection.start.character + match.index),
+                new vscode.Position(selection.start.line, selection.start.character + match.index + match[0].length)
+            ]);
+        }
+        if (matches.length) {
+            const midIndex = Math.floor(matches.length / 2);
+            const [start, end] = matches[midIndex];
+            editor.selection = new vscode.Selection(
+                new vscode.Position(start.line, Math.floor((start.character + end.character) / 2)),
+                new vscode.Position(start.line, Math.floor((start.character + end.character) / 2))
+            );
+        }
+        return ret;
     }
     
     async collapseToLeft(): Promise<modes.EditorModeChangeRequest> {
         const editor = this.context.editor;
         const selection = editor.selection;
         const document = editor.document;
-    
+        const text = document.getText(selection);
         if (selection.start.line !== selection.end.line) {
             const topLine = Math.min(selection.start.line, selection.end.line);
             const lineText = document.lineAt(topLine).text;
-            const start = lineText.indexOf(lineText.trim().charAt(0));
-    
+            const start = lineText.indexOf(lineText.trim()[0]);
+
             editor.selection = new vscode.Selection(topLine, start, topLine, start);
             return { kind: "COMMAND", subjectName: "LINE" };
-        } else {
-            const position = selection.start.isBefore(selection.end) ? selection.start : selection.end;
-            editor.selection = new vscode.Selection(position, position);
-            return this.handleWordMode(document, selection);
         }
+        const position = selection.start.isBefore(selection.end) ? selection.start : selection.end;
+        editor.selection = new vscode.Selection(position, position);
+        outputchannel.appendLine("new selection after collapseToLeft: " + editor.selection.start.line + ", " + editor.selection.start.character);
+        const ret = this.handleWordMode(document, selection);
+        const wordDefinition = getWordDefinition();
+        if (!wordDefinition) return ret;
+        const pattern = wordDefinition instanceof RegExp ? wordDefinition.source : wordDefinition;
+        const currentRegex = new RegExp(pattern, "g");
+        const matches: Array<[vscode.Position, vscode.Position]> = [];
+        let match;
+        while (match = currentRegex.exec(text)) {
+            matches.push([
+                new vscode.Position(selection.start.line, selection.start.character + match.index),
+                new vscode.Position(selection.start.line, selection.start.character + match.index + match[0].length)
+            ]);
+        }
+        if (matches.length) {
+            const [start, end] = matches[0];  // Take first match instead of last
+            editor.selection = new vscode.Selection(
+                new vscode.Position(start.line, Math.floor((start.character + end.character) / 2)),
+                new vscode.Position(start.line, Math.floor((start.character + end.character) / 2))
+            );
+        }
+        return ret;
     }
     
     async collapseToRight(): Promise<modes.EditorModeChangeRequest> {
         const editor = this.context.editor;
-        const selection = editor.selection;
         const document = editor.document;
-    
+        const selection = editor.selection;
+        const text = document.getText(selection);
         if (selection.start.line !== selection.end.line) {
             const bottomLine = Math.max(selection.start.line, selection.end.line);
-            const lineText = document.lineAt(bottomLine).text;
-            const start = lineText.indexOf(lineText.trim().charAt(0));
-    
+            const start = document.lineAt(bottomLine).text.indexOf(document.lineAt(bottomLine).text.trim()[0]);
             editor.selection = new vscode.Selection(bottomLine, start, bottomLine, start);
             return { kind: "COMMAND", subjectName: "LINE" };
-        } else {
-            const position = selection.start.isAfter(selection.end) ? selection.start : selection.end;
-            editor.selection = new vscode.Selection(position, position);
-            return this.handleWordMode(document, selection);
         }
+        const position = selection.start.isAfter(selection.end) ? selection.start : selection.end;
+        outputchannel.appendLine("new selection points after collapseToRight: " + editor.selection.start.line + ", " + editor.selection.start.character); 
+        editor.selection = new vscode.Selection(position, position);
+        const ret = this.handleWordMode(document, selection);
+        const wordDefinition = getWordDefinition();
+        outputchannel.appendLine("wordDefinition is: " + wordDefinition);
+        if (!wordDefinition) return ret;
+        const pattern = wordDefinition instanceof RegExp ? wordDefinition.source : wordDefinition;
+        const currentRegex = new RegExp(pattern, "g");
+        const matches: Array<[vscode.Position, vscode.Position]> = [];
+        let match;
+        while (match = currentRegex.exec(text)) {
+            matches.push([
+                new vscode.Position(selection.start.line, selection.start.character + match.index),
+                new vscode.Position(selection.start.line, selection.start.character + match.index + match[0].length)
+            ]);
+        }
+        if (matches.length) {
+            const [start, end] = matches[matches.length - 1];
+            editor.selection = new vscode.Selection(
+                new vscode.Position(start.line, Math.floor((start.character + end.character) / 2)),
+                new vscode.Position(start.line, Math.floor((start.character + end.character) / 2))
+            );
+        }
+        return ret;
     }
-    
+
+
 }
+    
+

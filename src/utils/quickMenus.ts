@@ -211,6 +211,7 @@ export const GoToCommands: QuickCommand[] = [
         quickKey: char("l"),
         label: "Go to next problem",
         execute: async () => {
+            await vscode.commands.executeCommand("vimAtHome.changeToInsertMode");
             await vscode.commands.executeCommand("editor.action.marker.nextInFiles");
         },
     },
@@ -218,6 +219,7 @@ export const GoToCommands: QuickCommand[] = [
         quickKey: char("j"),
         label: "Go to prev problem",
         execute: async () => {
+            await vscode.commands.executeCommand("vimAtHome.changeToInsertMode");
             await vscode.commands.executeCommand("editor.action.marker.prevInFiles");
         },
     },
