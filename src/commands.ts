@@ -897,6 +897,24 @@ export const registeredCommands: ExtensionCommand[] = [
             await manager.deleteRight();
         },
     },
+    {
+        id: "vimAtHome.downIndentDown", 
+        execute: async (manager) => {
+            await manager.downIndent("forwards");
+        },
+    },
+    {
+        id: "vimAtHome.downIndentUp", 
+        execute: async (manager) => {
+            await manager.downIndent("backwards");
+        },
+    },
+    // {
+    //     id: "vimAtHome.reverseFold", 
+    //     execute: async (manager) => {
+    //         await manager.reverseFold();
+    //     },
+    // },
     
 ];
 

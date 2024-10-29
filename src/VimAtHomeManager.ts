@@ -477,12 +477,16 @@ export default class VimAtHomeManager {
         const increment = direction === common.Direction.forwards ? 1 : -1;
         let n = 0;
 
+        const editor = vscode.window.activeTextEditor;
+            if (!editor) return;
+            
         while (currentLine >= 0 && currentLine < lineCount && n < 4) {
             currentLine += increment;
             if (currentLine <= 0 || currentLine >= lineCount) break;
             const line = document.lineAt(currentLine);
             
-            if (lineUtils.lineIsSignificant(line)) {
+            if (lineUtils.lineIsSignificant(line) && editor.visibleRanges.some(line => 
+                line.contains(new vscode.Position(currentLine, 0)))) {
                 n += 1;
             } 
 
@@ -638,6 +642,39 @@ export default class VimAtHomeManager {
         });
     }
 
+    async downIndent(direction: common.Direction) {
+        const document = this.editor.document;
+        const currentPosition = this.editor.selection.active;
+        const currentLine = document.lineAt(currentPosition.line);
+        const currentIndentation = currentLine.firstNonWhitespaceCharacterIndex;
+
+        let targetLine: vscode.TextLine | undefined;
+        let lineIterator = lineUtils.iterLines(document, {
+            startingPosition: currentPosition,
+            direction: direction,
+            currentInclusive: false,
+        });
+
+        for (const line of lineIterator) {
+            if (line.text.trim().length >= 1 && line.firstNonWhitespaceCharacterIndex < currentIndentation) {
+                targetLine = line;
+                break;
+            }
+        }
+
+        if (!targetLine) return;
+
+        const targetIndentation = targetLine.firstNonWhitespaceCharacterIndex;
+
+        let lastSignificantLine = targetLine;
+        for (const line of lineIterator) {
+            if (!lineUtils.lineIsSignificant(line)) continue;
+            if (line.firstNonWhitespaceCharacterIndex !== targetIndentation) break;
+            lastSignificantLine = line;
+        }
+
+        await this.updateEditorPosition(lastSignificantLine.lineNumber);
+    }
             
 }
 

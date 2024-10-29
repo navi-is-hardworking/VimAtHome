@@ -4,6 +4,11 @@ import Seq from "../utils/seq";
 import * as vscode from "vscode";
 import * as ranges from "../utils/selectionsAndRanges";
 
+const jumpDecorationTypes = {
+    regular: vscode.window.createTextEditorDecorationType({}),
+    zoom: vscode.window.createTextEditorDecorationType({})
+};
+
 function createDecorationOption(decorationRange: vscode.Range, text: string) {
     const extraProps = [
         "font-size:0.85em",
@@ -30,13 +35,50 @@ function createDecorationOption(decorationRange: vscode.Range, text: string) {
     };
 }
 
-export default class JumpInterface {
+export default class JumpInterface implements vscode.Disposable {
     private jumpCodes: string[];
-    private jumpCodeDecorationType: vscode.TextEditorDecorationType;
 
     constructor(private readonly context: common.ExtensionContext) {
         this.jumpCodes = context.config.jump.characters.split("");
-        this.jumpCodeDecorationType = vscode.window.createTextEditorDecorationType({});
+    }
+
+    dispose() {
+        this.removeDecorations();
+        jumpDecorationTypes.regular.dispose();
+        jumpDecorationTypes.zoom.dispose();
+    }
+
+    private async getFoldedRanges(): Promise<vscode.Range[]> {
+        const visibleRanges = this.context.editor.visibleRanges;
+        const foldedRanges: vscode.Range[] = [];
+        
+        for (let i = 0; i < visibleRanges.length - 1; i++) {
+            const currentRange = visibleRanges[i];
+            const nextRange = visibleRanges[i + 1];
+            if (currentRange.end.line + 1 < nextRange.start.line) {
+                foldedRanges.push(new vscode.Range(
+                    currentRange.end,
+                    nextRange.start
+                ));
+            }
+        }
+        
+        return foldedRanges;
+    }
+
+    private isPositionInFoldedRange(position: vscode.Position, foldedRanges: vscode.Range[]): boolean {
+        if (!foldedRanges.length) return false;
+        return foldedRanges.some(range => range.contains(position));
+    }
+
+    private async filterVisibleLocations(locations: Seq<vscode.Position>): Promise<Seq<vscode.Position>> {
+        const foldedRanges = await this.getFoldedRanges();
+        return locations.filter(position => !this.isPositionInFoldedRange(position, foldedRanges));
+    }
+
+    private removeDecorations() {
+        this.context.editor.setDecorations(jumpDecorationTypes.regular, []);
+        this.context.editor.setDecorations(jumpDecorationTypes.zoom, []);
     }
 
     async jump(jumpLocations: {
@@ -52,7 +94,7 @@ export default class JumpInterface {
                     if (!targetChar)
                         return undefined;
                     
-                    const remainingLocations = jumpLocations.locations.filterMap(
+                    const matchingLocations = jumpLocations.locations.filterMap(
                         (p) => {
                             const char = editor.charAt(
                                 this.context.editor.document,
@@ -65,13 +107,16 @@ export default class JumpInterface {
                         }
                     );
 
+                    const remainingLocations = await this.filterVisibleLocations(matchingLocations);
+
                     return await this.jump({
                         kind: "single-phase",
-                        locations: remainingLocations,
+                        locations: remainingLocations
                     });
                 }
                 case "single-phase": {
-                    const codedLocations = this.assignJumpCodes(jumpLocations.locations, currentSelection.active);
+                    const visibleLocations = await this.filterVisibleLocations(jumpLocations.locations);
+                    const codedLocations = this.assignJumpCodes(visibleLocations, currentSelection.active);
         
                     this.drawJumpCodes(codedLocations);
         
@@ -103,10 +148,10 @@ export default class JumpInterface {
                 }
             }
         } finally {
-            this.removeJumpCodes();
+            this.removeDecorations();
         }
     }
-
+    
     private assignJumpCodes(locations: Seq<vscode.Position>, cursorPosition: vscode.Position): (readonly [vscode.Position, string])[] {
         const codedLocations: [vscode.Position, string][] = [];
         const usedCodes = new Set<string>();
@@ -154,11 +199,6 @@ export default class JumpInterface {
         return codedLocations;
     }
 
-    private removeJumpCodes() {
-        this.context.editor.setDecorations(this.jumpCodeDecorationType, []);
-        this.jumpCodeDecorationType.dispose();
-    }
-
     private drawJumpCodes(
         jumpLocations: (readonly [vscode.Position, string])[]
     ) {
@@ -169,30 +209,16 @@ export default class JumpInterface {
             )
         );
 
-        this.context.editor.setDecorations(this.jumpCodeDecorationType, decorations);
-    }
-
-    getFullSelection(position: vscode.Position): { selection: vscode.Selection; text: string } {
-        const wordRange = this.context.editor.document.getWordRangeAtPosition(position);
-        let selection: vscode.Selection;
-        let text: string;
-
-        if (wordRange) {
-            selection = new vscode.Selection(wordRange.start, wordRange.end);
-            text = this.context.editor.document.getText(wordRange);
-        } else {
-            selection = new vscode.Selection(position, position);
-            text = this.context.editor.document.getText(new vscode.Range(position, position.translate(0, 1)));
-        }
-
-        return { selection, text };
+        this.removeDecorations();
+        this.context.editor.setDecorations(jumpDecorationTypes.regular, decorations);
     }
 
     async zoomJump(jumpLocations: {
         locations: Seq<vscode.Position>;
     }): Promise<vscode.Position | undefined> {
         try {
-            const codedLocations = jumpLocations.locations
+            const visibleLocations = await this.filterVisibleLocations(jumpLocations.locations);
+            const codedLocations = visibleLocations
                 .zipWith(this.jumpCodes)
                 .toArray();
 
@@ -206,10 +232,9 @@ export default class JumpInterface {
                 return undefined;
             }
 
-            const selectedLocation = codedLocations.find(([location, jumpCode]) => jumpCode === targetChar)?.[0];
-            return selectedLocation;
+            return codedLocations.find((value: readonly [vscode.Position, string]) => value[1] === targetChar)?.[0];
         } finally {
-            this.removeJumpCodes();
+            this.removeDecorations();
         }
     }
 
@@ -248,6 +273,7 @@ export default class JumpInterface {
             )
         );
 
-        this.context.editor.setDecorations(this.jumpCodeDecorationType, jumpCodeDecorations);
+        this.removeDecorations();
+        this.context.editor.setDecorations(jumpDecorationTypes.zoom, jumpCodeDecorations);
     }
 }

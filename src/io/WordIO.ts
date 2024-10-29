@@ -24,30 +24,39 @@ function iterVertically(
                 options.direction
             );
             const column = common.getVirtualColumn();
+            const editor = vscode.window.activeTextEditor;
+            if (!editor) return;
+
             while (cont) {
                 cont = false;
-                
-                const nextLine = lineUtils.getNextSignificantLine(
+                let nextLine = lineUtils.getNextSignificantLine(
                     document,
                     currentPosition,
                     options.direction
                 );
-                
-                currentPosition = currentPosition.with(column);
-                if (nextLine) {
-                    const newPosition = currentPosition.with(
-                        nextLine.lineNumber,
-                        column
-                    );
-                    const wordRange = findWordClosestTo(document, newPosition, {
-                            limitToCurrentLine: true,
-                            isVertical: true });
-                    
-                    if (wordRange) {
-                        yield wordRange;
 
-                        options.startingPosition = positionToRange(newPosition);
-                        cont = true;
+                if (nextLine) {
+                    while (nextLine && !editor.visibleRanges.some(range => 
+                        range.contains(new vscode.Position(nextLine!.lineNumber, 0)))) {
+                        nextLine = lineUtils.getNextSignificantLine(
+                            document,
+                            new vscode.Position(nextLine.lineNumber, column),
+                            options.direction
+                        );
+                    }
+
+                    if (nextLine) {
+                        const newPosition = currentPosition.with(nextLine.lineNumber, column);
+                        const wordRange = findWordClosestTo(document, newPosition, {
+                            limitToCurrentLine: true,
+                            isVertical: true
+                        });
+                        
+                        if (wordRange) {
+                            yield wordRange;
+                            currentPosition = newPosition;
+                            cont = true;
+                        }
                     }
                 }
             }
@@ -304,7 +313,7 @@ function iterScope(
 }
 
 export default class WordIO extends SubjectIOBase {
-    // deletableSeparators = /^[.\s,=+\*\/%]+$/;
+    // deletableSeparators = /^[.\,=+\*\/%]+$/;
     deletableSeparators = /^[.\s,=+\*\/%&|!?]+$/;
     defaultSeparationText = " ";
 

@@ -140,26 +140,31 @@ export default class CommandMode extends modes.EditorMode {
     async changeTo(
         newMode: modes.EditorModeChangeRequest
     ): Promise<modes.EditorMode> {
+
         
-        await this.dispose();
         switch (newMode.kind) {
-            case "INSERT":
+            case "INSERT": {
+                await this.dispose();
                 return new InsertMode(this.context, this);
-
-            case "EXTEND":
+            }
+            
+            case "EXTEND": {
+                await this.dispose();
                 return new ExtendMode(this.context, this);
-
+            }
+            
             case "COMMAND":
                 if (editor) {
                     const collapsePos = newMode.half === "RIGHT" ? "end" : "start";
                     selections.collapseSelections(this.context.editor, collapsePos);
                 }
-
+                
                 if (!newMode.subjectName) {
                     return this;
                 }
-
+                
                 if (newMode.subjectName !== this.subject.name && newMode.half == undefined) {
+                    await this.dispose();
                     if (this.subject.name != 'BRACKETS' && this.subject.name != 'BRACKETS_INCLUSIVE' && newMode.subjectName === 'BRACKETS') {
                         let currentLine = this.context.editor.selection.active.line;
                         let cursorChar = this.context.editor.selection.active.character;
@@ -220,6 +225,7 @@ export default class CommandMode extends modes.EditorMode {
                 // This handles the "cyclable" subjects, e.g. "WORD" -> "INTERWORD" -> "WORD" etc
                 switch (newMode.subjectName) {
                     case "WORD":
+                        await this.dispose();
                         return this.with({
                             subject: subjects.createFrom(
                                 this.context,
@@ -227,10 +233,12 @@ export default class CommandMode extends modes.EditorMode {
                             ),
                         });
                     case "INTERWORD":
+                        await this.dispose();
                         this.with({
                             subject: subjects.createFrom(this.context, "WORD"),
                         });
                     case "BRACKETS":
+                        await this.dispose();
                         return this.with({
                             subject: subjects.createFrom(
                                 this.context,
@@ -238,6 +246,7 @@ export default class CommandMode extends modes.EditorMode {
                             ),
                         });
                     case "BRACKETS_INCLUSIVE":
+                        await this.dispose();
                         return this.with({
                             subject: subjects.createFrom(
                                 this.context,
