@@ -35,11 +35,9 @@ I would recommend using the original but you are welcome to use this if you wish
 "vimAtHome.color.customWord5": "ffff00",
 "vimAtHome.color.customWord6": "cf9700",
 
-
 ```
 
-
-
+```
 
 [
     {
@@ -231,7 +229,6 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "editor.action.showHover"
     },
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     {
         "key": "b",
         "command": "-vimAtHome.changeToBlockSubject",
@@ -549,7 +546,6 @@ I would recommend using the original but you are welcome to use this if you wish
         "key": "alt+9",
         "command": "-workbench.action.openEditorAtIndex9"
     },
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
  
     {
@@ -802,7 +798,7 @@ I would recommend using the original but you are welcome to use this if you wish
                     "args": {
                         "to": "up",
                         "by": "line",
-                        "value": 20
+                        "value": 25
                     }
                 },
                 "vimAtHome.scrollToCursor",
@@ -820,7 +816,7 @@ I would recommend using the original but you are welcome to use this if you wish
                     "args": {
                         "to": "down",
                         "by": "line",
-                        "value": 20
+                        "value": 25
                     }
                 },
                 "vimAtHome.scrollToCursor",
@@ -1212,7 +1208,6 @@ I would recommend using the original but you are welcome to use this if you wish
         "args": {
             "commands": [
                 "vimAtHome.changeToLineSubject",
-                "editor.action.clipboardCopyAction",
             ]
         },
         "when": "editorTextFocus"// && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
@@ -1559,8 +1554,6 @@ I would recommend using the original but you are welcome to use this if you wish
         "key": "ctrl+k ctrl+alt+right",
         "command": "workbench.action.navigateForwardInEditLocations",
     },
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     {
         "key": "ctrl+j a",
@@ -2577,7 +2570,7 @@ I would recommend using the original but you are welcome to use this if you wish
                 "vimAtHome.changeToBlockSubject"
             ]
         },
-        "when": "editorTextFocus"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
     {
         "key": "shift+alt+right",
@@ -2735,7 +2728,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "vimAtHome.nextSubjectRight",
+                "vimAtHome.changeToCustomWord2",
                 "vimAtHome.nextSubjectRight",
             ]
         },
@@ -2746,8 +2739,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "vimAtHome.nextSubjectLeft",
-                "vimAtHome.nextSubjectLeft",
+                "vimAtHome.changeToCustomWord2",
             ]
         },
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && vimAtHome.subject == 'WORD'"
@@ -2799,20 +2791,8 @@ I would recommend using the original but you are welcome to use this if you wish
                 "vimAtHome.collapseToRight",
             ]
         },
-        // "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && vimAtHome.subject != 'WORD' && vimAtHome.subject != 'SUBWORD' && vimAtHome.subject != 'CHAR'"
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
-    // {
-    //     "key": "shift+right",
-    //     "command": "runCommands",
-    //     "args": {
-    //         "commands": [
-    //             "vimAtHome.changeToInsertModeAppend",
-    //             "vimAtHome.changeToCustomWord1",
-    //         ]
-    //     },
-    //     "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && vimAtHome.subject == 'WORD'"
-    // },
     {
         "key": "ctrl+shift+up",
         "command": "runCommands",
@@ -2947,18 +2927,70 @@ I would recommend using the original but you are welcome to use this if you wish
             ]
         },
         "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND')"
-    }
+    },
+    {
+        "key": "ctrl+alt+shift+up",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "scrollLineUp",
+                "scrollLineUp",
+                "scrollLineUp",
+                "scrollLineUp",
+                "scrollLineUp",
+                "scrollLineUp",
+                "scrollLineUp",
+            ]
+        },
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+alt+shift+down",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "scrollLineDown",
+                "scrollLineDown",
+                "scrollLineDown",
+                "scrollLineDown",
+                "scrollLineDown",
+                "scrollLineDown",
+                "scrollLineDown",
+            ]
+        },
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "alt+r",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "toggleSearchEditorRegex",
+            ]
+        },
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "shift+alt+f16",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "vimAtHome.downIndentUp",
+            ]
+        },
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "shift+alt+f18",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "vimAtHome.downIndentDown",
+            ]
+        },
+        "when": "editorTextFocus"
+    },
 
 ]
- 
-/*
- 
-la+ls up/down yh
- 
-shift+pageup/down when in command modem
- 
- 
-*/
-
 
 ```
