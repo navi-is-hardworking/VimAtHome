@@ -22,7 +22,7 @@ I would recommend using the original but you are welcome to use this if you wish
 },
 
 "vimAtHome.customWordRegex1": "[A-Z]*[A-Za-z0-9][a-z0-9]*|[^A-Za-z0-9\\s]+", // subword
-"vimAtHome.customWordRegex2":  "^[\\W]{1,}$", // Whitespace 
+"vimAtHome.customWordRegex2":  "[^\\w\\s\"\\':]+|^[\\W]{1,}$", // Whitespace 
 "vimAtHome.customWordRegex3":  "[^\\s(),{};][^,(){};]*", // Arguments
 "vimAtHome.customWordRegex4": "(!?\\w)(->|[\\w\\._\\-:\\\\\/]|<(?=[^>]*>).*?>|\\(\\)|\\[(?=[^\\]]*\\]).*?\\]|)*", // bigword
 "vimAtHome.customWordRegex5": "([a-zA-Z][\\w.\\-_>?:]*(?:<[^<>]*>)?(?:\\[(?:[^\\[\\]]|\\[[^\\[\\]]*\\])*\\]|\\((?:[^()]|\\([^()]*\\))*\\))*)",
@@ -38,6 +38,7 @@ I would recommend using the original but you are welcome to use this if you wish
 ```
 
 ```
+
 
 [
     {
@@ -178,7 +179,7 @@ I would recommend using the original but you are welcome to use this if you wish
     },
     {
         "key": "shift+alt+k",
-        "command": "bookmarks.toggle"
+        "command": "GitVision.highlightCommits"
     },
     {
         "key": "ctrl+alt+k",
@@ -2992,5 +2993,15 @@ I would recommend using the original but you are welcome to use this if you wish
     },
 
 ]
+ 
+/*
+ 
+la+ls up/down yh
+ 
+shift+pageup/down when in command modem
+ 
+ 
+*/
+
 
 ```
