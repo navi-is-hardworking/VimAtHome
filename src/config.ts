@@ -23,8 +23,8 @@ export type ColorConfig = {
 let colorConfig: ColorConfig;
 
 let wordDefinitions = [] as RegExp[];
-let vanillaWordDefinition = /\w+/;
 let currentWordDefinition = 0;
+let verticalSkipCount = 4;
 
 export type JumpConfig = {
     characters: string;
@@ -38,6 +38,7 @@ export type Config = {
 
 export function loadConfig(): Config {
     const config = vscode.workspace.getConfiguration("vimAtHome");
+    verticalSkipCount = config.get<number>("verticalSkipCount") || 4;
     colorConfig = {
         char: config.get<string>("color.char") || "ff8000",
         subWord: config.get<string>("color.subWord") || "ff6699",
@@ -96,8 +97,7 @@ export function getBracketColor(): string { return colorConfig.bracket; }
 export function getCommandColor(): string { return colorConfig.command; }
 export function getExtendColor(): string { return colorConfig.extend; }
 export function getInsertColor(): string { return colorConfig.insert; }
-
-
+export function getVerticalSkipCount(): number { return verticalSkipCount; }
 export function getWordDefinitionIndex(): number { return currentWordDefinition; }
 
 export function getWordDefinition(includeLineEnds=true): RegExp | undefined { 

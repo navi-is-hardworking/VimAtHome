@@ -11,7 +11,7 @@ import { SubjectName } from "./subjects/SubjectName";
 import * as modifications from "./utils/modifications";
 import { splitRange } from "./utils/decorations";
 import * as lineUtils from "./utils/lines";
-import { getWordDefinition } from "./config";
+import { getWordDefinition, getVerticalSkipCount } from "./config";
 import WordIO from "./io/WordIO";
 import { Direction } from "./common";
 
@@ -476,21 +476,20 @@ export default class VimAtHomeManager {
         let currentLine = this.editor.selection.active.line;
         const increment = direction === common.Direction.forwards ? 1 : -1;
         let n = 0;
-
-        const editor = vscode.window.activeTextEditor;
-            if (!editor) return;
-            
+    
+        const foldedMap = lineUtils.getLineToFoldedMap();
+    
         while (currentLine >= 0 && currentLine < lineCount && n < 4) {
             currentLine += increment;
-            if (currentLine <= 0 || currentLine >= lineCount) break;
+            if (currentLine < 0 || currentLine >= lineCount) break;
+            
             const line = document.lineAt(currentLine);
             
-            if (lineUtils.lineIsSignificant(line) && editor.visibleRanges.some(line => 
-                line.contains(new vscode.Position(currentLine, 0)))) {
+            if (lineUtils.lineIsSignificant(line) && !lineUtils.isLineInFoldedRange(currentLine, foldedMap)) {
                 n += 1;
-            } 
-
+            }
         }
+    
         await this.updateEditorPosition(currentLine);
     }
     

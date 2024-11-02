@@ -552,7 +552,7 @@ export const registeredCommands: ExtensionCommand[] = [
         id: "vimAtHome.goToLastSubjectInScope",
         execute: async (manager) => {
             await manager.executeSubjectCommand("lastObjectInScope");
-            setVirtualColumnNumber(150);
+            setVirtualColumnNumber(1000);
         },
     },
     {

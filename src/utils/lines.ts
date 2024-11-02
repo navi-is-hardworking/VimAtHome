@@ -116,7 +116,8 @@ export function iterLinePairs(
 export function getNextSignificantLine(
     document: vscode.TextDocument,
     position: vscode.Position,
-    direction: common.Direction
+    direction: common.Direction,
+    foldMap: boolean[] | undefined = undefined
 ): vscode.TextLine | undefined {
     const wordRegex = getWordDefinition(true);
     if (!wordRegex) return undefined;
@@ -127,12 +128,15 @@ export function getNextSignificantLine(
         currentInclusive: false,
     })) {
         if (wordRegex.test(line.text)) {
+            if (foldMap && foldMap.length > 0 && isLineInFoldedRange(line.lineNumber, foldMap)) {
+                continue;
+            }
             return line;
         }
     }
 }
 
-export function lineIsSignificant(line: vscode.TextLine) {
+export function lineIsSignificant(line: vscode.TextLine, ) {
     const wordRegex = getWordDefinition(true);
     return wordRegex ? wordRegex.test(line.text) : false;
 }
@@ -275,4 +279,29 @@ export function* iterLinesOutwards(
     function backwardsPointerInBounds() {
         return backwardsPointer >= 0;
     }
+}
+
+export function getLineToFoldedMap(
+): boolean[] {
+    const editor = vscode.window.activeTextEditor; 
+    if (!editor) {
+        return [];
+    }
+
+    const lineCount = editor.document.lineCount;
+    const foldedMap = new Array(lineCount).fill(false);
+    const ranges = editor.visibleRanges;
+    for (let i = 0; i < ranges.length - 1; i++) {
+        const currentRange = ranges[i];
+        const nextRange = ranges[i + 1];
+        for (let line = currentRange.end.line + 1; line < nextRange.start.line; line++) {
+            foldedMap[line] = true;
+        }
+    }
+    
+    return foldedMap;
+}
+
+export function isLineInFoldedRange(lineNumber: number, foldedMap: boolean[]): boolean {
+    return foldedMap[lineNumber] || false;
 }

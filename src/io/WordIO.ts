@@ -23,47 +23,40 @@ function iterVertically(
                 options.startingPosition,
                 options.direction
             );
+            
+            const foldMap = lineUtils.getLineToFoldedMap();
             const column = common.getVirtualColumn();
-            const editor = vscode.window.activeTextEditor;
-            if (!editor) return;
-
             while (cont) {
                 cont = false;
-                let nextLine = lineUtils.getNextSignificantLine(
+                
+                const nextLine = lineUtils.getNextSignificantLine(
                     document,
                     currentPosition,
-                    options.direction
+                    options.direction, 
+                    foldMap
                 );
-
+                
+                currentPosition = currentPosition.with(column);
                 if (nextLine) {
-                    while (nextLine && !editor.visibleRanges.some(range => 
-                        range.contains(new vscode.Position(nextLine!.lineNumber, 0)))) {
-                        nextLine = lineUtils.getNextSignificantLine(
-                            document,
-                            new vscode.Position(nextLine.lineNumber, column),
-                            options.direction
-                        );
-                    }
-
-                    if (nextLine) {
-                        const newPosition = currentPosition.with(nextLine.lineNumber, column);
-                        const wordRange = findWordClosestTo(document, newPosition, {
+                    const newPosition = currentPosition.with(
+                        nextLine.lineNumber,
+                        column
+                    );
+                    const wordRange = findWordClosestTo(document, newPosition, {
                             limitToCurrentLine: true,
-                            isVertical: true
-                        });
-                        
-                        if (wordRange) {
-                            yield wordRange;
-                            currentPosition = newPosition;
-                            cont = true;
-                        }
+                            isVertical: true });
+                    
+                    if (wordRange) {
+                        yield wordRange;
+
+                        options.startingPosition = positionToRange(newPosition);
+                        cont = true;
                     }
                 }
             }
         })
     );
 }
-
 
 function iterHorizontally(
     document: vscode.TextDocument,
@@ -109,12 +102,11 @@ function iterHorizontally(
                 }
 
                 const matchRange = new vscode.Range(currentLine, matchStart, currentLine, matchEnd);
-                
-                
+
                 if (options.direction === Direction.forwards)
                     common.setVirtualColumn(matchRange);
                 else
-                    common.setVirtualColumn(matchRange);    
+                    common.setVirtualColumn(matchRange);
                 yield matchRange;
                 return;
             } else {
