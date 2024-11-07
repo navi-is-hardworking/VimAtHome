@@ -884,7 +884,6 @@ export const registeredCommands: ExtensionCommand[] = [
             await manager.edgeOut(Direction.backwards);
         },
     },
-
     {
         id: "vimAtHome.deleteLeft",
         execute: async (manager) => {
@@ -907,6 +906,12 @@ export const registeredCommands: ExtensionCommand[] = [
         id: "vimAtHome.downIndentUp", 
         execute: async (manager) => {
             await manager.downIndent("backwards");
+        },
+    },
+    {
+        id: "vimAtHome.foldAllAtLevel", 
+        execute: async (manager) => {
+            await manager.foldAllAtLevel();
         },
     },
     // {

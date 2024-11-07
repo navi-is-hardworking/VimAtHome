@@ -14,6 +14,7 @@ import * as lineUtils from "./utils/lines";
 import { getWordDefinition, getVerticalSkipCount } from "./config";
 import WordIO from "./io/WordIO";
 import { Direction } from "./common";
+let outputChannel = vscode.window.createOutputChannel("VimAtHome");
 
 
 export default class VimAtHomeManager {
@@ -673,6 +674,29 @@ export default class VimAtHomeManager {
         }
 
         await this.updateEditorPosition(lastSignificantLine.lineNumber);
+    }
+
+    async foldAllAtLevel() {
+        const document = this.editor.document;
+        const currentPosition = this.editor.selection.active;
+        const currentLine = document.lineAt(currentPosition.line);
+        const tabSize = this.editor.options.tabSize as number;
+        const indentText = currentLine.text.substring(0, currentLine.firstNonWhitespaceCharacterIndex);
+        const usesTabs = this.editor.options.insertSpaces === false;
+        
+        let indentationLevel;
+        if (usesTabs) {
+            indentationLevel = (indentText.split('\t').length - 1) + 1;
+        } else {
+            indentationLevel = Math.floor(indentText.length / tabSize) + 1;
+        }
+        outputChannel.appendLine(`Uses tabs: ${usesTabs}`);
+        outputChannel.appendLine(`Tab size: ${tabSize}`);
+        outputChannel.appendLine(`Indentation level: ${indentationLevel}`);
+        if (indentationLevel >= 1 && indentationLevel <= 7) {
+            await vscode.commands.executeCommand(`editor.foldLevel${indentationLevel}`);
+            await vscode.commands.executeCommand("editor.fold");
+        }
     }
             
 }
