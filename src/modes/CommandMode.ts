@@ -155,7 +155,7 @@ export default class CommandMode extends modes.EditorMode {
             
             case "COMMAND":
                 if (editor) {
-                    const collapsePos = newMode.half === "RIGHT" ? "end" : "start";
+                    const collapsePos = newMode.half === "RIGHT" ? "start" : "end";
                     selections.collapseSelections(this.context.editor, collapsePos);
                 }
                 
@@ -463,7 +463,7 @@ export default class CommandMode extends modes.EditorMode {
                 setWordDefinition(4);
                 return { kind: "COMMAND", subjectName: "WORD" };
             case "WORD": {
-                if (getWordDefinitionIndex() === 4) {
+                if (getWordDefinitionIndex() === 4 || getWordDefinitionIndex() === 5) {
                     const selText = document.getText(selection);
                     
                     const regex0 = getWordDefinitionByIndex(0);

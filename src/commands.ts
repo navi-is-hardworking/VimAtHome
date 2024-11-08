@@ -130,7 +130,7 @@ export const registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.changeToBracketSubject",
         execute: async (manager) => {
-            manager.changeMode({
+            await manager.changeMode({
                 kind: "COMMAND",
                 subjectName: "BRACKETS",
             });
@@ -285,7 +285,7 @@ export const registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.changeToLineSubject",
         execute: async (manager: VimAtHomeManager) => {
-            manager.changeMode({
+            await manager.changeMode({
                 kind: "COMMAND",
                 subjectName: "LINE",
             });
@@ -309,20 +309,22 @@ export const registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.changeToSubwordSubject",
         execute: async (manager: VimAtHomeManager) => {
-            manager.changeMode({
+            await manager.changeMode({
                 kind: "COMMAND",
                 subjectName: "SUBWORD",
             });
+            
         },
     },
     {
         id: "vimAtHome.changeToHalfBracketSubjectRight",
         execute: async (manager: VimAtHomeManager) => {
-            manager.changeMode({
+            await manager.changeMode({
                 kind: "COMMAND",
                 subjectName: "BRACKETS",
                 half: "RIGHT"
             });
+            
         },
     },
     {
@@ -338,21 +340,23 @@ export const registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.changeToHalfLineSubjectRight",
         execute: async (manager: VimAtHomeManager) => {
-            manager.changeMode({
+            await manager.changeMode({
                 kind: "COMMAND",
                 subjectName: "LINE",
                 half: "RIGHT"
             });
+            
         },
     },
     {
         id: "vimAtHome.changeToHalfLineSubjectLeft",
         execute: async (manager: VimAtHomeManager) => {
-            manager.changeMode({
+            await manager.changeMode({
                 kind: "COMMAND",
                 subjectName: "LINE",
                 half: "LEFT"
             });
+            
         },
     },
     {
@@ -592,6 +596,7 @@ export const registeredCommands: ExtensionCommand[] = [
         execute: async (manager) => {
             collapseSelections(manager.editor, "end");
             manager.changeMode({ kind: "INSERT" });
+
             await vscode.commands.executeCommand(
                 "editor.action.insertLineAfter"
             );
@@ -752,8 +757,10 @@ export const registeredCommands: ExtensionCommand[] = [
                 const terminal = vscode.window.createTerminal({
                     name: "File Directory Terminal"
                 });
+                
                 terminal.show();
                 terminal.sendText(`cd "${unixDirPath}" && pwd`, true);
+                // abcdefghijklmnopqrstuvwxyz1234567890_()]{}"<>&*/$%^!@#ABCDEFGHIJKLMNOPQRSTUVWXYZ
             }
         },
     },
@@ -766,13 +773,24 @@ export const registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.deleteLineAbove",
         execute: async (manager: VimAtHomeManager) => {
+            await manager.copyLine(-1);
             await manager.deleteLineAbove();
         },
     },
     {
         id: "vimAtHome.deleteLineBelow",
         execute: async (manager: VimAtHomeManager) => {
+            await manager.copyLine(1);
             await manager.deleteLineBelow();
+        },
+    },
+    {
+        id: "vimAtHome.deleteLine",
+        execute: async (manager: VimAtHomeManager) => {
+            await manager.copyLine(0);
+            vscode.commands.executeCommand(
+                "editor.action.deleteLines"
+            );
         },
     },
     {
@@ -884,6 +902,7 @@ export const registeredCommands: ExtensionCommand[] = [
             await manager.edgeOut(Direction.backwards);
         },
     },
+
     {
         id: "vimAtHome.deleteLeft",
         execute: async (manager) => {
@@ -907,6 +926,7 @@ export const registeredCommands: ExtensionCommand[] = [
         execute: async (manager) => {
             await manager.downIndent("backwards");
         },
+        
     },
     {
         id: "vimAtHome.foldAllAtLevel", 
@@ -914,12 +934,30 @@ export const registeredCommands: ExtensionCommand[] = [
             await manager.foldAllAtLevel();
         },
     },
-    // {
-    //     id: "vimAtHome.reverseFold", 
-    //     execute: async (manager) => {
-    //         await manager.reverseFold();
-    //     },
-    // },
+    {
+        id: "vimAtHome.wordHalfRight", 
+        execute: async (manager) => {
+            await manager.expandSubject("forwards");
+        },
+    },
+    {
+        id: "vimAtHome.wordHalfLeft", 
+        execute: async (manager) => {
+            await manager.expandSubject("backwards");
+        },
+    },
+    {
+        id: "vimAtHome.copy", 
+        execute: async (manager) => {
+            await manager.copy();
+        },
+    },
+    {
+        id: "vimAtHome.paste", 
+        execute: async (manager) => {
+            await manager.paste();
+        },
+    },
     
 ];
 

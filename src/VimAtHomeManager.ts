@@ -11,11 +11,10 @@ import { SubjectName } from "./subjects/SubjectName";
 import * as modifications from "./utils/modifications";
 import { splitRange } from "./utils/decorations";
 import * as lineUtils from "./utils/lines";
-import { getWordDefinition, getVerticalSkipCount } from "./config";
+import { getWordDefinition, getVerticalSkipCount, setWordDefinition, getWordDefinitionIndex } from "./config";
 import WordIO from "./io/WordIO";
 import { Direction } from "./common";
-let outputChannel = vscode.window.createOutputChannel("VimAtHome");
-
+import * as cacheCommands from "./CacheCommands";
 
 export default class VimAtHomeManager {
     private mode: EditorMode;
@@ -72,6 +71,7 @@ export default class VimAtHomeManager {
     }
 
     async changeMode(newMode: EditorModeChangeRequest) {
+        let prevSubject = this.mode.getSubjectName();
         this.clearSelections();
 
         // newMode.kind = this.mode.kind;
@@ -81,10 +81,28 @@ export default class VimAtHomeManager {
         this.setUI();
         this.mode.fixSelection(half);
         this.setDecorations();
+
+        if (this.mode.name === "COMMAND" && !(this.mode.getSubjectName() === 'CHAR' 
+        
+
+            || (this.mode.getSubjectName() === 'WORD' && getWordDefinitionIndex() <= 3)
+            || (prevSubject === this.mode.getSubjectName() && prevSubject !== 'WORD')
+            )) {
+            this.copy();
+        }
     }
 
     async executeSubjectCommand(command: SubjectAction) {
         await this.mode.executeSubjectCommand(command);
+
+        // if (this.mode.getSubjectName() === 'LINE' || this.mode.getSubjectName() === 'BRACKETS') {
+        //     let text = this.editor.document.getText(this.editor.selection);
+        //     if (this.editor.selection.start.line === this.editor.selection.end.line) {
+        //         cacheCommands.addTextToCache(text);
+        //     } else {
+        //         cacheCommands.parseLines(text);
+        //     }
+        // }
     }
     
     async executeModifyCommand(command: modifications.ModifyCommand) {
@@ -690,14 +708,68 @@ export default class VimAtHomeManager {
         } else {
             indentationLevel = Math.floor(indentText.length / tabSize) + 1;
         }
-        outputChannel.appendLine(`Uses tabs: ${usesTabs}`);
-        outputChannel.appendLine(`Tab size: ${tabSize}`);
-        outputChannel.appendLine(`Indentation level: ${indentationLevel}`);
         if (indentationLevel >= 1 && indentationLevel <= 7) {
             await vscode.commands.executeCommand(`editor.foldLevel${indentationLevel}`);
             await vscode.commands.executeCommand("editor.fold");
         }
     }
-            
+
+    async expandSubject(direction: common.Direction) {
+        const selection = this.editor.selection;
+        const dir = direction == "forwards" ? "RIGHT" : "LEFT";
+        if (getWordDefinitionIndex() === 5) {
+            const command = direction === "forwards" ? "nextObjectRight" : "nextObjectLeft";
+            await this.executeSubjectCommand(command);
+            return;
+        }
+        
+        setWordDefinition(4);
+        await this.changeMode({
+            kind: "COMMAND",
+            subjectName: "WORD",
+            half: dir
+        });
+        
+        let newSelection = this.editor.selection;
+        
+        if (selection.isEqual(newSelection)) {
+            setWordDefinition(5);
+            await this.changeMode({
+                kind: "COMMAND",
+                subjectName: "WORD",
+                half: dir
+            });
+        }
+
+        newSelection = this.editor.selection;
+        if (selection.isEqual(newSelection)) {
+            const command = direction === "forwards" ? "nextObjectRight" : "nextObjectLeft";
+            await this.executeSubjectCommand(command);
+        }
+
+    }
+    
+    async copyLine(mod: number) {
+        const text = this.editor.document.lineAt(this.editor.selection.start.line + mod).text;
+        cacheCommands.copy(text);
+    }
+    
+    async copy() {
+        cacheCommands.copy(this.editor.document.getText(this.editor.selection));
+
+
+    }
+
+    async paste() {
+        const selection = this.editor.selection;
+        const currentSelection = this.editor.document.getText(this.editor.selection);
+
+        const options = cacheCommands.paste();
+        let newSelection = options[0] === currentSelection ? options[1] : options[0]; 
+        
+        this.editor.edit(editBuilder => {
+            editBuilder.replace(selection, newSelection);
+        });
+    }
 }
 

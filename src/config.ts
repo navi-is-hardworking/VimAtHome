@@ -143,15 +143,16 @@ export function setSelectionBackground(color: string) {
     const currentCustomizations = workbench.get('colorCustomizations') || {};
 
 
-    const updatedCustomizations = {
-        ...currentCustomizations,
-        'editor.selectionBackground': color
-    };
-    workbench.update(
-        'colorCustomizations', 
-        updatedCustomizations,
-        vscode.ConfigurationTarget.Workspace
-    )
+    // const updatedCustomizations = {
+    //     ...currentCustomizations,
+    //     'editor.selectionBackground': color
+    // };
+
+    // workbench.update(
+    //     'colorCustomizations', 
+    //     updatedCustomizations,
+    //     vscode.ConfigurationTarget.Workspace
+    // )
 }
     
 // export function clearSelectionBackground() {

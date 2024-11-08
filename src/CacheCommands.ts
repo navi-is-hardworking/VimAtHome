@@ -20,11 +20,19 @@ function fuzzyMatch(pattern: string, str: string): { matched: boolean; score: nu
     return { matched: true, score: score / strLower.length };
 }
 
+export const addTextToCache = (text: string) => {
+    historyCache.addToCache(text);
+};
+
 export const addToCache = (editor: vscode.TextEditor) => {
     const selection = editor.selection;
     const text = editor.document.getText(selection);
     historyCache.addToCache(text);
 };
+
+export const parseLines = (text: string) => {
+    historyCache.parseToCache(",", text);
+}
 
 export const parseToCache = (editor: vscode.TextEditor) => {
     const selection = editor.selection;
@@ -110,3 +118,23 @@ export const pasteTop = (editor: vscode.TextEditor) => {
 export const clearCache = (editor: vscode.TextEditor) => {
     historyCache.clearCache();
 }
+
+let copiedText: [string, string] = ["", ""];
+
+export const copy = (text: string) => {
+    
+    if (text === "" || text === undefined) {
+        return;
+    }
+    addTextToCache(text);
+    if (text === copiedText[0]) {
+        return;
+    }
+    copiedText[1] = copiedText[0];
+    copiedText[0] = text;
+}
+
+export const paste = ()  => {
+    return copiedText; 
+}
+
