@@ -268,19 +268,37 @@ export default class CommandMode extends modes.EditorMode {
     }
 
     async skip(direction: common.Direction): Promise<void> {
-        const skipChar = await editor.inputBoxChar(
-            `Skip ${direction} to a ${this.subject.name} by its first character`
-        );
+        const combinedRange = this.context.editor.visibleRanges.reduce((acc, range) => acc.union(range));
+        const jumpLocations = this.subject
+            .iterAll(common.IterationDirection.alternate, combinedRange)
+            .map((range) => range.start)
+            .toArray();
+            
+        const jumpInterface = new JumpInterface(this.context);
+        let jumpType = this.subject.jumpPhaseType;
+        jumpType = "single-phase";
 
-        if (skipChar === undefined) {
-            return;
+        // if (this.subject.name === "WORD") {
+        //     let wordDefinitionIndex = getWordDefinitionIndex();
+        //     if (wordDefinitionIndex == 0) {
+        //         jumpType = "dual-phase";
+        //     } else {
+        //         jumpType = "single-phase";
+        //     }
+        // }
+    
+        let size: number = this.getSubjectName() === "CHAR" ? 0 : 1;
+        common.setLazyPassSubjectName(this.subject.name);
+        const jumpPosition = await jumpInterface.jump({
+            kind: jumpType,
+            locations: seq(jumpLocations)},
+        size);
+    
+        if (jumpPosition) {
+            this.context.editor.selection = selections.positionToSelection(jumpPosition);
+            common.setVirtualColumn(this.context.editor.selection);
+            await this.fixSelection();
         }
-
-        if (skipChar > 'A' && skipChar < 'Z') {
-            direction = common.reverseDirection(direction);
-        }
-        common.setLastSkip({kind: "SkipTo", char: skipChar, subject: this.subject.name, direction: direction});
-        await this.subject.skip(direction, {kind: "SkipTo", char: skipChar, subject: this.subject.name, direction: direction});
     }
 
     async skipOver(direction: common.Direction): Promise<void> {
@@ -316,7 +334,6 @@ export default class CommandMode extends modes.EditorMode {
 
     
     async jump(): Promise<void> {
-        // outputchannel.appendLine(`jumping`);
         const combinedRange = this.context.editor.visibleRanges.reduce((acc, range) => acc.union(range));
         const jumpLocations = this.subject
             .iterAll(common.IterationDirection.alternate, combinedRange)
@@ -324,8 +341,9 @@ export default class CommandMode extends modes.EditorMode {
             .toArray();
             
         const jumpInterface = new JumpInterface(this.context);
-
         let jumpType = this.subject.jumpPhaseType;
+        // jumpType = "single-phase";
+
         if (this.subject.name === "WORD") {
             let wordDefinitionIndex = getWordDefinitionIndex();
             if (wordDefinitionIndex == 0) {
@@ -336,18 +354,16 @@ export default class CommandMode extends modes.EditorMode {
         }
     
         common.setLazyPassSubjectName(this.subject.name);
+        let size: number = this.getSubjectName() === "CHAR" ? 0 : 1;
         const jumpPosition = await jumpInterface.jump({
             kind: jumpType,
-            locations: seq(jumpLocations),
-        });
+            locations: seq(jumpLocations)},
+        size);
     
         if (jumpPosition) {
             this.context.editor.selection = selections.positionToSelection(jumpPosition);
-            
             common.setVirtualColumn(this.context.editor.selection);
-            // outputchannel.appendLine(`jump: ${jumpPosition.line}, ${jumpPosition.character}`);
             await this.fixSelection();
-            // await vscode.commands.executeCommand('revealLine', {lineNumber: this.context.editor.selection.active.line, at: 'center'});
         }
     }
 
@@ -370,11 +386,12 @@ export default class CommandMode extends modes.EditorMode {
                 }
             }
             
-        common.setLazyPassSubjectName(subjectName);
+        let size: number = this.getSubjectName() === "CHAR" ? 0 : 1;
+        common.setLazyPassSubjectName(this.subject.name);
         const jumpPosition = await jumpInterface.jump({
             kind: jumpType,
-            locations: seq(jumpLocations),
-        });
+            locations: seq(jumpLocations)},
+        size);
 
         if (jumpPosition) {
             this.context.editor.selection =
@@ -406,10 +423,12 @@ export default class CommandMode extends modes.EditorMode {
             }
         }
 
+        let size: number = this.getSubjectName() === "CHAR" ? 0 : 1;
+        common.setLazyPassSubjectName(this.subject.name);
         const jumpPosition = await jumpInterface.jump({
             kind: jumpType,
-            locations: seq(jumpLocations),
-        });
+            locations: seq(jumpLocations)},
+        size);
 
         if (jumpPosition) {
             const currentSelection = this.context.editor.selection;

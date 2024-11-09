@@ -928,6 +928,19 @@ export const registeredCommands: ExtensionCommand[] = [
         },
         
     },
+    // {
+    //     id: "vimAtHome.upIndentDown", 
+    //     execute: async (manager) => {
+    //         await manager.upIndent("forwards");
+    //     },
+    // },
+    // {
+    //     id: "vimAtHome.upIndentUp", 
+    //     execute: async (manager) => {
+    //         await manager.upIndent("backwards");
+    //     },
+        
+    // },
     {
         id: "vimAtHome.foldAllAtLevel", 
         execute: async (manager) => {

@@ -3,49 +3,77 @@ import * as editor from "../utils/editor";
 import Seq from "../utils/seq";
 import * as vscode from "vscode";
 import * as ranges from "../utils/selectionsAndRanges";
+import { Disposable, StatusBarAlignment, window } from 'vscode';
 
-const jumpDecorationTypes = {
-    regular: vscode.window.createTextEditorDecorationType({}),
-    zoom: vscode.window.createTextEditorDecorationType({})
+const subscriptions: Disposable[] = [];
+
+type JumpPhase = {
+    kind: common.JumpPhaseType;
+    locations: Seq<vscode.Position>;
 };
 
-function createDecorationOption(decorationRange: vscode.Range, text: string) {
-    const extraProps = [
-        "font-size:0.85em",
-        "border-radius: 0.4ch",
-        "line-height: 2ch",
-        "vertical-align: middle",
-        "position: absolute",
-        "margin-top: -0.3ch",
-    ].join(";");
+class JumpInlineInput {
+    private statusBarItem: vscode.StatusBarItem;
+    private input = '';
+    private disposables: vscode.Disposable[] = [];
 
-    return <vscode.DecorationOptions>{
-        range: decorationRange,
-        renderOptions: {
-            before: {
-                color: "white",
-                backgroundColor: "#0a0042",
-                contentText: text,
-                margin: "0 0.4em 0 0",
-                padding: `0.25ch 0.5ch`,
-                textDecoration: ";" + extraProps,
-                border: "1px solid white",
-            },
-        },
+    constructor(
+        private readonly onInput: (input: string, char: string) => void,
+        private readonly onCancel: () => void
+    ) {
+        this.disposables.push(
+            vscode.commands.registerCommand('type', this._onInput),
+            window.onDidChangeTextEditorSelection(this._onCancel)
+        );
+
+        this.statusBarItem = window.createStatusBarItem(
+            StatusBarAlignment.Right,
+            1000
+        );
+    }
+
+    public updateStatusBar(text: string, matches: number, placeholderText?: string): void {
+        this.statusBarItem.text = `$(search) ${placeholderText || 'Jump:'} ${text} (${matches} matches)`;
+        this.statusBarItem.show();
+    }
+
+    public dispose(): void {
+        this.statusBarItem.dispose();
+        this.disposables.forEach(d => d.dispose());
+    }
+
+    private _onInput = ({ text }: { text: string }) => {
+        const char = text;
+        if (char === '\n') {
+            this._onCancel();
+        } else {
+            this.input += char;
+            this.onInput(this.input, char);
+        }
+    };
+
+    private _onCancel = () => {
+        this.dispose();
+        this.onCancel();
     };
 }
 
 export default class JumpInterface implements vscode.Disposable {
     private jumpCodes: string[];
+    private inlineInput?: JumpInlineInput;
+    private decorationType: vscode.TextEditorDecorationType;
+    private codedLocations: (readonly [vscode.Position, string])[] = [];
+    private isSecondPhase = false;
 
     constructor(private readonly context: common.ExtensionContext) {
         this.jumpCodes = context.config.jump.characters.split("");
+        this.decorationType = vscode.window.createTextEditorDecorationType({});
     }
 
     dispose() {
         this.removeDecorations();
-        jumpDecorationTypes.regular.dispose();
-        jumpDecorationTypes.zoom.dispose();
+        this.inlineInput?.dispose();
+        this.decorationType.dispose();
     }
 
     private async getFoldedRanges(): Promise<vscode.Range[]> {
@@ -56,10 +84,7 @@ export default class JumpInterface implements vscode.Disposable {
             const currentRange = visibleRanges[i];
             const nextRange = visibleRanges[i + 1];
             if (currentRange.end.line + 1 < nextRange.start.line) {
-                foldedRanges.push(new vscode.Range(
-                    currentRange.end,
-                    nextRange.start
-                ));
+                foldedRanges.push(new vscode.Range(currentRange.end, nextRange.start));
             }
         }
         
@@ -67,7 +92,6 @@ export default class JumpInterface implements vscode.Disposable {
     }
 
     private isPositionInFoldedRange(position: vscode.Position, foldedRanges: vscode.Range[]): boolean {
-        if (!foldedRanges.length) return false;
         return foldedRanges.some(range => range.contains(position));
     }
 
@@ -77,81 +101,94 @@ export default class JumpInterface implements vscode.Disposable {
     }
 
     private removeDecorations() {
-        this.context.editor.setDecorations(jumpDecorationTypes.regular, []);
-        this.context.editor.setDecorations(jumpDecorationTypes.zoom, []);
+        this.context.editor.setDecorations(this.decorationType, []);
     }
 
-    async jump(jumpLocations: {
-        kind: common.JumpPhaseType;
-        locations: Seq<vscode.Position>;
-    }): Promise<vscode.Position | undefined> {
-        try {
-            const currentSelection = this.context.editor.selection;
+    async jump(jumpLocations: JumpPhase, size: number): Promise<vscode.Position | undefined> {
+        return new Promise<vscode.Position | undefined>((resolve) => {
+            try {
+                const currentSelection = this.context.editor.selection;
 
-            switch (jumpLocations.kind) {
-                case "dual-phase": {
-                    const targetChar = await editor.inputBoxChar("Enter the first character");
-                    if (!targetChar)
-                        return undefined;
-                    
-                    const matchingLocations = jumpLocations.locations.filterMap(
-                        (p) => {
-                            const char = editor.charAt(
-                                this.context.editor.document,
-                                p
-                            );
-
-                            if (char.toLowerCase() === targetChar.toLowerCase()) {
-                                return p;
+                const handleInput = async (input: string, char: string) => {
+                    if (jumpLocations.kind === "dual-phase" && !this.isSecondPhase) {
+                        const matchingLocations = jumpLocations.locations.filterMap(
+                            (p) => {
+                                const matchChar = editor.charAt(
+                                    this.context.editor.document,
+                                    p
+                                );
+                                if (matchChar.toLowerCase() === char.toLowerCase()) {
+                                    return p;
+                                }
                             }
+                        );
+
+                        const remainingLocations = await this.filterVisibleLocations(matchingLocations);
+                        this.isSecondPhase = true;
+                        this.handleSinglePhase(remainingLocations, currentSelection.active, size);
+                        if (this.inlineInput) {
+                            this.inlineInput.updateStatusBar("", this.codedLocations.length, "Enter jump target:");
                         }
-                    );
-
-                    const remainingLocations = await this.filterVisibleLocations(matchingLocations);
-
-                    return await this.jump({
-                        kind: "single-phase",
-                        locations: remainingLocations
-                    });
-                }
-                case "single-phase": {
-                    const visibleLocations = await this.filterVisibleLocations(jumpLocations.locations);
-                    const codedLocations = this.assignJumpCodes(visibleLocations, currentSelection.active);
-        
-                    this.drawJumpCodes(codedLocations);
-        
-                    const targetChar = await editor.inputBoxChar(
-                        "Enter the jump character"
-                    );
-        
-                    if (!targetChar)
-                        return undefined;
-        
-                    const selectedLocation = codedLocations.find(([location, jumpCode]) => jumpCode === targetChar)?.[0];
-                    
-                    if (selectedLocation) {
-                        const direction = selectedLocation.line > currentSelection.active.line ? common.Direction.forwards : common.Direction.backwards;
-                        const char = editor.charAt(this.context.editor.document, selectedLocation) as common.Char;
-                        
-                        let subjectName = common.getLazyPassSubjectName();
-                        if (subjectName !== undefined) {
-                            common.setLastSkip({
-                                kind: "SkipTo",
-                                char: char,
-                                subject: subjectName,
-                                direction: direction
-                            });
+                    } else {
+                        if (this.codedLocations) {
+                            const selectedLocation = this.codedLocations.find(([_, code]) => code === char)?.[0];
+                            if (selectedLocation) {
+                                const direction = ((selectedLocation.line > currentSelection.active.line) || (selectedLocation.line === currentSelection.active.line && selectedLocation.character > currentSelection.active.character)) 
+                                    ? common.Direction.forwards 
+                                    : common.Direction.backwards;
+                                
+                                const targetChar = editor.charAt(this.context.editor.document, selectedLocation) as common.Char;
+                                let subjectName = common.getLazyPassSubjectName();
+                                if (subjectName) {
+                                    common.setLastSkip({
+                                        kind: "SkipTo",
+                                        char: targetChar,
+                                        subject: subjectName,
+                                        direction: direction
+                                    });
+                                }
+                            }
+                            resolve(selectedLocation);
                         }
                     }
-        
-                    return selectedLocation;
+                };
+
+                if (jumpLocations.kind === "single-phase") {
+                    this.handleSinglePhase(jumpLocations.locations, currentSelection.active, size);
                 }
+
+                this.inlineInput = new JumpInlineInput(
+                    handleInput,
+                    () => resolve(undefined)
+                );
+
+                if (this.inlineInput) {
+                    if (jumpLocations.kind === "dual-phase") {
+                        this.inlineInput.updateStatusBar("", jumpLocations.locations.toArray().length, "Enter first character:");
+                    } else {
+                        this.inlineInput.updateStatusBar("", this.codedLocations.length, "Enter jump target:");
+                    }
+                }
+
+            } catch (error) {
+                console.error(error);
+                resolve(undefined);
             }
-        } finally {
-            this.removeDecorations();
-        }
+        }).finally(() => {
+            this.dispose();
+        });
     }
-    
+
+    private async handleSinglePhase(
+        locations: Seq<vscode.Position>, 
+        cursorPosition: vscode.Position,
+        size: number
+    ) {
+        const visibleLocations = await this.filterVisibleLocations(locations);
+        this.codedLocations = this.assignJumpCodes(visibleLocations, cursorPosition);
+        this.drawJumpCodes(this.codedLocations, size);
+    }
+
     private assignJumpCodes(locations: Seq<vscode.Position>, cursorPosition: vscode.Position): (readonly [vscode.Position, string])[] {
         const codedLocations: [vscode.Position, string][] = [];
         const usedCodes = new Set<string>();
@@ -160,7 +197,7 @@ export default class JumpInterface implements vscode.Disposable {
         for (const position of locations) {
             const char = editor.charAt(this.context.editor.document, position);
             const isBelow = position.line > cursorPosition.line || 
-                            (position.line === cursorPosition.line && position.character > cursorPosition.character);
+                          (position.line === cursorPosition.line && position.character > cursorPosition.character);
             
             if (/[a-zA-Z]/.test(char)) {
                 let code = isBelow ? char.toLowerCase() : char.toUpperCase();
@@ -199,43 +236,102 @@ export default class JumpInterface implements vscode.Disposable {
         return codedLocations;
     }
 
-    private drawJumpCodes(
-        jumpLocations: (readonly [vscode.Position, string])[]
-    ) {
+    private createDecorationOption(decorationRange: vscode.Range, text: string, type: number) {
+        if (type == 1) {
+            const extraProps = [
+                "font-size:0.85em",
+                "border-radius: 0.4ch",
+                "line-height: 2ch",
+                "vertical-align: middle",
+                "position: absolute",
+                "margin-top: -0.3ch",
+            ].join(";");
+
+            return <vscode.DecorationOptions>{
+                range: decorationRange,
+                renderOptions: {
+                    before: {
+                        color: "white", 
+                        backgroundColor: "#0a0042",
+                        contentText: text,
+                        margin: "0 0.4em 0 0",
+                        padding: `0.25ch 0.5ch`,
+                        textDecoration: ";" + extraProps,
+                        border: "1px solid white",
+                    },
+                },
+            };
+        } 
+            else {
+                const extraProps = [
+                "font-size:0.80em",
+                // "border-radius: 0.0ch",
+                "line-height: 2ch",
+                // "vertical-align: top",
+                "position: absolute",
+                // "margin-top: -0.6ch",
+                ].join(";");
+
+                return <vscode.DecorationOptions>{
+                range: decorationRange,
+                renderOptions: {
+                    before: {
+                    color: "white",
+                    backgroundColor: "#0a0042",
+                    contentText: text,
+                    // margin: "0 0.0em 0 0",
+                    // padding: `0.25ch 0.5ch`,
+                    textDecoration: ";" + extraProps,
+                    // border: "1px solid white",
+                    },
+                },
+            };
+        }
+    }
+    private drawJumpCodes(jumpLocations: (readonly [vscode.Position, string])[], size: number) {
         const decorations = jumpLocations.map(([position, code]) =>
-            createDecorationOption(
+            this.createDecorationOption(
                 ranges.positionToRange(position),
-                code.toString()
+                code.toString(),
+                size
             )
         );
 
         this.removeDecorations();
-        this.context.editor.setDecorations(jumpDecorationTypes.regular, decorations);
+        this.context.editor.setDecorations(this.decorationType, decorations);
     }
 
-    async zoomJump(jumpLocations: {
-        locations: Seq<vscode.Position>;
-    }): Promise<vscode.Position | undefined> {
-        try {
-            const visibleLocations = await this.filterVisibleLocations(jumpLocations.locations);
-            const codedLocations = visibleLocations
-                .zipWith(this.jumpCodes)
-                .toArray();
+    async zoomJump(jumpLocations: { locations: Seq<vscode.Position>; }): Promise<vscode.Position | undefined> {
+        return new Promise<vscode.Position | undefined>((resolve) => {
+            try {
+                this.filterVisibleLocations(jumpLocations.locations).then(visibleLocations => {
+                    this.codedLocations = visibleLocations
+                        .zipWith(this.jumpCodes)
+                        .toArray();
 
-            this.drawZoomJumpCodes(codedLocations);
+                    this.drawZoomJumpCodes(this.codedLocations);
 
-            const targetChar = await editor.inputBoxChar(
-                "Enter the zoom jump character"
-            );
+                    const handleInput = (_: string, char: string) => {
+                        const selectedLocation = this.codedLocations.find(([_, code]) => code === char)?.[0];
+                        resolve(selectedLocation);
+                    };
 
-            if (!targetChar) {
-                return undefined;
+                    this.inlineInput = new JumpInlineInput(
+                        handleInput,
+                        () => resolve(undefined)
+                    );
+
+                    if (this.inlineInput) {
+                        this.inlineInput.updateStatusBar("", this.codedLocations.length, "Enter zoom target:");
+                    }
+                });
+            } catch (error) {
+                console.error(error);
+                resolve(undefined);
             }
-
-            return codedLocations.find((value: readonly [vscode.Position, string]) => value[1] === targetChar)?.[0];
-        } finally {
-            this.removeDecorations();
-        }
+        }).finally(() => {
+            this.dispose();
+        });
     }
 
     private createZoomJumpDecorationOption(decorationRange: vscode.Range, text: string) {
@@ -263,9 +359,7 @@ export default class JumpInterface implements vscode.Disposable {
         };
     }
 
-    private drawZoomJumpCodes(
-        jumpLocations: (readonly [vscode.Position, string])[]
-    ) {
+    private drawZoomJumpCodes(jumpLocations: (readonly [vscode.Position, string])[]) {
         const jumpCodeDecorations = jumpLocations.map(([position, code]) =>
             this.createZoomJumpDecorationOption(
                 ranges.positionToRange(position),
@@ -274,6 +368,6 @@ export default class JumpInterface implements vscode.Disposable {
         );
 
         this.removeDecorations();
-        this.context.editor.setDecorations(jumpDecorationTypes.zoom, jumpCodeDecorations);
+        this.context.editor.setDecorations(this.decorationType, jumpCodeDecorations);
     }
 }
