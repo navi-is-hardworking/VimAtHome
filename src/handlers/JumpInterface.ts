@@ -3,64 +3,16 @@ import * as editor from "../utils/editor";
 import Seq from "../utils/seq";
 import * as vscode from "vscode";
 import * as ranges from "../utils/selectionsAndRanges";
-import { Disposable, StatusBarAlignment, window } from 'vscode';
-
-const subscriptions: Disposable[] = [];
+import { InlineInput } from "../utils/inlineInput"; // Adjust path as needed
 
 type JumpPhase = {
     kind: common.JumpPhaseType;
     locations: Seq<vscode.Position>;
 };
 
-class JumpInlineInput {
-    private statusBarItem: vscode.StatusBarItem;
-    private input = '';
-    private disposables: vscode.Disposable[] = [];
-
-    constructor(
-        private readonly onInput: (input: string, char: string) => void,
-        private readonly onCancel: () => void
-    ) {
-        this.disposables.push(
-            vscode.commands.registerCommand('type', this._onInput),
-            window.onDidChangeTextEditorSelection(this._onCancel)
-        );
-
-        this.statusBarItem = window.createStatusBarItem(
-            StatusBarAlignment.Right,
-            1000
-        );
-    }
-
-    public updateStatusBar(text: string, matches: number, placeholderText?: string): void {
-        this.statusBarItem.text = `$(search) ${placeholderText || 'Jump:'} ${text} (${matches} matches)`;
-        this.statusBarItem.show();
-    }
-
-    public dispose(): void {
-        this.statusBarItem.dispose();
-        this.disposables.forEach(d => d.dispose());
-    }
-
-    private _onInput = ({ text }: { text: string }) => {
-        const char = text;
-        if (char === '\n') {
-            this._onCancel();
-        } else {
-            this.input += char;
-            this.onInput(this.input, char);
-        }
-    };
-
-    private _onCancel = () => {
-        this.dispose();
-        this.onCancel();
-    };
-}
-
 export default class JumpInterface implements vscode.Disposable {
     private jumpCodes: string[];
-    private inlineInput?: JumpInlineInput;
+    private inlineInput?: InlineInput;
     private decorationType: vscode.TextEditorDecorationType;
     private codedLocations: (readonly [vscode.Position, string])[] = [];
     private isSecondPhase = false;
@@ -72,7 +24,7 @@ export default class JumpInterface implements vscode.Disposable {
 
     dispose() {
         this.removeDecorations();
-        this.inlineInput?.dispose();
+        this.inlineInput?.destroy();
         this.decorationType.dispose();
     }
 
@@ -104,12 +56,25 @@ export default class JumpInterface implements vscode.Disposable {
         this.context.editor.setDecorations(this.decorationType, []);
     }
 
-    async jump(jumpLocations: JumpPhase, size: number): Promise<vscode.Position | undefined> {
+    private updateActivity(activityState: { active: boolean }, locations?: Seq<vscode.Position>) {
+        if (this.inlineInput) {
+            const matches = this.isSecondPhase 
+                ? this.codedLocations.length 
+                : locations?.toArray().length ?? 0;
+            const text = this.isSecondPhase ? "Enter jump target" : "Enter first character";
+            activityState.active = !activityState.active;
+            this.inlineInput.updateStatusBar(text, matches, activityState.active);
+        }
+    }
+
+    async jump(jumpLocations: JumpPhase): Promise<vscode.Position | undefined> {
         return new Promise<vscode.Position | undefined>((resolve) => {
             try {
                 const currentSelection = this.context.editor.selection;
-
-                const handleInput = async (input: string, char: string) => {
+                const activityState = { active: false };
+                let statusInterval: NodeJS.Timer | undefined;
+    
+                const handleInput = async (_: string, char: common.Char) => {
                     if (jumpLocations.kind === "dual-phase" && !this.isSecondPhase) {
                         const matchingLocations = jumpLocations.locations.filterMap(
                             (p) => {
@@ -122,18 +87,16 @@ export default class JumpInterface implements vscode.Disposable {
                                 }
                             }
                         );
-
+    
                         const remainingLocations = await this.filterVisibleLocations(matchingLocations);
                         this.isSecondPhase = true;
-                        this.handleSinglePhase(remainingLocations, currentSelection.active, size);
-                        if (this.inlineInput) {
-                            this.inlineInput.updateStatusBar("", this.codedLocations.length, "Enter jump target:");
-                        }
+                        this.handleSinglePhase(remainingLocations, currentSelection.active);
+                        this.updateActivity(activityState, remainingLocations);
                     } else {
                         if (this.codedLocations) {
                             const selectedLocation = this.codedLocations.find(([_, code]) => code === char)?.[0];
                             if (selectedLocation) {
-                                const direction = ((selectedLocation.line > currentSelection.active.line) || (selectedLocation.line === currentSelection.active.line && selectedLocation.character > currentSelection.active.character)) 
+                                const direction = selectedLocation.line > currentSelection.active.line 
                                     ? common.Direction.forwards 
                                     : common.Direction.backwards;
                                 
@@ -148,28 +111,34 @@ export default class JumpInterface implements vscode.Disposable {
                                     });
                                 }
                             }
+                            if (statusInterval) {
+                                clearInterval(statusInterval);
+                            }
                             resolve(selectedLocation);
                         }
                     }
                 };
-
-                if (jumpLocations.kind === "single-phase") {
-                    this.handleSinglePhase(jumpLocations.locations, currentSelection.active, size);
-                }
-
-                this.inlineInput = new JumpInlineInput(
-                    handleInput,
-                    () => resolve(undefined)
-                );
-
-                if (this.inlineInput) {
-                    if (jumpLocations.kind === "dual-phase") {
-                        this.inlineInput.updateStatusBar("", jumpLocations.locations.toArray().length, "Enter first character:");
-                    } else {
-                        this.inlineInput.updateStatusBar("", this.codedLocations.length, "Enter jump target:");
+    
+                const cleanup = () => {
+                    if (statusInterval) {
+                        clearInterval(statusInterval);
                     }
+                    resolve(undefined);
+                };
+    
+                if (jumpLocations.kind === "single-phase") {
+                    this.handleSinglePhase(jumpLocations.locations, currentSelection.active);
                 }
-
+    
+                this.inlineInput = new InlineInput({
+                    textEditor: this.context.editor,
+                    onInput: handleInput,
+                    onCancel: cleanup
+                });
+    
+                this.updateActivity(activityState, jumpLocations.locations);
+                statusInterval = setInterval(() => this.updateActivity(activityState, jumpLocations.locations), 800);
+    
             } catch (error) {
                 console.error(error);
                 resolve(undefined);
@@ -182,11 +151,10 @@ export default class JumpInterface implements vscode.Disposable {
     private async handleSinglePhase(
         locations: Seq<vscode.Position>, 
         cursorPosition: vscode.Position,
-        size: number
     ) {
         const visibleLocations = await this.filterVisibleLocations(locations);
         this.codedLocations = this.assignJumpCodes(visibleLocations, cursorPosition);
-        this.drawJumpCodes(this.codedLocations, size);
+        this.drawJumpCodes(this.codedLocations);
     }
 
     private assignJumpCodes(locations: Seq<vscode.Position>, cursorPosition: vscode.Position): (readonly [vscode.Position, string])[] {
@@ -236,64 +204,37 @@ export default class JumpInterface implements vscode.Disposable {
         return codedLocations;
     }
 
-    private createDecorationOption(decorationRange: vscode.Range, text: string, type: number) {
-        if (type == 1) {
-            const extraProps = [
-                "font-size:0.85em",
-                "border-radius: 0.4ch",
-                "line-height: 2ch",
-                "vertical-align: middle",
-                "position: absolute",
-                "margin-top: -0.3ch",
-            ].join(";");
+    private createDecorationOption(decorationRange: vscode.Range, text: string) {
+        const extraProps = [
+            "font-size:0.85em",
+            "border-radius: 0.4ch",
+            "line-height: 2ch",
+            "vertical-align: middle",
+            "position: absolute",
+            "margin-top: -0.3ch",
+        ].join(";");
 
-            return <vscode.DecorationOptions>{
-                range: decorationRange,
-                renderOptions: {
-                    before: {
-                        color: "white", 
-                        backgroundColor: "#0a0042",
-                        contentText: text,
-                        margin: "0 0.4em 0 0",
-                        padding: `0.25ch 0.5ch`,
-                        textDecoration: ";" + extraProps,
-                        border: "1px solid white",
-                    },
-                },
-            };
-        } 
-            else {
-                const extraProps = [
-                "font-size:0.80em",
-                // "border-radius: 0.0ch",
-                "line-height: 2ch",
-                // "vertical-align: top",
-                "position: absolute",
-                // "margin-top: -0.6ch",
-                ].join(";");
-
-                return <vscode.DecorationOptions>{
-                range: decorationRange,
-                renderOptions: {
-                    before: {
+        return <vscode.DecorationOptions>{
+            range: decorationRange,
+            renderOptions: {
+                before: {
                     color: "white",
                     backgroundColor: "#0a0042",
                     contentText: text,
-                    // margin: "0 0.0em 0 0",
-                    // padding: `0.25ch 0.5ch`,
+                    margin: "0 0.4em 0 0",
+                    padding: `0.25ch 0.5ch`,
                     textDecoration: ";" + extraProps,
-                    // border: "1px solid white",
-                    },
+                    border: "1px solid white",
                 },
-            };
-        }
+            },
+        };
     }
-    private drawJumpCodes(jumpLocations: (readonly [vscode.Position, string])[], size: number) {
+
+    private drawJumpCodes(jumpLocations: (readonly [vscode.Position, string])[]) {
         const decorations = jumpLocations.map(([position, code]) =>
             this.createDecorationOption(
                 ranges.positionToRange(position),
-                code.toString(),
-                size
+                code.toString()
             )
         );
 
@@ -311,18 +252,19 @@ export default class JumpInterface implements vscode.Disposable {
 
                     this.drawZoomJumpCodes(this.codedLocations);
 
-                    const handleInput = (_: string, char: string) => {
+                    const handleInput = (_: string, char: common.Char) => {
                         const selectedLocation = this.codedLocations.find(([_, code]) => code === char)?.[0];
                         resolve(selectedLocation);
                     };
 
-                    this.inlineInput = new JumpInlineInput(
-                        handleInput,
-                        () => resolve(undefined)
-                    );
+                    this.inlineInput = new InlineInput({
+                        textEditor: this.context.editor,
+                        onInput: handleInput,
+                        onCancel: () => resolve(undefined)
+                    });
 
                     if (this.inlineInput) {
-                        this.inlineInput.updateStatusBar("", this.codedLocations.length, "Enter zoom target:");
+                        this.inlineInput.updateStatusBar("Enter jump target", this.codedLocations.length, true);
                     }
                 });
             } catch (error) {

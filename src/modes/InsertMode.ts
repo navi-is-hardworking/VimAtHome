@@ -111,7 +111,7 @@ export default class InsertMode extends EditorMode {
         const jumpPosition = await jumpInterface.jump({
             kind: tempSubject.jumpPhaseType,
             locations: jumpLocations,
-        }, 1);
+        },);
 
         if (jumpPosition) {
             const currentSelection = this.context.editor.selection;
