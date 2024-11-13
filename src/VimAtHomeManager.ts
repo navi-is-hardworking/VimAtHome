@@ -121,7 +121,7 @@ export default class VimAtHomeManager {
             event.kind === vscode.TextEditorSelectionChangeKind.Command ||
             event.kind === undefined
         ) {
-            this.editor.revealRange(this.editor.selection);
+            this.editor.revealRange(new vscode.Range(this.editor.selection.active, this.editor.selection.active));
             return;
         }
         
