@@ -15,6 +15,9 @@ import { getWordDefinition, getVerticalSkipCount, setWordDefinition, getWordDefi
 import WordIO from "./io/WordIO";
 import { Direction } from "./common";
 import * as cacheCommands from "./CacheCommands";
+import { getMidPoint } from "./utils/selectionsAndRanges";
+
+let outputChannel = vscode.window.createOutputChannel("check bracket");
 
 export default class VimAtHomeManager {
     private mode: EditorMode;
@@ -71,7 +74,34 @@ export default class VimAtHomeManager {
     }
 
     async changeMode(newMode: EditorModeChangeRequest) {
-        let prevSubject = this.mode.getSubjectName();
+        this.clearSelections();
+        this.mode = await this.mode.changeTo(newMode);
+        const half = newMode.kind === "INSERT" ? undefined : newMode.half;
+        this.setUI();
+        this.mode.fixSelection(half);
+        this.setDecorations();
+    }
+    
+    async changeToMidWord(newMode: EditorModeChangeRequest) {
+        if (this.mode.getSubjectName() === "WORD" && getWordDefinitionIndex() === 0) {
+            let line = this.editor.document.lineAt(this.editor.selection.active.line).text
+            const start = line.search(/\S/);
+            const end = line.length - 1;
+            if (start) {
+                const midPoint = start + (end - start) / 2;
+                let curPos = new vscode.Position(this.editor.selection.active.line, midPoint);
+                this.editor.selection = new vscode.Selection(curPos, curPos);
+            }
+        } else if (newMode.kind === "COMMAND" && newMode.subjectName === "WORD") {
+            let startChar = this.editor.selection.active.character;
+            let endChar = this.editor.selection.anchor.character;
+            let startLine = this.editor.selection.active.line;
+            let endLine = this.editor.selection.anchor.line;
+            let curLine = (startLine + endLine) / 2;
+            let curChar = (startChar + endChar) / 2;
+            let curRange = new vscode.Position(curLine, curChar);
+            this.editor.selection = new vscode.Selection(curRange, curRange);
+        }
         this.clearSelections();
 
         // newMode.kind = this.mode.kind;
@@ -81,15 +111,6 @@ export default class VimAtHomeManager {
         this.setUI();
         this.mode.fixSelection(half);
         this.setDecorations();
-
-        if (this.mode.name === "COMMAND" && !(this.mode.getSubjectName() === 'CHAR' 
-        
-
-            || (this.mode.getSubjectName() === 'WORD' && getWordDefinitionIndex() <= 3)
-            || (prevSubject === this.mode.getSubjectName() && prevSubject !== 'WORD')
-            )) {
-            this.copy();
-        }
     }
 
     async executeSubjectCommand(command: SubjectAction) {
@@ -286,37 +307,26 @@ export default class VimAtHomeManager {
     }
 
     async jumpToSubject(subjectName: SubjectName) {
-
         if (this.mode.getSubjectName() === subjectName) {
             await this.mode.jump();
             return;
         }
         const newMode = await this.mode.jumpToSubject(subjectName);
-
-
         if (newMode === undefined) return;
-
         this.clearSelections();
         this.mode = newMode;
-
         this.setUI();
         this.mode.fixSelection();
-
         this.setDecorations();
     }
 
     async pullSubject(subjectName: SubjectName) {
         const newMode = await this.mode.pullSubject(subjectName);
-
-
         if (newMode === undefined) return;
-
         this.clearSelections();
         this.mode = newMode;
-
         this.setUI();
         this.mode.fixSelection();
-
         this.setDecorations();
     }
 
@@ -746,30 +756,84 @@ export default class VimAtHomeManager {
             const command = direction === "forwards" ? "nextObjectRight" : "nextObjectLeft";
             await this.executeSubjectCommand(command);
         }
-
     }
     
-    async copyLine(mod: number) {
-        const text = this.editor.document.lineAt(this.editor.selection.start.line + mod).text;
-        cacheCommands.copy(text);
-    }
-    
-    async copy() {
-        cacheCommands.copy(this.editor.document.getText(this.editor.selection));
-
-
+    async copyAll() {
+        cacheCommands.copyLine(this.editor.document.lineAt(this.editor.selection.active).text);
+        cacheCommands.copyBracket(this.editor.document.lineAt(this.editor.selection.active).text);
+        cacheCommands.copySubject(this.editor.document.getText(this.editor.selection));
     }
 
-    async paste() {
+    async copySelection() {
+        cacheCommands.copySubject(this.editor.document.getText(this.editor.selection));
+    }
+    async copyLine() {
+        cacheCommands.copyLine(this.editor.document.lineAt(this.editor.selection.active).text);
+    }
+    async copyBracket() {
+        cacheCommands.copyBracket(this.editor.document.getText(this.editor.selection));
+    }
+
+    async pasteLine() {
         const selection = this.editor.selection;
-        const currentSelection = this.editor.document.getText(this.editor.selection);
-
-        const options = cacheCommands.paste();
-        let newSelection = options[0] === currentSelection ? options[1] : options[0]; 
-        
+        const newText = cacheCommands.pasteLine();
         this.editor.edit(editBuilder => {
-            editBuilder.replace(selection, newSelection);
+            editBuilder.replace(selection, newText);
         });
     }
+
+    async pasteBracket() {
+        const selection = this.editor.selection;
+        const newText = cacheCommands.pasteBracket();
+        this.editor.edit(editBuilder => {
+            editBuilder.replace(selection, newText);
+        });
+    }
+
+    async pasteSubject() {
+        const selection = this.editor.selection;
+
+        const newText = cacheCommands.pasteSubject();
+        
+        this.editor.edit(editBuilder => {
+            editBuilder.replace(selection, newText);
+        });
+    }
+
+    async changeToBracketSubject() {
+        if (this.editor.selection.active.line == this.editor.selection.anchor.line) {
+            // find first to left, if not, then first to right, move curosr
+            let line = this.editor.document.lineAt(this.editor.selection.active.line).text
+            let index = 1;
+            outputChannel.appendLine(line);
+            if (line) 
+                for (index = this.editor.selection.active.character; index > 0; index--) {
+                    outputChannel.appendLine(line[index]);
+
+                    if ("({[".includes(line[index])) {
+                        let position = new vscode.Position(this.editor.selection.active.line, index);
+                        this.editor.selection = new vscode.Selection(position, position);
+                        break;
+                    }
+                }
+                for (index = this.editor.selection.active.character; index < line.length; index++) {
+                    if ("({[".includes(line[index])) {
+                        let position = new vscode.Position(this.editor.selection.active.line, index);
+                        this.editor.selection = new vscode.Selection(position, position);
+                        break;
+                    }
+                }
+            
+        }
+        await this.changeMode({
+            kind: "COMMAND",
+            subjectName: "BRACKETS",
+        });
+    }
+
+    async getSubjectSelection() {
+        
+    }
+    
 }
 

@@ -6,7 +6,6 @@ function fuzzyMatch(pattern: string, str: string): { matched: boolean; score: nu
     const strLower = str.toLowerCase();
     let score = 0;
     let strIdx = 0;
-
     for (let patternIdx = 0; patternIdx < patternLower.length; patternIdx++) {
         const char = patternLower[patternIdx];
         const indexInStr = strLower.indexOf(char, strIdx);
@@ -16,7 +15,6 @@ function fuzzyMatch(pattern: string, str: string): { matched: boolean; score: nu
         score += 1 / (indexInStr - strIdx + 1);
         strIdx = indexInStr + 1;
     }
-
     return { matched: true, score: score / strLower.length };
 }
 
@@ -119,22 +117,66 @@ export const clearCache = (editor: vscode.TextEditor) => {
     historyCache.clearCache();
 }
 
-let copiedText: [string, string] = ["", ""];
+let copiedLine: string = "";
+let copiedSubject: string = "";
+let copiedBracket: string = "";
 
-export const copy = (text: string) => {
-    
+
+export const copyLine = (text: string) => {
+    text = text.trim();
     if (text === "" || text === undefined) {
         return;
     }
-    addTextToCache(text);
-    if (text === copiedText[0]) {
-        return;
-    }
-    copiedText[1] = copiedText[0];
-    copiedText[0] = text;
+    copiedLine = text;
 }
 
-export const paste = ()  => {
-    return copiedText; 
+export const copyBracket = (text: string) => {
+    text = text.trim();
+    let parenStack = [];
+    let curlyStack = [];
+    let result = "";
+    for (let i = 0; i < text.length; i++) {
+        if (text[i] === "(") {
+            parenStack.push(i);
+        } else if (text[i] === "{") {
+            curlyStack.push(i);
+        } else if (text[i] === ")" && !(parenStack.length === 0)) {
+            const tempText = text.substring(parenStack[parenStack.length-1]+1, i);
+            parenStack.pop();
+            if (tempText.length > result.length) {
+                result = tempText;
+            }
+        } else if (text[i] === "}" && !(curlyStack.length === 0)) {
+            const tempText = text.substring(curlyStack[curlyStack.length-1]+1, i);
+            curlyStack.pop();
+            if (tempText.length > result.length) {
+                result = tempText;
+            }
+        }
+
+    }
+    if (result.length > 0) {
+        copiedBracket = result;
+    } 
+}
+
+export const copySubject = (text: string) => {
+    text = text.trim();
+    if (text === "" || text === undefined) {
+        return;
+    }
+    copiedSubject = text;
+}
+
+export const pasteLine = ()  => {
+    return copiedLine; 
+}
+
+export const pasteSubject = ()  => {
+    return copiedSubject; 
+}
+
+export const pasteBracket = ()  => {
+    return copiedBracket; 
 }
 

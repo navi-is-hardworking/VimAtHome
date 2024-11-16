@@ -12,27 +12,6 @@ import { setVirtualColumnNumber } from "./common";
 
 const highlightManager = new HighlightManager();
 
-function fuzzyMatch(pattern: string, str: string): { matched: boolean; score: number } {
-    let score = 0;
-    let patternIdx = 0;
-    let strIdx = 0;
-    let patternLength = pattern.length;
-    let strLength = str.length;
-
-    while (patternIdx < patternLength && strIdx < strLength) {
-        if (pattern[patternIdx].toLowerCase() === str[strIdx].toLowerCase()) {
-            score += 1 / (strIdx + 1);  // Higher score for earlier matches
-            patternIdx++;
-        }
-        strIdx++;
-    }
-
-    return {
-        matched: patternIdx === patternLength,
-        score: score,
-    };
-}
-
 type ExtensionCommand = {
     id: string;
     execute: (manager: VimAtHomeManager, ...args: any[]) => Promise<void>;
@@ -130,10 +109,12 @@ export const registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.changeToBracketSubject",
         execute: async (manager) => {
-            await manager.changeMode({
-                kind: "COMMAND",
-                subjectName: "BRACKETS",
-            });
+            await manager.changeToBracketSubject();
+
+            // await manager.changeMode({
+            //     kind: "COMMAND",
+            //     subjectName: "BRACKETS",
+            // });
         },
     },
     {
@@ -147,6 +128,16 @@ export const registeredCommands: ExtensionCommand[] = [
         execute: async (manager: VimAtHomeManager) => {
             setWordDefinition(0);
             manager.changeMode({
+                kind: "COMMAND",
+                subjectName: "WORD",
+            });
+        },
+    },
+    {
+        id: "vimAtHome.changeToMidWord",
+        execute: async (manager: VimAtHomeManager) => {
+            setWordDefinition(0);
+            manager.changeToMidWord({
                 kind: "COMMAND",
                 subjectName: "WORD",
             });
@@ -773,21 +764,19 @@ export const registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.deleteLineAbove",
         execute: async (manager: VimAtHomeManager) => {
-            await manager.copyLine(-1);
             await manager.deleteLineAbove();
         },
     },
     {
         id: "vimAtHome.deleteLineBelow",
         execute: async (manager: VimAtHomeManager) => {
-            await manager.copyLine(1);
             await manager.deleteLineBelow();
         },
     },
     {
         id: "vimAtHome.deleteLine",
         execute: async (manager: VimAtHomeManager) => {
-            await manager.copyLine(0);
+            manager.copyLine();
             vscode.commands.executeCommand(
                 "editor.action.deleteLines"
             );
@@ -962,13 +951,31 @@ export const registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.copy", 
         execute: async (manager) => {
-            await manager.copy();
+            await manager.copyAll();
+        },
+    },
+    // {
+    //     id: "vimAtHome.copy", 
+    //     execute: async (manager) => {
+    //         await manager.copy();
+    //     },
+    // },
+    {
+        id: "vimAtHome.pasteLine", 
+        execute: async (manager) => {
+            await manager.pasteLine();
         },
     },
     {
-        id: "vimAtHome.paste", 
+        id: "vimAtHome.pasteBracket", 
         execute: async (manager) => {
-            await manager.paste();
+            await manager.pasteBracket();
+        },
+    },
+    {
+        id: "vimAtHome.pasteSubject", 
+        execute: async (manager) => {
+            await manager.pasteSubject();
         },
     },
     

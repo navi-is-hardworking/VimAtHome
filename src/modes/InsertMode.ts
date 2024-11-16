@@ -8,6 +8,8 @@ import { SubjectName } from "../subjects/SubjectName";
 import JumpInterface from "../handlers/JumpInterface";
 import { getCommandColor, setSelectionBackground } from "../config";
 import * as modes from "./modes";
+import { getWordDefinitionIndex } from "../config";
+import { seq } from "../utils/seq";
 
 export default class InsertMode extends EditorMode {
     private keySequenceStarted: boolean = false;
@@ -98,20 +100,29 @@ export default class InsertMode extends EditorMode {
     
     async pullSubject(subjectName: SubjectName) {
         const tempSubject = subjects.createFrom(this.context, subjectName);
-
+        const combinedRange = this.context.editor.visibleRanges.reduce((acc, range) => acc.union(range));
         const jumpLocations = tempSubject
-            .iterAll(
-                common.IterationDirection.alternate,
-                this.context.editor.visibleRanges[0]
-            )
-            .map((range) => range.start);
+            .iterAll(common.IterationDirection.alternate, combinedRange)
+            .map((range) => range.start)
+            .toArray();
 
         const jumpInterface = new JumpInterface(this.context);
+        let jumpType = tempSubject.jumpPhaseType;
 
+        // outputchannel.appendLine(`subject nme ${tempSubject.name}`);
+        if (tempSubject.name === "WORD") {
+            let wordDefinitionIndex = getWordDefinitionIndex();
+            if (wordDefinitionIndex <= 1) {
+                jumpType = "dual-phase";
+            } else {
+                jumpType = "single-phase";
+            }
+        }
+
+        common.setLazyPassSubjectName(subjectName);
         const jumpPosition = await jumpInterface.jump({
-            kind: tempSubject.jumpPhaseType,
-            locations: jumpLocations,
-        },);
+            kind: jumpType,
+            locations: seq(jumpLocations)},);
 
         if (jumpPosition) {
             const currentSelection = this.context.editor.selection;

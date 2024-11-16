@@ -7,12 +7,13 @@ export type ColorConfig = {
     char: string;
     subWord: string;
     word: string;
-    customWord1: string;
-    customWord2: string;
-    customWord3: string;
-    customWord4: string;
-    customWord5: string;
-    customWord6: string;
+    // customWord1: string;
+    // customWord2: string;
+    // customWord3: string;
+    // customWord4: string;
+    // customWord5: string;
+    // customWord6: string;
+    wordColors: string[];
     line: string;
     block: string;
     bracket: string;
@@ -43,14 +44,7 @@ export function loadConfig(): Config {
         char: config.get<string>("color.char") || "ff8000",
         subWord: config.get<string>("color.subWord") || "ff6699",
         word: config.get<string>("color.word") || "964d4d",
-
-        customWord1: config.get<string>("color.customWord1") || "3381ff",
-        customWord2: config.get<string>("color.customWord2") || "ffff00",
-        customWord3: config.get<string>("color.customWord3") || "cf9700",
-        customWord4: config.get<string>("color.customWord4") || "3381ff",
-        customWord5: config.get<string>("color.customWord5") || "ffff00",
-        customWord6: config.get<string>("color.customWord6") || "cf9700",
-        
+        wordColors: [],
         line: config.get<string>("color.line") || "8feb34",
         block: config.get<string>("color.block") || "aba246",
         bracket: config.get<string>("color.bracket") || "9900ff",
@@ -61,13 +55,19 @@ export function loadConfig(): Config {
     
     let wordSet = new Set();
     wordSet.add("\\w+");
-    for (let i = 1; i <= 6; i++) {
-        const customRegex = config.get<string>(`customWordRegex${i}`);
-        if (customRegex)
+    for (let i = 1; true; i++) {
+        const customRegex = config.get<string>(`customWordRegex${i}`) || null;
+        if (customRegex) 
             wordSet.add(customRegex);
+        else 
+            break;
     }
-
     wordDefinitions = Array.from(wordSet).map(w => new RegExp(w as string));
+    colorConfig.wordColors.push(config.get<string>("color.word") || "ffffff");
+    for (let i = 1; i < wordDefinitions.length; i++) {
+        colorConfig.wordColors.push(config.get<string>(`color.customWord${i}`) || "ffffff");
+    }
+    
     
     return {
         jump: config.get<JumpConfig>("jump")!,
@@ -76,17 +76,23 @@ export function loadConfig(): Config {
     };
 }
 export function getWordColor(): string { 
-    switch (currentWordDefinition) {
-        case -1: return colorConfig.char;
-        case 0: return colorConfig.word;
-        case 1: return colorConfig.customWord1;
-        case 2: return colorConfig.customWord2;
-        case 3: return colorConfig.customWord3;
-        case 4: return colorConfig.customWord4;
-        case 5: return colorConfig.customWord5;
-        case 6: return colorConfig.customWord6;
-        default: return colorConfig.word;
+    if (currentWordDefinition == -1) {
+        return colorConfig.char;
     }
+
+    return colorConfig.wordColors[currentWordDefinition];
+    
+    // switch (currentWordDefinition) {
+    //     case -1: return colorConfig.char;
+    //     case 0: return colorConfig.word;
+    //     case 1: return colorConfig.customWord1;
+    //     case 2: return colorConfig.customWord2;
+    //     case 3: return colorConfig.customWord3;
+    //     case 4: return colorConfig.customWord4;
+    //     case 5: return colorConfig.customWord5;
+    //     case 6: return colorConfig.customWord6;
+    //     default: return colorConfig.word;
+    // }
 }
 
 export function getCharColor(): string { return colorConfig.char; }
