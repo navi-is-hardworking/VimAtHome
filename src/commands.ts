@@ -880,6 +880,18 @@ export const registeredCommands: ExtensionCommand[] = [
         },
     },
     {
+        id: "vimAtHome.hopVerticalUp",
+        execute: async (manager: VimAtHomeManager) => {
+            await manager.hopVertical(Direction.backwards);
+        },
+    },
+    {
+        id: "vimAtHome.hopVerticalDown",
+        execute: async (manager: VimAtHomeManager) => {
+            await manager.hopVertical(Direction.forwards);
+        },
+    },
+    {
         id: "vimAtHome.selectOutward",
             execute: async (manager: VimAtHomeManager) => {
             await manager.edgeOut(Direction.forwards);

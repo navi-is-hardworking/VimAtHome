@@ -17,7 +17,7 @@ import { Direction } from "./common";
 import * as cacheCommands from "./CacheCommands";
 import { getMidPoint } from "./utils/selectionsAndRanges";
 
-let outputChannel = vscode.window.createOutputChannel("check bracket");
+let outputChannel = vscode.window.createOutputChannel("LineHop");
 
 export default class VimAtHomeManager {
     private mode: EditorMode;
@@ -499,7 +499,7 @@ export default class VimAtHomeManager {
             this.changeMode(changeRequest)
     }
 
-    async moveVerticalN(direction: common.Direction) {
+    async getNthVerticalLine(direction: common.Direction, distance: number) {
         const document = this.editor.document;
         const lineCount = document.lineCount;
         let currentLine = this.editor.selection.active.line;
@@ -508,7 +508,7 @@ export default class VimAtHomeManager {
     
         const foldedMap = lineUtils.getLineToFoldedMap();
     
-        while (currentLine >= 0 && currentLine < lineCount && n < 4) {
+        while (currentLine >= 0 && currentLine < lineCount && n < distance) {
             currentLine += increment;
             if (currentLine < 0 || currentLine >= lineCount) break;
             
@@ -518,34 +518,49 @@ export default class VimAtHomeManager {
                 n += 1;
             }
         }
+
+        return currentLine;
+    }
     
+    async moveVerticalN(direction: common.Direction) {
+        const currentLine = await this.getNthVerticalLine(direction, getVerticalSkipCount());
         await this.updateEditorPosition(currentLine);
     }
     
-    async nextSignificantBlock(direction: common.Direction) {
+    async getNextSignificantBlockLocation(direction: common.Direction) {
         const document = this.editor.document;
         const lineCount = document.lineCount;
         let currentLine = this.editor.selection.active.line;
         const increment = direction === common.Direction.forwards ? 1 : -1;
 
-        while (currentLine >= 0 && currentLine < lineCount) {
+        while (!lineUtils.lineIsSignificant(document.lineAt(currentLine + increment)) && currentLine < lineCount && currentLine >= 0) {
             currentLine += increment;
-            if (currentLine < 0 || currentLine >= lineCount) break;
-            
-            const line = document.lineAt(currentLine);
-            if (lineUtils.lineIsSignificant(line)) {
-                while (currentLine >= 0 && currentLine < lineCount) {
-                    const nextLine = document.lineAt(currentLine + increment);
-                    if (!lineUtils.lineIsSignificant(nextLine)) {
-                        break;
-                    }
-                    currentLine += increment;
-                }
-                break;
-            }
         }
-
+        
+        while (lineUtils.lineIsSignificant(document.lineAt(currentLine + increment)) && currentLine < lineCount && currentLine >= 0) {
+            currentLine += increment;
+        }
+        
+        return currentLine
+    }
+    
+    async nextSignificantBlock(direction: common.Direction) {
+        const currentLine = await this.getNextSignificantBlockLocation(direction);
         await this.updateEditorPosition(currentLine);
+    }
+    
+    async hopVertical(direction: common.Direction) {
+        outputChannel.appendLine("currentLine: " + this.editor.selection.active.line);  
+        let nextN = await this.getNthVerticalLine(direction, 2);
+        let nextBlockLine = await this.getNextSignificantBlockLocation(direction);
+        outputChannel.appendLine("nextN: " + nextN + ", nextBlockLine: " + nextBlockLine);
+        let newLine = 0;
+        if (direction === common.Direction.forwards) {
+            newLine = nextN > nextBlockLine ? nextN : nextBlockLine;
+        } else if (direction === common.Direction.backwards) {
+            newLine = nextN < nextBlockLine ? nextN : nextBlockLine;
+        }
+        await this.updateEditorPosition(newLine);
     }
     
     async nextIndentBlock(direction: common.Direction) {
