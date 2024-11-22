@@ -7,7 +7,7 @@ import { EditorMode, EditorModeChangeRequest } from "./modes";
 import { SubjectAction } from "../subjects/SubjectActions";
 import CommandMode from "./CommandMode";
 import { SubjectName } from "../subjects/SubjectName";
-import { getExtendColor, setSelectionBackground } from "../config";
+import { getExtendColor } from "../config";
 import * as modes from "./modes";
 
 

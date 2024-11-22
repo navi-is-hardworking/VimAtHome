@@ -16,11 +16,13 @@ import WordIO from "./io/WordIO";
 import { Direction } from "./common";
 import * as cacheCommands from "./CacheCommands";
 import { getMidPoint } from "./utils/selectionsAndRanges";
+import * as ncp from 'copy-paste'
+import { promisify } from "util";
 
-let outputChannel = vscode.window.createOutputChannel("LineHop");
+const copyAsync = promisify((text: string) => ncp.copy(text));
 
 export default class VimAtHomeManager {
-    private mode: EditorMode;
+    public mode: EditorMode;
     public statusBar: vscode.StatusBarItem;
     public editor: vscode.TextEditor = undefined!;
 
@@ -103,8 +105,6 @@ export default class VimAtHomeManager {
             this.editor.selection = new vscode.Selection(curRange, curRange);
         }
         this.clearSelections();
-
-        // newMode.kind = this.mode.kind;
         this.mode = await this.mode.changeTo(newMode);
         const half = newMode.kind === "INSERT" ? undefined : newMode.half;
 
@@ -115,15 +115,6 @@ export default class VimAtHomeManager {
 
     async executeSubjectCommand(command: SubjectAction) {
         await this.mode.executeSubjectCommand(command);
-
-        // if (this.mode.getSubjectName() === 'LINE' || this.mode.getSubjectName() === 'BRACKETS') {
-        //     let text = this.editor.document.getText(this.editor.selection);
-        //     if (this.editor.selection.start.line === this.editor.selection.end.line) {
-        //         cacheCommands.addTextToCache(text);
-        //     } else {
-        //         cacheCommands.parseLines(text);
-        //     }
-        // }
     }
     
     async executeModifyCommand(command: modifications.ModifyCommand) {
@@ -550,10 +541,8 @@ export default class VimAtHomeManager {
     }
     
     async hopVertical(direction: common.Direction) {
-        outputChannel.appendLine("currentLine: " + this.editor.selection.active.line);  
         let nextN = await this.getNthVerticalLine(direction, 2);
         let nextBlockLine = await this.getNextSignificantBlockLocation(direction);
-        outputChannel.appendLine("nextN: " + nextN + ", nextBlockLine: " + nextBlockLine);
         let newLine = 0;
         if (direction === common.Direction.forwards) {
             newLine = nextN > nextBlockLine ? nextN : nextBlockLine;
@@ -776,12 +765,12 @@ export default class VimAtHomeManager {
     async copyAll() {
         cacheCommands.copyLine(this.editor.document.lineAt(this.editor.selection.active).text);
         cacheCommands.copyBracket(this.editor.document.lineAt(this.editor.selection.active).text);
-        cacheCommands.copySubject(this.editor.document.getText(this.editor.selection));
+        const selection = this.editor.document.getText(this.editor.selection);
+        if (selection !== null && selection.length > 0) {
+            await copyAsync(selection);
+        }
     }
 
-    async copySelection() {
-        cacheCommands.copySubject(this.editor.document.getText(this.editor.selection));
-    }
     async copyLine() {
         cacheCommands.copyLine(this.editor.document.lineAt(this.editor.selection.active).text);
     }
@@ -806,25 +795,20 @@ export default class VimAtHomeManager {
     }
 
     async pasteSubject() {
+        const clipText = await vscode.env.clipboard.readText();
         const selection = this.editor.selection;
-
-        const newText = cacheCommands.pasteSubject();
-        
         this.editor.edit(editBuilder => {
-            editBuilder.replace(selection, newText);
+            editBuilder.replace(selection, clipText);
         });
     }
 
     async changeToBracketSubject() {
         if (this.editor.selection.active.line == this.editor.selection.anchor.line) {
             // find first to left, if not, then first to right, move curosr
-            let line = this.editor.document.lineAt(this.editor.selection.active.line).text
+            let line = this.editor.document.lineAt(this.editor.selection.active.line).text;
             let index = 1;
-            outputChannel.appendLine(line);
             if (line) 
                 for (index = this.editor.selection.active.character; index > 0; index--) {
-                    outputChannel.appendLine(line[index]);
-
                     if ("({[".includes(line[index])) {
                         let position = new vscode.Position(this.editor.selection.active.line, index);
                         this.editor.selection = new vscode.Selection(position, position);
@@ -838,7 +822,6 @@ export default class VimAtHomeManager {
                         break;
                     }
                 }
-            
         }
         await this.changeMode({
             kind: "COMMAND",
@@ -846,9 +829,42 @@ export default class VimAtHomeManager {
         });
     }
 
-    async getSubjectSelection() {
-        
+    async changeToBlockSubject() {
+        let selection = this.editor.selection;
+        if ((this.mode.getSubjectName() === 'BRACKETS' || this.mode.getSubjectName() === 'BRACKETS_INCLUSIVE') && selection.active.line !== selection.anchor.line) {
+            let start = this.editor.selection.active;
+            start = start.with(start.line, this.editor.document.lineAt(start.line).firstNonWhitespaceCharacterIndex);
+            let end = this.editor.selection.anchor 
+            end = end.with(end.line, this.editor.document.lineAt(end.line).text.length);
+            this.editor.selection = new vscode.Selection(start, end);
+        } else {
+            await this.changeMode({
+                kind: "COMMAND",
+                subjectName: "BLOCK",
+            });
+        }
     }
     
+    async insertHome() {
+        await this.changeMode({
+            kind: "INSERT",
+        });
+        
+        const position = this.editor.selection.active;
+        const newPosition = position.with(position.line, this.editor.document.lineAt(position.line).firstNonWhitespaceCharacterIndex);
+        const newSelection = new vscode.Selection(newPosition, newPosition);
+        this.editor.selection = newSelection;
+    }
+    
+    async insertEnd() {
+        await this.changeMode({
+            kind: "INSERT",
+        });
+    
+        const position = this.editor.selection.active;
+        const newPosition = position.with(position.line, this.editor.document.lineAt(position.line).text.length);
+        const newSelection = new vscode.Selection(newPosition, newPosition);
+        this.editor.selection = newSelection;
+    }
 }
 

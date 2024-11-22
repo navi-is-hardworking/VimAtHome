@@ -3,12 +3,12 @@ import * as editor from "./utils/editor";
 import type VimAtHomeManager from "./VimAtHomeManager";
 import { collapseSelections } from "./utils/selectionsAndRanges";
 import { Direction } from "./common";
-import { setWordDefinition, nextWordDefinition, prevWordDefinition } from "./config";
+import { setWordDefinition, nextWordDefinition, prevWordDefinition, getWordDefinitionIndex } from "./config";
 import * as path from 'path';
 import { HighlightManager } from './handlers/HighlightManager';
 import * as cacheCommands from "./CacheCommands";
 import { setVirtualColumnNumber } from "./common";
-
+import { addSubjectCommand } from "./utils/quickMenus"
 
 const highlightManager = new HighlightManager();
 
@@ -17,7 +17,7 @@ type ExtensionCommand = {
     execute: (manager: VimAtHomeManager, ...args: any[]) => Promise<void>;
 };
 
-export const registeredCommands: ExtensionCommand[] = [
+export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.swapSubjectUp",
         execute: async (manager) => {
@@ -110,11 +110,6 @@ export const registeredCommands: ExtensionCommand[] = [
         id: "vimAtHome.changeToBracketSubject",
         execute: async (manager) => {
             await manager.changeToBracketSubject();
-
-            // await manager.changeMode({
-            //     kind: "COMMAND",
-            //     subjectName: "BRACKETS",
-            // });
         },
     },
     {
@@ -126,21 +121,19 @@ export const registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.changeToWordSubject",
         execute: async (manager: VimAtHomeManager) => {
-            setWordDefinition(0);
-            manager.changeMode({
-                kind: "COMMAND",
-                subjectName: "WORD",
-            });
-        },
-    },
-    {
-        id: "vimAtHome.changeToMidWord",
-        execute: async (manager: VimAtHomeManager) => {
-            setWordDefinition(0);
-            manager.changeToMidWord({
-                kind: "COMMAND",
-                subjectName: "WORD",
-            });
+            if (manager.mode.getSubjectName() !== "WORD" || getWordDefinitionIndex() !== 0) {
+                setWordDefinition(0);
+                manager.changeMode({
+                    kind: "COMMAND",
+                    subjectName: "WORD",
+                });
+            } else {
+                setWordDefinition(0);
+                manager.changeToMidWord({
+                    kind: "COMMAND",
+                    subjectName: "WORD",
+                });
+            }
         },
     },
     {
@@ -169,110 +162,6 @@ export const registeredCommands: ExtensionCommand[] = [
             });
         },
     },
-    {
-        id: "vimAtHome.changeToCustomWord1",
-        execute: async (manager: VimAtHomeManager) => {
-            setWordDefinition(1);
-            manager.changeMode({
-                kind: "COMMAND",
-                subjectName: "WORD",
-            });
-        },
-    },
-    {
-        id: "vimAtHome.jumpToCustomWord1",
-        execute: async (manager: VimAtHomeManager) => {
-            setWordDefinition(1);
-            manager.jumpToSubject('WORD');
-        },
-    },
-    {
-        id: "vimAtHome.changeToCustomWord2",
-        execute: async (manager: VimAtHomeManager) => {
-            setWordDefinition(2);
-            manager.changeMode({
-                kind: "COMMAND",
-                subjectName: "WORD",
-            });
-        },
-    },
-    {
-        id: "vimAtHome.jumpToCustomWord2",
-        execute: async (manager: VimAtHomeManager) => {
-            setWordDefinition(2);
-            manager.jumpToSubject('WORD');
-        },
-    },
-    {
-        id: "vimAtHome.changeToCustomWord3",
-        execute: async (manager: VimAtHomeManager) => {
-            setWordDefinition(3);
-            manager.changeMode({
-                kind: "COMMAND",
-                subjectName: "WORD",
-            });
-        },
-    },
-    {
-        id: "vimAtHome.jumpToCustomWord3",
-        execute: async (manager: VimAtHomeManager) => {
-            setWordDefinition(3);
-            manager.jumpToSubject('WORD');
-        },
-    },
-
-    {
-        id: "vimAtHome.changeToCustomWord4",
-        execute: async (manager: VimAtHomeManager) => {
-            setWordDefinition(4);
-            manager.changeMode({
-                kind: "COMMAND",
-                subjectName: "WORD",
-            });
-        },
-    },
-    {
-        id: "vimAtHome.jumpToCustomWord4",
-        execute: async (manager: VimAtHomeManager) => {
-            setWordDefinition(4);
-            manager.jumpToSubject('WORD');
-        },
-    },
-    {
-        id: "vimAtHome.changeToCustomWord5",
-        execute: async (manager: VimAtHomeManager) => {
-            setWordDefinition(5);
-            manager.changeMode({
-                kind: "COMMAND",
-                subjectName: "WORD",
-            });
-        },
-    },
-    {
-        id: "vimAtHome.jumpToCustomWord5",
-        execute: async (manager: VimAtHomeManager) => {
-            setWordDefinition(5);
-            manager.jumpToSubject('WORD');
-        },
-    },
-    {
-        id: "vimAtHome.changeToCustomWord6",
-        execute: async (manager: VimAtHomeManager) => {
-            setWordDefinition(6);
-            manager.changeMode({
-                kind: "COMMAND",
-                subjectName: "WORD",
-            });
-        },
-    },
-    {
-        id: "vimAtHome.jumpToCustomWord6",
-        execute: async (manager: VimAtHomeManager) => {
-            setWordDefinition(6);
-            manager.jumpToSubject('WORD');
-        },
-    },
-
     {
         id: "vimAtHome.changeToLineSubject",
         execute: async (manager: VimAtHomeManager) => {
@@ -362,10 +251,7 @@ export const registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.changeToBlockSubject",
         execute: async (manager: VimAtHomeManager) => {
-            manager.changeMode({
-                kind: "COMMAND",
-                subjectName: "BLOCK",
-            });
+            manager.changeToBlockSubject();
         },
     },
     {
@@ -678,48 +564,6 @@ export const registeredCommands: ExtensionCommand[] = [
         },
     },
     {
-        id: "vimAtHome.pullCustomWord1",
-        execute: async (manager: VimAtHomeManager) => {
-            setWordDefinition(1);
-            manager.pullSubject('WORD');
-        },
-    },
-    {
-        id: "vimAtHome.pullCustomWord2",
-        execute: async (manager: VimAtHomeManager) => {
-            setWordDefinition(2);
-            manager.pullSubject('WORD');
-        },
-    },
-    {
-        id: "vimAtHome.pullCustomWord3",
-        execute: async (manager: VimAtHomeManager) => { // 
-            setWordDefinition(3);
-            manager.pullSubject('WORD');
-        },
-    },
-    {
-        id: "vimAtHome.pullCustomWord4",
-        execute: async (manager: VimAtHomeManager) => { // 
-            setWordDefinition(4);
-            manager.pullSubject('WORD');
-        },
-    },
-    {
-        id: "vimAtHome.pullCustomWord5",
-        execute: async (manager: VimAtHomeManager) => { // 
-            setWordDefinition(5);
-            manager.pullSubject('WORD');
-        },
-    },
-    {
-        id: "vimAtHome.pullCustomWord6",
-        execute: async (manager: VimAtHomeManager) => { // 
-            setWordDefinition(6);
-            manager.pullSubject('WORD');
-        },
-    },
-    {
         id: "vimAtHome.pullBracketSubject",
         execute: async (manager: VimAtHomeManager) => {
             manager.pullSubject('BRACKETS');
@@ -776,7 +620,6 @@ export const registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.deleteLine",
         execute: async (manager: VimAtHomeManager) => {
-            manager.copyLine();
             vscode.commands.executeCommand(
                 "editor.action.deleteLines"
             );
@@ -966,12 +809,6 @@ export const registeredCommands: ExtensionCommand[] = [
             await manager.copyAll();
         },
     },
-    // {
-    //     id: "vimAtHome.copy", 
-    //     execute: async (manager) => {
-    //         await manager.copy();
-    //     },
-    // },
     {
         id: "vimAtHome.pasteLine", 
         execute: async (manager) => {
@@ -990,8 +827,59 @@ export const registeredCommands: ExtensionCommand[] = [
             await manager.pasteSubject();
         },
     },
+    {
+        id: "vimAtHome.insertHome", 
+        execute: async (manager) => {
+            await manager.insertHome();
+        },
+    },
+    {
+        id: "vimAtHome.insertEnd", 
+        execute: async (manager) => {
+            await manager.insertEnd();
+        },
+    },
     
 ];
+
+export function popCustomCommands(num: number) {
+    for (let i = 0; i < num; i++) {
+        registeredCommands.pop();
+    }
+}
+
+export function addCustomWord(index: number, key: string) {
+    const customCommand = `vimAtHome.changeToCustomWord${index}`;
+    registeredCommands.push(
+    {
+        id: customCommand,
+        execute: async (manager: VimAtHomeManager) => {
+            setWordDefinition(index);
+            manager.changeMode({
+                kind: "COMMAND",
+                subjectName: "WORD",
+            });
+        },
+    })
+    registeredCommands.push(
+    {
+        id: `vimAtHome.jumpToCustomWord${index}`,
+        execute: async (manager: VimAtHomeManager) => {
+            setWordDefinition(index);
+            manager.jumpToSubject('WORD');
+        },
+    })
+    registeredCommands.push(
+    {
+        id: `vimAtHome.pullCustomWord${index}`,
+        execute: async (manager: VimAtHomeManager) => {
+            setWordDefinition(index);
+            manager.pullSubject('WORD');
+        },
+    })
+
+    addSubjectCommand(customCommand, key, index);
+}
 
 export function deactivate() {
     highlightManager.dispose();

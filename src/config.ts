@@ -1,18 +1,18 @@
+
 import * as vscode from "vscode";
 import { SubjectName } from "./subjects/SubjectName";
 import { char } from "./utils/quickMenus";
 import { join } from "path";
+import * as commands from "./commands";
+import type VimAtHomeManager from "./VimAtHomeManager";
+import * as common from "./common"
+import { addCustomWord } from "./commands";
+import { resetSubjectChangeCommands } from "./utils/quickMenus";
 
 export type ColorConfig = {
     char: string;
     subWord: string;
     word: string;
-    // customWord1: string;
-    // customWord2: string;
-    // customWord3: string;
-    // customWord4: string;
-    // customWord5: string;
-    // customWord6: string;
     wordColors: string[];
     line: string;
     block: string;
@@ -21,11 +21,13 @@ export type ColorConfig = {
     extend: string;
     insert: string;
 }
-let colorConfig: ColorConfig;
 
+let colorConfig: ColorConfig;
 let wordDefinitions = [] as RegExp[];
+let wordKeys: string;
 let currentWordDefinition = 0;
 let verticalSkipCount = 4;
+let customCommandsAdded = 0;
 
 export type JumpConfig = {
     characters: string;
@@ -53,6 +55,8 @@ export function loadConfig(): Config {
         insert: config.get<string>("color.insert") || "#00eeff34",
     };
     
+    wordKeys = config.get<string>("wordKeys", "");
+    
     let wordSet = new Set();
     wordSet.add("\\w+");
     for (let i = 1; true; i++) {
@@ -68,6 +72,19 @@ export function loadConfig(): Config {
         colorConfig.wordColors.push(config.get<string>(`color.customWord${i}`) || "ffffff");
     }
     
+    resetSubjectChangeCommands()
+    commands.popCustomCommands(customCommandsAdded);
+    customCommandsAdded = 0;
+    
+    for (let i = 1; i < wordDefinitions.length; i++) {
+        let key = "0"
+        if (i - 1 < wordKeys.length) {
+            key = wordKeys.charAt(i - 1);
+        }
+        customCommandsAdded += 1;
+        addCustomWord(i, key);
+    }
+    
     
     return {
         jump: config.get<JumpConfig>("jump")!,
@@ -81,18 +98,6 @@ export function getWordColor(): string {
     }
 
     return colorConfig.wordColors[currentWordDefinition];
-    
-    // switch (currentWordDefinition) {
-    //     case -1: return colorConfig.char;
-    //     case 0: return colorConfig.word;
-    //     case 1: return colorConfig.customWord1;
-    //     case 2: return colorConfig.customWord2;
-    //     case 3: return colorConfig.customWord3;
-    //     case 4: return colorConfig.customWord4;
-    //     case 5: return colorConfig.customWord5;
-    //     case 6: return colorConfig.customWord6;
-    //     default: return colorConfig.word;
-    // }
 }
 
 export function getCharColor(): string { return colorConfig.char; }
@@ -138,38 +143,3 @@ export function getWordDefinitionByIndex(index: number): RegExp | undefined {
     }
     return undefined;
 }
-
-loadConfig();
-let cur_color = "";
-
-export function setSelectionBackground(color: string) {
-    if (cur_color === color) return;
-    cur_color = color;
-    const workbench = vscode.workspace.getConfiguration('workbench');
-    const currentCustomizations = workbench.get('colorCustomizations') || {};
-
-
-    // const updatedCustomizations = {
-    //     ...currentCustomizations,
-    //     'editor.selectionBackground': color
-    // };
-
-    // workbench.update(
-    //     'colorCustomizations', 
-    //     updatedCustomizations,
-    //     vscode.ConfigurationTarget.Workspace
-    // )
-}
-    
-// export function clearSelectionBackground() {
-//     const workbench = vscode.workspace.getConfiguration('workbench');
-//     const currentCustomizations = workbench.get('colorCustomizations') || {};
-//     const newColor = "#00000000";
-
-//     const updatedCustomizations = {
-//         ...currentCustomizations,
-//         'editor.selectionBackground': newColor
-//     };
-//     workbench.update(
-//         'colorCustomizations', 
-//         updatedCustomizations,//         vscode.ConfigurationTarget.d

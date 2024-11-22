@@ -21,23 +21,33 @@ I would recommend using the original but you are welcome to use this if you wish
     "tab.inactiveBackground": "#000000",
 },
 
+"vimAtHome.wordKeys": "m,.jkluioxcvsdfwer",
 "vimAtHome.customWordRegex1": "[A-Z]*[A-Za-z0-9][a-z0-9]*|[^A-Za-z0-9\\s]+", // subword
-"vimAtHome.customWordRegex2":  "[^\\w\\s\"\\':]+|^[\\W]{1,}$", // Whitespace 
-"vimAtHome.customWordRegex3":  "[^\\s(),{};][^,(){};]*", // Arguments
+"vimAtHome.customWordRegex2":  "[^\\w\\s\"\\'][^\\w\\s\"\\']+[^\\w\\s\"\\']|[^\\w\\s\"\\']+", // Whitespace 
+"vimAtHome.customWordRegex3":  "[a-zA-Z][^,|&?]+[^\\)\\s{}^,|&?]", // Arguments
 "vimAtHome.customWordRegex4": "(!?\\w)(->|[\\w\\._\\-:\\\\\/]|<(?=[^>]*>).*?>|\\(\\)|\\[(?=[^\\]]*\\]).*?\\]|)*", // bigword
+// "vimAtHome.customWordRegex4": "<[^>]+>|\\([^)]+\\)|{[^}]+}|\\[[^]]+\\]",
 "vimAtHome.customWordRegex5": "([a-zA-Z][\\w.\\-_>?:]*(?:<[^<>]*>)?(?:\\[(?:[^\\[\\]]|\\[[^\\[\\]]*\\])*\\]|\\((?:[^()]|\\([^()]*\\))*\\))*)",
-"vimAtHome.customWordRegex6": "(['\"])(?:(?!\\1).)*\\1",
+"vimAtHome.customWordRegex6": "(['\"`])(?:(?!\\1).)*\\1",
 
+"vimAtHome.customWordRegex7": "return",
+"vimAtHome.customWordRegex8": "[^;:=\\s][^;:=]+[^;:=\\s]",
+// "vimAtHome.customWordRegex9": "[^\\s(),&|?:]([^(),&|?:]|\\(\\)|[^\\s][(][^,&|]+[)])+[^\\s(),&|?:]",
+"vimAtHome.customWordRegex9": "[^\\s(),&|?:;]([^(),&|?:;]|\\(\\)|[^\\s(][(][^,&|;]+[)])+[^\\s(),&|?:;]",
+"vimAtHome.customWordRegex10": "[^s]",
+
+"vimAtHome.color.word": "ffffff",
 "vimAtHome.color.customWord1": "3381ff",
 "vimAtHome.color.customWord2": "ffff00",
 "vimAtHome.color.customWord3": "cf9700",
 "vimAtHome.color.customWord4": "f40000",
 "vimAtHome.color.customWord5": "ffff00",
 "vimAtHome.color.customWord6": "cf9700",
-
+"vimAtHome.verticalSkipCount": 4,
 ```
 
 ```
+
 
 
 [
@@ -130,8 +140,8 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
+                "workbench.action.quickOpen",
                 "vimAtHome.changeToInsertModePrepend",
-                "workbench.action.quickOpen"
             ]
         },
         "when": "vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
@@ -1227,12 +1237,12 @@ I would recommend using the original but you are welcome to use this if you wish
     },
     {
         "key": "home",
-        "command": "vimAtHome.goToFirstSubjectInScope",
+        "command": "vimAtHome.insertEnd",
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "end",
-        "command": "vimAtHome.goToLastSubjectInScope",
+        "command": "vimAtHome.insertHome",
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
@@ -2389,16 +2399,6 @@ I would recommend using the original but you are welcome to use this if you wish
         },
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
-    // {
-    //     "key": "ctrl+c",
-    //     "command": "vimAtHome.addToCache",
-    //     "when": "editorTextFocus"
-    // },
-    // {
-    //     "key": "ctrl+v",
-    //     "command": "vimAtHome.pasteTop",
-    //     "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
-    // },
     {
         "key": "alt+c",
         "command": "vimAtHome.parseToCache",
@@ -2709,11 +2709,7 @@ I would recommend using the original but you are welcome to use this if you wish
         },
         "when": "editorTextFocus"
     },
-    {
-        "key": "ctrl+v",
-        "command": "pasteAndIndent.action",
-        "when": "editorTextFocus"
-    },
+    {},
     {
         "key": "enter",
         "command": "runCommands",
@@ -2756,14 +2752,24 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "-cursorColumnSelectDown",
         "when": "editorColumnSelection && textInputFocus"
     },
+    // {
+    //     "key": "ctrl+right",
+    //     "command": "vimAtHome.wordHalfRight",
+    //     "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && vimAtHome.subject == 'WORD'"
+    // },
+    // {
+    //     "key": "ctrl+left",
+    //     "command": "vimAtHome.wordHalfLeft",
+    //     "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && vimAtHome.subject == 'WORD'"
+    // },
     {
         "key": "ctrl+right",
-        "command": "vimAtHome.wordHalfRight",
-        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && vimAtHome.subject == 'WORD'"
+        "command": "vimAtHome.goToLastSubjectInScope",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+left",
-        "command": "vimAtHome.wordHalfLeft",
+        "command": "vimAtHome.goToFirstSubjectInScope",
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && vimAtHome.subject == 'WORD'"
     },
     {
@@ -2781,7 +2787,7 @@ I would recommend using the original but you are welcome to use this if you wish
     },
     {
         "key": "f24",
-        "command": "vimAtHome.changeToMidWord",
+        "command": "vimAtHome.changeToWordSubject",
         "when": "editorTextFocus"
     },
     {
@@ -2821,7 +2827,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "vimAtHome.changeToInsertModePrepend",
+                "vimAtHome.changeToInsertMode",
                 "actions.find"
             ]
         },
@@ -2885,7 +2891,24 @@ I would recommend using the original but you are welcome to use this if you wish
         },
        "when": "editorTextFocus"
     },
+    {
+        "key": "ctrl+c",
+        "command": "vimAtHome.copy",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+v",
+        "command": "vimAtHome.pasteSubject",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "escape",
+        "command": "vimAtHome.changeToInsertMode",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
+    },
     
 ]
+
+
 
 ```

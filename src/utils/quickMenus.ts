@@ -505,54 +505,19 @@ export const CacheCommands: QuickCommand[] = [
     },
 ]
 
-export const SubjectChangeCommands: QuickCommand[] = [
-    {
-        quickKey: char("0"),
-        label: "Custom Subject 0",
+export let SubjectChangeCommands: QuickCommand[] = [];
+
+export function resetSubjectChangeCommands() {
+    SubjectChangeCommands = [];
+}
+
+export function addSubjectCommand(command: string, key: string, index: number) {
+    SubjectChangeCommands.push({
+        quickKey: char(key),
+        label: `Custom Subject ${index}`,
         execute: async () => {
-            await vscode.commands.executeCommand("vimAtHome.changeToWordSubject");
+            await vscode.commands.executeCommand(command);
         },
-    },
-    {
-        quickKey: char("1"),
-        label: "Custom Subject 1",
-        execute: async () => {
-            await vscode.commands.executeCommand("vimAtHome.changeToCustomWord1");
-        },
-    },
-    {
-        quickKey: char("2"),
-        label: "Custom Subject 2",
-        execute: async () => {
-            await vscode.commands.executeCommand("vimAtHome.changeToCustomWord2");
-        },
-    },
-    {
-        quickKey: char("3"),
-        label: "Custom Subject 3",
-        execute: async () => {
-            await vscode.commands.executeCommand("vimAtHome.changeToCustomWord3");
-        },
-    },
-    {
-        quickKey: char("4"),
-        label: "Custom Subject 4",
-        execute: async () => {
-            await vscode.commands.executeCommand("vimAtHome.changeToCustomWord4");
-        },
-    },
-    {
-        quickKey: char("5"),
-        label: "Custom Subject 5",
-        execute: async () => {
-            await vscode.commands.executeCommand("vimAtHome.changeToCustomWord5");
-        },
-    },
-    {
-        quickKey: char("6"),
-        label: "Custom Subject 6",
-        execute: async () => {
-            await vscode.commands.executeCommand("vimAtHome.changeToCustomWord6");
-        },
-    },
-]
+    })
+
+}

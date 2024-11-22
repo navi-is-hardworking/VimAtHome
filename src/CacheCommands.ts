@@ -118,20 +118,27 @@ export const clearCache = (editor: vscode.TextEditor) => {
 }
 
 let copiedLine: string = "";
-let copiedSubject: string = "";
 let copiedBracket: string = "";
+let clipboardText: string = "";
 
+export const storeClipboard = (text: string) => {
+    if (text.length > 0) {
+        clipboardText = text;
+        addTextToCache(clipboardText);
+    }
+}
 
 export const copyLine = (text: string) => {
     text = text.trim();
-    if (text === "" || text === undefined) {
-        return;
-    }
+    if (text === "" || text === undefined) return;
+    addTextToCache(copiedLine);
     copiedLine = text;
 }
 
 export const copyBracket = (text: string) => {
     text = text.trim();
+    if (text === "" || text === undefined) return;
+    
     let parenStack = [];
     let curlyStack = [];
     let result = "";
@@ -153,30 +160,19 @@ export const copyBracket = (text: string) => {
                 result = tempText;
             }
         }
-
     }
     if (result.length > 0) {
         copiedBracket = result;
+        addTextToCache(copiedBracket);
     } 
-}
-
-export const copySubject = (text: string) => {
-    text = text.trim();
-    if (text === "" || text === undefined) {
-        return;
-    }
-    copiedSubject = text;
 }
 
 export const pasteLine = ()  => {
     return copiedLine; 
 }
 
-export const pasteSubject = ()  => {
-    return copiedSubject; 
-}
-
 export const pasteBracket = ()  => {
     return copiedBracket; 
 }
+
 

@@ -6,7 +6,7 @@ import CommandMode from "./CommandMode";
 import * as subjects from "../subjects/subjects";
 import { SubjectName } from "../subjects/SubjectName";
 import JumpInterface from "../handlers/JumpInterface";
-import { getCommandColor, setSelectionBackground } from "../config";
+import { getCommandColor } from "../config";
 import * as modes from "./modes";
 import { getWordDefinitionIndex } from "../config";
 import { seq } from "../utils/seq";
@@ -26,7 +26,6 @@ export default class InsertMode extends EditorMode {
         private readonly context: common.ExtensionContext,
         private previousNavigateMode: CommandMode
     ) {
-        // setSelectionBackground(getCommandColor());
         super();
     }
 
