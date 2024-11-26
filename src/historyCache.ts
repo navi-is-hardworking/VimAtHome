@@ -190,3 +190,12 @@ function parseBrackets(text: string): string[] {
 export function clearCache(): void {
     parsedCache.clear();
 }
+
+// something to store hotspots
+// maybe document divided up into sections?
+
+[
+    {
+        
+    },
+]

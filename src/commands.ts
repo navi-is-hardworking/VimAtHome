@@ -828,6 +828,12 @@ export let registeredCommands: ExtensionCommand[] = [
         },
     },
     {
+        id: "vimAtHome.yoinkFromSkip", 
+        execute: async (manager) => {
+            await manager.yoinkAnchor();
+        },
+    },
+    {
         id: "vimAtHome.insertHome", 
         execute: async (manager) => {
             await manager.insertHome();
@@ -884,3 +890,7 @@ export function addCustomWord(index: number, key: string) {
 export function deactivate() {
     highlightManager.dispose();
 }
+
+
+
+

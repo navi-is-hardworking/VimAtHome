@@ -334,7 +334,7 @@ export default class CommandMode extends modes.EditorMode {
                 }
             }
             
-        common.setLazyPassSubjectName(this.subject.name);
+        common.setLazyPassSubjectName(subjectName);
         const jumpPosition = await jumpInterface.jump({
             kind: jumpType,
             locations: seq(jumpLocations)},);

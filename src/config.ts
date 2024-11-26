@@ -84,7 +84,7 @@ export function loadConfig(): Config {
         customCommandsAdded += 1;
         addCustomWord(i, key);
     }
-    
+
     
     return {
         jump: config.get<JumpConfig>("jump")!,

@@ -7,7 +7,7 @@ export class HighlightManager {
 
     constructor() {
         this.highlightDecorationType = vscode.window.createTextEditorDecorationType({
-            backgroundColor: 'rgba(255, 255, 0, 0.2)',
+            backgroundColor: "ffff00",
             border: '1px solid yellow',
         });
 
@@ -114,6 +114,14 @@ export class HighlightManager {
     public clearAllHighlightsDirectly() {
         this.highlightedWords.clear();
         this.updateHighlights();
+    }
+
+    public getHighlightRegex(): RegExp {
+        let regString: string = ""
+        this.highlightedWords.forEach(word => regString += (word + "|"))
+        if (regString.length > 0) 
+            regString = regString.substring(0, regString.length - 2);
+        return new RegExp(regString as string);
     }
 
 }

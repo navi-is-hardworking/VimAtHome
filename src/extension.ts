@@ -27,8 +27,6 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
 
-    
-    
     for (const command of registeredCommands) {
         context.subscriptions.push(
             vscode.commands.registerCommand(command.id, (...args) =>

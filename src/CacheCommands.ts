@@ -1,6 +1,8 @@
 import * as vscode from "vscode";
 import * as historyCache from "./historyCache";
 
+let outputchannel = vscode.window.createOutputChannel("cacheCommands");
+
 function fuzzyMatch(pattern: string, str: string): { matched: boolean; score: number } {
     const patternLower = pattern.toLowerCase();
     const strLower = str.toLowerCase();
@@ -119,13 +121,10 @@ export const clearCache = (editor: vscode.TextEditor) => {
 
 let copiedLine: string = "";
 let copiedBracket: string = "";
-let clipboardText: string = "";
 
 export const storeClipboard = (text: string) => {
-    if (text.length > 0) {
-        clipboardText = text;
-        addTextToCache(clipboardText);
-    }
+    if (text === undefined || text.length === 0) return;
+    addTextToCache(text);
 }
 
 export const copyLine = (text: string) => {
@@ -175,4 +174,58 @@ export const pasteBracket = ()  => {
     return copiedBracket; 
 }
 
+let cachedSelection: vscode.Selection | undefined;
+export function SetSelectionAnchor(selection: vscode.Selection) {
+    if (!selection) return;
+    outputchannel.appendLine("changing selection anchor");
+    cachedSelection = selection;
+}
+
+export function MergeSelection(cachedSelection: vscode.Selection, selection: vscode.Selection) {
+    let newActive = new vscode.Position(
+        Math.min(selection.active.line, selection.anchor.line),
+        Math.min(selection.active.character, selection.anchor.character)
+    );
+    let newAnchor = new vscode.Position(
+        Math.max(cachedSelection.active.line, cachedSelection.anchor.line),
+        Math.max(cachedSelection.active.character, cachedSelection.anchor.character)
+    );
+
+    return [newActive, newAnchor]
+}
+
+export function YoinkFromAnchor(selection: vscode.Selection) {
+    if (cachedSelection === undefined || !selection) return; 
+
+    let newActive;
+    let newAnchor;
+    if (cachedSelection.active.line === selection.anchor.line) {
+        newActive = new vscode.Position(
+            selection.anchor.line, 
+            Math.min(cachedSelection.active.character,
+            cachedSelection.anchor.character,
+            selection.anchor.character,
+            selection.active.character)
+        ); 
+        newAnchor = new vscode.Position(
+            selection.anchor.line, 
+            Math.max(cachedSelection.active.character,
+            cachedSelection.anchor.character,
+            selection.anchor.character,
+            selection.active.character)
+        ); 
+    } else if (selection.active.line < cachedSelection.active.line) {
+        [newActive, newAnchor] = MergeSelection(cachedSelection, selection);
+    } else {
+        let [tempCachedSelection, tempSelection] = [selection, cachedSelection];
+        [newActive, newAnchor] = MergeSelection(tempCachedSelection, tempSelection);
+    }
+
+    return new vscode.Range(newActive, newAnchor)
+}
+
+export function ClearSelectionAnchor() {
+    outputchannel.appendLine("clearing anchor");
+    cachedSelection = undefined;
+}
 

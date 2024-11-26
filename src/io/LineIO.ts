@@ -25,7 +25,7 @@ function iterHorizontally(
             rangeToPosition(options.startingPosition, options.direction)
         );
         const indentation: common.Change =
-            options.direction === Direction.forwards ? "greaterThan" : "lessThan";
+            options.direction === Direction.forwards ? "lessThan" : "lessThan";
         let first = true;
 
         do {

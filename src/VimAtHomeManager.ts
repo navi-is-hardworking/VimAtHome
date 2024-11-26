@@ -19,6 +19,8 @@ import { getMidPoint } from "./utils/selectionsAndRanges";
 import * as ncp from 'copy-paste'
 import { promisify } from "util";
 
+
+let outputChannel = vscode.window.createOutputChannel("selectionAnchor");
 const copyAsync = promisify((text: string) => ncp.copy(text));
 
 export default class VimAtHomeManager {
@@ -76,11 +78,14 @@ export default class VimAtHomeManager {
     }
 
     async changeMode(newMode: EditorModeChangeRequest) {
+        cacheCommands.ClearSelectionAnchor();
         this.clearSelections();
         this.mode = await this.mode.changeTo(newMode);
         const half = newMode.kind === "INSERT" ? undefined : newMode.half;
         this.setUI();
-        this.mode.fixSelection(half);
+        if (this.mode.getSubjectName() !== "WORD" || getWordDefinitionIndex() !== 0 || lineUtils.lineIsSignificant(this.editor.document.lineAt(this.editor.selection.active.line))) {
+            this.mode.fixSelection(half);
+        }
         this.setDecorations();
     }
     
@@ -128,6 +133,7 @@ export default class VimAtHomeManager {
         this.clearSelections();
         this.setDecorations();
         const selectedText = this.editor.document.getText(this.editor.selection);
+        
         
         if (
             event.kind === vscode.TextEditorSelectionChangeKind.Command ||
@@ -279,8 +285,12 @@ export default class VimAtHomeManager {
     }
 
     async skip(direction: common.Direction) {
+        cacheCommands.SetSelectionAnchor(this.editor.selection);
         await this.mode.skip(direction);
         this.setUI();
+        if (this.mode.getSubjectName() === "CHAR" || this.mode.getSubjectName() === "SUBWORD") {
+            this.yoinkAnchor();
+        }
     }
     
     async skipOver(direction: common.Direction) {
@@ -290,14 +300,19 @@ export default class VimAtHomeManager {
     
     async repeatLastSkip(direction: common.Direction) {
         await this.mode.repeatLastSkip(direction);
+        if (this.mode.getSubjectName() === "CHAR" || this.mode.getSubjectName() === "SUBWORD") {
+            this.yoinkAnchor();
+        }
         this.setUI();
     }
 
     async jump() {
+        cacheCommands.SetSelectionAnchor(this.editor.selection);
         await this.mode.jump();
     }
 
     async jumpToSubject(subjectName: SubjectName) {
+        cacheCommands.SetSelectionAnchor(this.editor.selection);
         if (this.mode.getSubjectName() === subjectName) {
             await this.mode.jump();
             return;
@@ -590,7 +605,8 @@ export default class VimAtHomeManager {
         const virtualColumn = common.getVirtualColumn();
         const newPosition = new vscode.Position(lineNumber, virtualColumn);
         this.editor.selection = new vscode.Selection(newPosition, newPosition);
-        await this.changeMode({ kind: "COMMAND", subjectName: "WORD" });
+        // await this.changeMode({ kind: "COMMAND", subjectName: "WORD" });
+        await this.mode.fixSelection();
     }
 
     async edgeOut(direction: common.Direction): Promise<void> {
@@ -763,12 +779,9 @@ export default class VimAtHomeManager {
     }
     
     async copyAll() {
-        cacheCommands.copyLine(this.editor.document.lineAt(this.editor.selection.active).text);
-        cacheCommands.copyBracket(this.editor.document.lineAt(this.editor.selection.active).text);
-        const selection = this.editor.document.getText(this.editor.selection);
-        if (selection !== null && selection.length > 0) {
-            await copyAsync(selection);
-        }
+        this.copyLine();
+        this.copyBracket();
+        this.copySelection(this.editor.document.getText(this.editor.selection))
     }
 
     async copyLine() {
@@ -800,6 +813,15 @@ export default class VimAtHomeManager {
         this.editor.edit(editBuilder => {
             editBuilder.replace(selection, clipText);
         });
+    }
+
+    async copySelection(text: string) {
+        if (text !== null && text.length > 0) {
+            cacheCommands.storeClipboard(text);
+            await copyAsync(text);
+        } else {
+            await copyAsync(cacheCommands.pasteLine());
+        }
     }
 
     async changeToBracketSubject() {
@@ -865,6 +887,16 @@ export default class VimAtHomeManager {
         const newPosition = position.with(position.line, this.editor.document.lineAt(position.line).text.length);
         const newSelection = new vscode.Selection(newPosition, newPosition);
         this.editor.selection = newSelection;
+    }
+    
+    async yoinkAnchor() {
+        const tempRange = cacheCommands.YoinkFromAnchor(this.editor.selection);
+        if (tempRange) {
+            const text = this.editor.document.getText(tempRange);
+            this.copySelection(text);
+            outputChannel.appendLine(`new yoink: ${text}`);
+            outputChannel.appendLine("");
+        }
     }
 }
 
