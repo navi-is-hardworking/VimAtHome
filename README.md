@@ -21,28 +21,29 @@ I would recommend using the original but you are welcome to use this if you wish
     "tab.inactiveBackground": "#000000",
 },
 
-"vimAtHome.wordKeys": "m,.jkluioxcvsdfwer",
-"vimAtHome.customWordRegex1": "[A-Z]*[A-Za-z0-9][a-z0-9]*|[^A-Za-z0-9\\s]+", // subword
-"vimAtHome.customWordRegex2":  "[^\\w\\s\"\\'][^\\w\\s\"\\']+[^\\w\\s\"\\']|[^\\w\\s\"\\']+", // Whitespace 
-"vimAtHome.customWordRegex3":  "[a-zA-Z][^,|&?]+[^\\)\\s{}^,|&?]", // Arguments
-"vimAtHome.customWordRegex4": "(!?\\w)(->|[\\w\\._\\-:\\\\\/]|<(?=[^>]*>).*?>|\\(\\)|\\[(?=[^\\]]*\\]).*?\\]|)*", // bigword
-// "vimAtHome.customWordRegex4": "<[^>]+>|\\([^)]+\\)|{[^}]+}|\\[[^]]+\\]",
-"vimAtHome.customWordRegex5": "([a-zA-Z][\\w.\\-_>?:]*(?:<[^<>]*>)?(?:\\[(?:[^\\[\\]]|\\[[^\\[\\]]*\\])*\\]|\\((?:[^()]|\\([^()]*\\))*\\))*)",
-"vimAtHome.customWordRegex6": "(['\"`])(?:(?!\\1).)*\\1",
+"vimAtHome.wordKeys": "em,.jkluiopwrsdfxcv",
 
-"vimAtHome.customWordRegex7": "return",
-"vimAtHome.customWordRegex8": "[^;:=\\s][^;:=]+[^;:=\\s]",
-// "vimAtHome.customWordRegex9": "[^\\s(),&|?:]([^(),&|?:]|\\(\\)|[^\\s][(][^,&|]+[)])+[^\\s(),&|?:]",
-"vimAtHome.customWordRegex9": "[^\\s(),&|?:;]([^(),&|?:;]|\\(\\)|[^\\s(][(][^,&|;]+[)])+[^\\s(),&|?:;]",
-"vimAtHome.customWordRegex10": "[^s]",
-
+"vimAtHome.customWordRegex1": "tempword", // subword
+"vimAtHome.customWordRegex2": "[A-Z]*[A-Za-z0-9][a-z0-9]*|[^A-Za-z0-9\\s]+", // subword
+"vimAtHome.customWordRegex3":  "[^\\w\\s\"\\'][^\\w\\s\"\\']+[^\\w\\s\"\\']|[^\\w\\s\"\\']+", // Whitespace 
+"vimAtHome.customWordRegex4":  "[a-zA-Z][^,|&?]+[^\\)\\s{}^,|&?]", // Arguments
+"vimAtHome.customWordRegex5": "(!?\\w)(->|[\\w\\._\\-:\\\\\/]|<(?=[^>]*>).*?>|\\(\\)|\\[(?=[^\\]]*\\]).*?\\]|)*", // bigword
+"vimAtHome.customWordRegex6": "([a-zA-Z][\\w.\\-_>?:]*(?:<[^<>]*>)?(?:\\[(?:[^\\[\\]]|\\[[^\\[\\]]*\\])*\\]|\\((?:[^()]|\\([^()]*\\))*\\))*)",
+"vimAtHome.customWordRegex7": "(['\"`])(?:(?!\\1).)*\\1",
+"vimAtHome.customWordRegex8": "(return)|(yield)",
+"vimAtHome.customWordRegex9": "[^;:=\\s][^;:=]+[^;:=\\s]",
+"vimAtHome.customWordRegex10": "[^\\s(),&|?:;]([^(),&|?:;]|\\(\\)|[^\\s(][(][^,&|;]+[)])+[^\\s(),&|?:;]",
+"vimAtHome.customWordRegex11": "-?\\d*\\.?\\d+f?",
+"vimAtHome.customWordRegex12": "\\w+[^\\w]+\\w+",
 "vimAtHome.color.word": "ffffff",
 "vimAtHome.color.customWord1": "3381ff",
-"vimAtHome.color.customWord2": "ffff00",
-"vimAtHome.color.customWord3": "cf9700",
-"vimAtHome.color.customWord4": "f40000",
-"vimAtHome.color.customWord5": "ffff00",
-"vimAtHome.color.customWord6": "cf9700",
+"vimAtHome.color.customWord2": "3381ff",
+"vimAtHome.color.customWord3": "ffff00",
+"vimAtHome.color.customWord4": "cf9700",
+"vimAtHome.color.customWord5": "f40000",
+"vimAtHome.color.customWord6": "ffff00",
+"vimAtHome.color.customWord7": "cf9700",
+
 "vimAtHome.verticalSkipCount": 4,
 ```
 

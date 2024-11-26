@@ -183,7 +183,7 @@ function getContainingWordAt(
 ): vscode.Range | undefined {
     if (!position)
         return;
-    return document.getWordRangeAtPosition(position, getWordDefinition(false));
+    return document.getWordRangeAtPosition(position, getWordDefinition(true));
 }
 
 function findWordClosestTo(

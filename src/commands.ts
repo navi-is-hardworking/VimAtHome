@@ -121,19 +121,7 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.changeToWordSubject",
         execute: async (manager: VimAtHomeManager) => {
-            if (manager.mode.getSubjectName() !== "WORD" || getWordDefinitionIndex() !== 0) {
-                setWordDefinition(0);
-                manager.changeMode({
-                    kind: "COMMAND",
-                    subjectName: "WORD",
-                });
-            } else {
-                setWordDefinition(0);
-                manager.changeToMidWord({
-                    kind: "COMMAND",
-                    subjectName: "WORD",
-                });
-            }
+            await manager.changeToWord();
         },
     },
     {
@@ -841,6 +829,12 @@ export let registeredCommands: ExtensionCommand[] = [
     },
     {
         id: "vimAtHome.insertEnd", 
+        execute: async (manager) => {
+            await manager.insertEnd();
+        },
+    },
+    {
+        id: "vimAtHome.anchorSwap", 
         execute: async (manager) => {
             await manager.insertEnd();
         },

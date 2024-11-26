@@ -80,6 +80,8 @@ export default class VimAtHomeManager {
     async changeMode(newMode: EditorModeChangeRequest) {
         cacheCommands.ClearSelectionAnchor();
         this.clearSelections();
+        if (this.mode.name === "EXTEND")
+            this.mode = await this.mode.changeTo(newMode);
         this.mode = await this.mode.changeTo(newMode);
         const half = newMode.kind === "INSERT" ? undefined : newMode.half;
         this.setUI();
@@ -89,38 +91,10 @@ export default class VimAtHomeManager {
                 || lineUtils.lineIsSignificant(this.editor.document.lineAt(this.editor.selection.active.line))) {
             this.mode.fixSelection(half);
         }
+
         this.setDecorations();
     }
     
-    async changeToMidWord(newMode: EditorModeChangeRequest) {
-        if (this.mode.getSubjectName() === "WORD" && getWordDefinitionIndex() === 0) {
-            let line = this.editor.document.lineAt(this.editor.selection.active.line).text
-            const start = line.search(/\S/);
-            const end = line.length - 1;
-            if (start) {
-                const midPoint = start + (end - start) / 2;
-                let curPos = new vscode.Position(this.editor.selection.active.line, midPoint);
-                this.editor.selection = new vscode.Selection(curPos, curPos);
-            }
-        } else if (newMode.kind === "COMMAND" && newMode.subjectName === "WORD") {
-            let startChar = this.editor.selection.active.character;
-            let endChar = this.editor.selection.anchor.character;
-            let startLine = this.editor.selection.active.line;
-            let endLine = this.editor.selection.anchor.line;
-            let curLine = (startLine + endLine) / 2;
-            let curChar = (startChar + endChar) / 2;
-            let curRange = new vscode.Position(curLine, curChar);
-            this.editor.selection = new vscode.Selection(curRange, curRange);
-        }
-        this.clearSelections();
-        this.mode = await this.mode.changeTo(newMode);
-        const half = newMode.kind === "INSERT" ? undefined : newMode.half;
-
-        this.setUI();
-        this.mode.fixSelection(half);
-        this.setDecorations();
-    }
-
     async executeSubjectCommand(command: SubjectAction) {
         await this.mode.executeSubjectCommand(command);
     }
@@ -140,7 +114,7 @@ export default class VimAtHomeManager {
         
         if (
             event.kind === vscode.TextEditorSelectionChangeKind.Command 
-||
+                ||
             event.kind === undefined
         ) {
             this.editor.revealRange(new vscode.Range(this.editor.selection.active, this.editor.selection.active));
@@ -160,36 +134,37 @@ export default class VimAtHomeManager {
         
         this.mode.fixSelection();
         this.setUI();
-        
     }
 
     async setDecorations() {
         if (this.mode?.decorationType) {
+            const topDecorations: vscode.Range[] = [];
+            const midDecorations: vscode.Range[] = [];
+            const bottomDecorations: vscode.Range[] = [];
+            const singleLineDecorations: vscode.Range[] = [];
+
             for (const selection of this.editor.selections) {
                 const splits = splitRange(this.editor.document, selection);
-
                 if (splits.kind === 'SingleLine') {
-                    this.editor.setDecorations(
-                        this.mode.decorationType,
-                        [splits.range]
-                    );
+                    singleLineDecorations.push(splits.range);
+                } else {
+                    topDecorations.push(splits.firstLine);
+                    midDecorations.push(...splits.middleLines);
+                    bottomDecorations.push(splits.lastLine);
                 }
-                else {
-                    this.editor.setDecorations(
-                        this.mode.decorationTypeTop ?? this.mode.decorationType,
-                        [splits.firstLine]
-                    );
+            }
 
-                    this.editor.setDecorations(
-                        this.mode.decorationTypeMid ?? this.mode.decorationType,
-                        splits.middleLines
-                    );
-
-                    this.editor.setDecorations(
-                        this.mode.decorationTypeBottom ?? this.mode.decorationType,
-                        [splits.lastLine]
-                    );                
-                }
+            if (singleLineDecorations.length > 0) {
+                this.editor.setDecorations(this.mode.decorationType, singleLineDecorations);
+            } 
+            if (topDecorations.length > 0) {
+                this.editor.setDecorations(this.mode.decorationTypeTop ?? this.mode.decorationType, topDecorations);
+            }
+            if (midDecorations.length > 0) {
+                this.editor.setDecorations(this.mode.decorationTypeMid ?? this.mode.decorationType, midDecorations);
+            }
+            if (bottomDecorations.length > 0) {
+                this.editor.setDecorations(this.mode.decorationTypeBottom ?? this.mode.decorationType, bottomDecorations);
             }
         }
     }
@@ -292,9 +267,6 @@ export default class VimAtHomeManager {
         cacheCommands.SetSelectionAnchor(this.editor.selection);
         await this.mode.skip(direction);
         this.setUI();
-        if (this.mode.getSubjectName() === "CHAR" || this.mode.getSubjectName() === "SUBWORD") {
-            this.yoinkAnchor();
-        }
     }
     
     async skipOver(direction: common.Direction) {
@@ -304,9 +276,6 @@ export default class VimAtHomeManager {
     
     async repeatLastSkip(direction: common.Direction) {
         await this.mode.repeatLastSkip(direction);
-        if (this.mode.getSubjectName() === "CHAR" || this.mode.getSubjectName() === "SUBWORD") {
-            this.yoinkAnchor();
-        }
         this.setUI();
     }
 
@@ -522,8 +491,7 @@ export default class VimAtHomeManager {
     
         while (currentLine >= 0 && currentLine < lineCount && n < distance) {
             currentLine += increment;
-            if (currentLine < 0 
-|| currentLine >= lineCount) break;
+            if (currentLine < 0 || currentLine >= lineCount) break;
             
             const line = document.lineAt(currentLine);
             
@@ -794,12 +762,17 @@ export default class VimAtHomeManager {
         
         this.copyLine();
         this.copyBracket();
-        this.copySelection(joinedText);
+        if (joinedText.length <= 1) {
+            this.yoinkAnchor();
+        } else {
+            this.copySelection(joinedText);
+        }
     }
 
     async copyLine() {
         cacheCommands.copyLine(this.editor.document.lineAt(this.editor.selection.active).text);
     }
+    
     async copyBracket() {
         cacheCommands.copyBracket(this.editor.document.lineAt(this.editor.selection.active).text);
     }
@@ -812,7 +785,6 @@ export default class VimAtHomeManager {
             await copyAsync(cacheCommands.pasteLine());
         }
     }
-
 
     async pasteLine() {
         const newText = cacheCommands.pasteLine();
@@ -930,6 +902,52 @@ export default class VimAtHomeManager {
             outputChannel.appendLine(`new yoink: ${text}`);
             outputChannel.appendLine("");
         }
+    }
+
+    async changeToWord() {
+        if (this.mode.name === "EXTEND" || this.mode.name === "INSERT" || this.mode.getSubjectName() === "CHAR" || this.mode.getSubjectName() === "SUBWORD" || 
+                (this.mode.getSubjectName() === "WORD" && getWordDefinitionIndex() != 5 && getWordDefinitionIndex() != 6 && getWordDefinitionIndex() != 0)) {
+            setWordDefinition(0);
+            await this.changeMode({ kind: "COMMAND", subjectName: "WORD" });
+            return;
+        }
+        
+        let changeRequest;
+        switch (this.mode.getSubjectName()) {
+            case "BLOCK": 
+            case "LINE": 
+            case "BRACKETS": 
+                changeRequest = await this.mode.collapseToCenter();
+                if (changeRequest) await this.changeMode(changeRequest)
+                if (this.mode.getSubjectName() != "WORD") {
+                    changeRequest = await this.mode.collapseToCenter();
+                    if (changeRequest) await this.changeMode(changeRequest)
+                } 
+            break;
+            default:
+                if (getWordDefinitionIndex() !== 0) {
+                    changeRequest = await this.mode.collapseToCenter();
+                    if (changeRequest) await this.changeMode(changeRequest)
+                } else {
+                    let line = this.editor.document.lineAt(this.editor.selection.active.line).text
+                    const start = line.search(/\S/);
+                    const end = line.length;
+                    let active = new vscode.Position(this.editor.selection.active.line, start); 
+                    let anchor = new vscode.Position(this.editor.selection.active.line, end); 
+                    let mockSelection = new vscode.Selection(active, anchor); // select full line
+                    setWordDefinition(5);
+                    changeRequest = await this.mode.collapseToCenter(mockSelection);
+                    if (changeRequest) await this.changeMode(changeRequest)
+                }
+            break;
+        }
+
+    }
+
+    async anchorSwap() {
+        let active = this.editor.selection.anchor;
+        let anchor = this.editor.selection.active;
+        this.editor.selection = new vscode.Selection(active, anchor);
     }
 }
 

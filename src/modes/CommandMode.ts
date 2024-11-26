@@ -423,10 +423,10 @@ export default class CommandMode extends modes.EditorMode {
             case "LINE":
             case "BRACKETS":
             case "BRACKETS_INCLUSIVE":
-                setWordDefinition(4);
+                setWordDefinition(0);
                 return { kind: "COMMAND", subjectName: "WORD" };
             case "WORD": {
-                if (getWordDefinitionIndex() === 4 || getWordDefinitionIndex() === 5) {
+                if (getWordDefinitionIndex() === 5 || getWordDefinitionIndex() === 6) {
                     const selText = document.getText(selection);
                     
                     const regex0 = getWordDefinitionByIndex(0);
@@ -440,7 +440,7 @@ export default class CommandMode extends modes.EditorMode {
                         }
                     }
                     
-                    const regex1 = getWordDefinitionByIndex(1);
+                    const regex1 = getWordDefinitionByIndex(2);
                     if (regex1) {
                         regex1.lastIndex = 0;
                         const match1 = regex1.exec(selText);
@@ -455,13 +455,13 @@ export default class CommandMode extends modes.EditorMode {
                     return { kind: "COMMAND", subjectName: "WORD" };
                 } else if (getWordDefinitionIndex() === 0) {
                     const selText = document.getText(selection);
-                    const regex0 = getWordDefinitionByIndex(1);
+                    const regex0 = getWordDefinitionByIndex(2);
                     if (regex0) {
                         regex0.lastIndex = 0;
                         const match0 = regex0.exec(selText);
                         const exactMatch0 = match0 && match0.index === 0 && match0[0].length === selText.length;
                         if (!exactMatch0) {
-                            setWordDefinition(1);
+                            setWordDefinition(2);
                             return { kind: "COMMAND", subjectName: "WORD" };
                         }
                     }
@@ -493,38 +493,44 @@ export default class CommandMode extends modes.EditorMode {
         return matches;
     }
     
-    async collapseToCenter(): Promise<modes.EditorModeChangeRequest> {
-        const editor = this.context.editor;
-        const selection = editor.selection;
-        const document = editor.document;
-        const text = document.getText(selection);
-        if (selection.start.line !== selection.end.line) {
-            const startLine = Math.min(selection.start.line, selection.end.line);
-            const endLine = Math.max(selection.start.line, selection.end.line);
-            const middleLine = Math.floor((startLine + endLine) / 2);
-            const lineText = document.lineAt(middleLine).text;
-            const start = lineText.indexOf(lineText.trim()[0]);
-            const comment = lineText.indexOf('//');
-            const end = Math.min(lineText.length, comment !== -1 ? comment : lineText.length);
-            const mid = Math.floor((start + end) / 2);
-            editor.selection = new vscode.Selection(middleLine, mid, middleLine, mid);
-            return { kind: "COMMAND", subjectName: "LINE" };
+    async collapseToCenter(mockSelection: vscode.Selection | undefined): Promise<modes.EditorModeChangeRequest> {
+        try {
+            const editor = this.context.editor;
+            const document = editor.document;
+            let selection = mockSelection ? mockSelection : editor.selection;
+            let text = document.getText(selection);
+            if (selection.start.line !== selection.end.line) {
+                const startLine = Math.min(selection.start.line, selection.end.line);
+                const endLine = Math.max(selection.start.line, selection.end.line);
+                const middleLine = Math.floor((startLine + endLine) / 2);
+                const lineText = document.lineAt(middleLine).text;
+                const start = lineText.indexOf(lineText.trim()[0]);
+                const comment = lineText.indexOf('//');
+                const end = Math.min(lineText.length, comment !== -1 ? comment : lineText.length);
+                const mid = Math.floor((start + end) / 2);
+                editor.selection = new vscode.Selection(middleLine, mid, middleLine, mid);
+                return { kind: "COMMAND", subjectName: "LINE" };
+            }
+            // collapseSelections(editor, "midpoint");
+            outputchannel.appendLine("new selection after collapseToCenter: " + editor.selection.start.line + ", " + editor.selection.start.character);
+            const ret = this.handleWordMode(document, selection);
+            const wordDefinition = getWordDefinition();
+            const selectedText = document.getText(selection);
+            if (!wordDefinition || !selectedText || selectedText.trim().length == 0) return ret;
+            let matches = this.splitByRegex(wordDefinition, text, selection);
+            if (matches.length) {
+                const midIndex = Math.floor((matches.length) / 2);
+                const [start, end] = matches[midIndex];
+                editor.selection = new vscode.Selection(
+                    new vscode.Position(start.line, Math.floor((start.character + end.character + 1) / 2)),
+                    new vscode.Position(start.line, Math.floor((start.character + end.character + 1) / 2))
+                );
+            }
+            return ret;
         }
-        collapseSelections(editor, "midpoint");
-        outputchannel.appendLine("new selection after collapseToCenter: " + editor.selection.start.line + ", " + editor.selection.start.character);
-        const ret = this.handleWordMode(document, selection);
-        const wordDefinition = getWordDefinition();
-        if (!wordDefinition) return ret;
-        let matches = this.splitByRegex(wordDefinition, text, selection);
-        if (matches.length) {
-            const midIndex = Math.floor(matches.length / 2);
-            const [start, end] = matches[midIndex];
-            editor.selection = new vscode.Selection(
-                new vscode.Position(start.line, Math.floor((start.character + end.character + 1) / 2)),
-                new vscode.Position(start.line, Math.floor((start.character + end.character + 1) / 2))
-            );
+        catch (error) {
+            return { kind: "COMMAND", subjectName: "WORD" };
         }
-        return ret;
     }
     
     async collapseToLeft(): Promise<modes.EditorModeChangeRequest> {
