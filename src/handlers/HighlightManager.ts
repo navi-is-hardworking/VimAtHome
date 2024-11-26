@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { setHighlightRegex } from "../config";
 
 export class HighlightManager {
     private highlightDecorationType: vscode.TextEditorDecorationType;
@@ -101,6 +102,8 @@ export class HighlightManager {
 
             editor.setDecorations(this.highlightDecorationType, ranges);
         });
+
+        setHighlightRegex(this.getHighlightRegex());
     }
 
     private escapeRegExp(string: string): string {
@@ -120,8 +123,8 @@ export class HighlightManager {
         let regString: string = ""
         this.highlightedWords.forEach(word => regString += (word + "|"))
         if (regString.length > 0) 
-            regString = regString.substring(0, regString.length - 2);
-        return new RegExp(regString as string);
+            regString = regString.substring(0, regString.length - 1);
+        return new RegExp(regString, 'i');
     }
 
 }

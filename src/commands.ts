@@ -10,7 +10,7 @@ import * as cacheCommands from "./CacheCommands";
 import { setVirtualColumnNumber } from "./common";
 import { addSubjectCommand } from "./utils/quickMenus"
 
-const highlightManager = new HighlightManager();
+export let highlightManager = new HighlightManager();
 
 type ExtensionCommand = {
     id: string;

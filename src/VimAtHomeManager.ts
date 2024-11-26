@@ -292,8 +292,7 @@ export default class VimAtHomeManager {
         cacheCommands.SetSelectionAnchor(this.editor.selection);
         await this.mode.skip(direction);
         this.setUI();
-        if (this.mode.getSubjectName() === "CHAR" 
-|| this.mode.getSubjectName() === "SUBWORD") {
+        if (this.mode.getSubjectName() === "CHAR" || this.mode.getSubjectName() === "SUBWORD") {
             this.yoinkAnchor();
         }
     }
@@ -305,8 +304,7 @@ export default class VimAtHomeManager {
     
     async repeatLastSkip(direction: common.Direction) {
         await this.mode.repeatLastSkip(direction);
-        if (this.mode.getSubjectName() === "CHAR" 
-|| this.mode.getSubjectName() === "SUBWORD") {
+        if (this.mode.getSubjectName() === "CHAR" || this.mode.getSubjectName() === "SUBWORD") {
             this.yoinkAnchor();
         }
         this.setUI();
@@ -446,8 +444,8 @@ export default class VimAtHomeManager {
                 const htmlCommentStart = lineText.indexOf('<!--');
     
                 if (commentStart !== -1 
-|| pythonCommentStart !== -1 
-|| htmlCommentStart !== -1) {
+                    || pythonCommentStart !== -1 
+                    || htmlCommentStart !== -1) {
                     let commentStartIndex = Math.min(
                         commentStart !== -1 ? commentStart : Infinity,
                         pythonCommentStart !== -1 ? pythonCommentStart : Infinity,
@@ -788,17 +786,33 @@ export default class VimAtHomeManager {
     }
     
     async copyAll() {
+        const selections = this.editor.selections;
+        const texts = selections.map(selection => 
+            this.editor.document.getText(selection)
+        );
+        const joinedText = texts.join('\n');
+        
         this.copyLine();
         this.copyBracket();
-        this.copySelection(this.editor.document.getText(this.editor.selection))
+        this.copySelection(joinedText);
     }
 
     async copyLine() {
         cacheCommands.copyLine(this.editor.document.lineAt(this.editor.selection.active).text);
     }
     async copyBracket() {
-        cacheCommands.copyBracket(this.editor.document.getText(this.editor.selection));
+        cacheCommands.copyBracket(this.editor.document.lineAt(this.editor.selection.active).text);
     }
+
+    async copySelection(text: string) {
+        if (text !== null && text.length > 0) {
+            cacheCommands.storeClipboard(text);
+            await copyAsync(text);
+        } else {
+            await copyAsync(cacheCommands.pasteLine());
+        }
+    }
+
 
     async pasteLine() {
         const newText = cacheCommands.pasteLine();
@@ -819,24 +833,27 @@ export default class VimAtHomeManager {
             }
         });
     }
-
     async pasteSubject() {
         const clipText = await vscode.env.clipboard.readText();
+        const currentSelections = this.editor.selections.length;
+
         this.editor.edit(editBuilder => {
-            for (let i = 0; i < this.editor.selections.length; i++) {
-                const selection = this.editor.selections[i];
-                editBuilder.replace(selection, clipText);
+            if (currentSelections === 1) {
+                editBuilder.replace(this.editor.selections[0], clipText);
+            } else {
+                const texts = clipText.split(/\r?\n/);
+                if (texts.length === currentSelections) {
+                    for (let i = 0; i < currentSelections; i++) {
+                        editBuilder.replace(this.editor.selections[i], texts[i]);
+                    }
+                } else {
+                    for (const selection of this.editor.selections) {
+                        editBuilder.replace(selection, clipText);
+                    }
+                }
             }
         });
-    }
-
-    async copySelection(text: string) {
-        if (text !== null && text.length > 0) {
-            cacheCommands.storeClipboard(text);
-            await copyAsync(text);
-        } else {
-            await copyAsync(cacheCommands.pasteLine());
-        }
+        
     }
 
     async changeToBracketSubject() {
@@ -869,7 +886,7 @@ export default class VimAtHomeManager {
     async changeToBlockSubject() {
         let selection = this.editor.selection;
         if ((this.mode.getSubjectName() === 'BRACKETS' 
-|| this.mode.getSubjectName() === 'BRACKETS_INCLUSIVE') && selection.active.line !== selection.anchor.line) {
+                || this.mode.getSubjectName() === 'BRACKETS_INCLUSIVE') && selection.active.line !== selection.anchor.line) {
             let start = this.editor.selection.active;
             start = start.with(start.line, this.editor.document.lineAt(start.line).firstNonWhitespaceCharacterIndex);
             let end = this.editor.selection.anchor 

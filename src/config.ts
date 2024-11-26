@@ -8,6 +8,7 @@ import type VimAtHomeManager from "./VimAtHomeManager";
 import * as common from "./common"
 import { addCustomWord } from "./commands";
 import { resetSubjectChangeCommands } from "./utils/quickMenus";
+import { highlightManager } from "./commands";
 
 export type ColorConfig = {
     char: string;
@@ -85,6 +86,8 @@ export function loadConfig(): Config {
         addCustomWord(i, key);
     }
 
+    wordDefinitions[1] = highlightManager.getHighlightRegex();
+
     
     return {
         jump: config.get<JumpConfig>("jump")!,
@@ -100,6 +103,9 @@ export function getWordColor(): string {
     return colorConfig.wordColors[currentWordDefinition];
 }
 
+export function setHighlightRegex(reg: RegExp) {
+    wordDefinitions[1] = reg;
+}
 export function getCharColor(): string { return colorConfig.char; }
 export function getSubWordColor(): string { return colorConfig.subWord; }
 export function getLineColor(): string { return colorConfig.line; }
