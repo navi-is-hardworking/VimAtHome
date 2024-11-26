@@ -683,18 +683,13 @@ I would recommend using the original but you are welcome to use this if you wish
     },
     {
         "key": "shift+f16",
-        "command": "runCommands",
-        "args": {
-            "commands": [
-                "editor.action.setSelectionAnchor",
-                "cursorLeft",
-                "editor.action.selectFromAnchorToCursor"
-            ]
-        }
+        "command": "editor.action.addSelectionToPreviousFindMatch",
+        "when": "editorTextFocus"
     },
     {
         "key": "ctrl+f16",
         "command": "editor.action.smartSelect.shrink",
+        "when": "editorTextFocus"
     },
     {
         "key": "ctrl+shift+alt+up",
