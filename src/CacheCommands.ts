@@ -229,3 +229,77 @@ export function ClearSelectionAnchor() {
     cachedSelection = undefined;
 }
 
+let prevText = "";
+let carriedSelection = "";
+let prevSelection: vscode.Selection;
+let selectionChanging = false;
+
+export function StopCarry() {
+    carriedSelection = "";
+    prevText = "";
+}
+
+export function DidSelectionChange(text: string) {
+    return text !== prevText;
+}
+
+export function IsSelectionChanging() {
+    return selectionChanging;
+}
+
+export function SetPreviousSelection(selection:vscode.Selection) {
+    prevSelection = selection
+}
+
+export function SetSelectionChanging(value: boolean) {
+    selectionChanging = value;
+}
+
+export function Carry(text: string, selection: vscode.Selection) {
+    if (IsCarrying()) {
+        carriedSelection = "";
+        prevText = "";
+    } else {
+        outputchannel.appendLine(`carried text ${text}`);
+        carriedSelection = text;
+        prevText = text;
+        prevSelection = selection;
+    }
+}
+
+export async function SwapCarry(newTemp: string, editor: vscode.TextEditor) {
+    prevText = newTemp;
+    outputchannel.appendLine(`prevText: ${prevText}, prevSelection ${editor.document.getText(prevSelection)}`);
+    outputchannel.appendLine(`swapping: ${editor.document.getText(editor.selection)} <-> ${carriedSelection}`);
+    await editor.edit(editBuilder => {
+        (editBuilder.replace(editor.selection, carriedSelection));
+    });
+}
+
+export async function RestorePreviousSelection(editor: vscode.TextEditor) {
+    outputchannel.appendLine(`prevText: ${prevText}, prevSelection: ${editor.document.getText(prevSelection)}`);
+    await editor.edit(editBuilder => {
+        if (prevText.length > 0) 
+            editBuilder.replace(prevSelection, prevText);
+        else {
+            editBuilder.delete(prevSelection);
+        }
+    });
+}
+
+
+export function IsCarrying() {
+    return !(carriedSelection.length === 0);
+}
+
+export function GetCarry() {
+    return carriedSelection;
+}
+
+export function GetTempSelection() {
+    return prevText;
+}
+
+
+
+

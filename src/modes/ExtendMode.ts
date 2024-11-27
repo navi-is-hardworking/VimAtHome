@@ -92,7 +92,7 @@ export default class ExtendMode extends EditorMode {
             },   
         });
     }
-
+    
     async dispose(): Promise<void> {
         this.decorationType?.dispose();
         this.decorationTypeTop?.dispose();
@@ -110,7 +110,7 @@ export default class ExtendMode extends EditorMode {
             case "INSERT":
                 return new InsertMode(this.context, this.wrappedMode);
             case "COMMAND":
-                return new CommandMode(this.context, this.wrappedMode.subject)
+                return this.wrappedMode;
             case "EXTEND":
                 if (!newMode.subjectName) {
                     throw new Error("No subject name provided");

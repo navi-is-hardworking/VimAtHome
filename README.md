@@ -51,6 +51,8 @@ I would recommend using the original but you are welcome to use this if you wish
 
 
 
+
+
 [
     {
         "key": "f16",
@@ -684,13 +686,18 @@ I would recommend using the original but you are welcome to use this if you wish
     },
     {
         "key": "shift+f16",
-        "command": "editor.action.addSelectionToPreviousFindMatch",
-        "when": "editorTextFocus"
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "editor.action.setSelectionAnchor",
+                "cursorLeft",
+                "editor.action.selectFromAnchorToCursor"
+            ]
+        }
     },
     {
         "key": "ctrl+f16",
         "command": "editor.action.smartSelect.shrink",
-        "when": "editorTextFocus"
     },
     {
         "key": "ctrl+shift+alt+up",
@@ -1130,19 +1137,19 @@ I would recommend using the original but you are welcome to use this if you wish
     },
     {
         "key": "alt+f16",
-        "command": "codemarks.createMark",
-        "when": "editorTextFocus"
-    },
-    {
-        "key": "alt+f17",
-        "command": "codemarks.jumpToMark",
+        "command": "vimAtHome.swapSubjectLeft",
         "when": "editorTextFocus"
     },
     {
         "key": "alt+f18",
-        "command": "codemarks.selectToMark",
+        "command": "vimAtHome.swapSubjectRight",
         "when": "editorTextFocus"
     },
+    // {
+    //     "key": "alt+f18",
+    //     "command": "codemarks.selectToMark",
+    //     "when": "editorTextFocus"
+    // },
     {
         "key": "alt+shift+f16",
         "command": "codemarks.clearAllLocalMarks",
@@ -2696,8 +2703,13 @@ I would recommend using the original but you are welcome to use this if you wish
     },
     {
         "key": "f24",
-        "command": "vimAtHome.changeToWordSubject",
-        "when": "editorTextFocus"
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "closeFindWidget",
+                "vimAtHome.changeToWordSubject"
+            ]
+        },
     },
     {
         "key": "ctrl+shift+[",
@@ -2777,7 +2789,7 @@ I would recommend using the original but you are welcome to use this if you wish
                         "value": 25
                     }
                 },
-                // "vimAtHome.scrollToCursor",
+                // "vimAtHome.ascrollToCursor",
             ]
         },
         "when": "editorTextFocus"
@@ -2812,8 +2824,30 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "vimAtHome.changeToInsertMode",
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
-    
+
+    {
+        "key": "alt+up",
+        "command": "vimAtHome.swapSubjectUp",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && vimAtHome.subject == 'BLOCK'"
+    },
+    {
+        "key": "alt+down",
+        "command": "vimAtHome.swapSubjectDown",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && vimAtHome.subject == 'BLOCK'"
+    },
+    {
+        "key": "delete",
+        "command": "vimAtHome.anchorSwap",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
+    },
+    {
+        "key": "ctrl+alt+shift+delete",
+        "command": "vimAtHome.carry",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
+    },
 ]
+
+
 
 
 

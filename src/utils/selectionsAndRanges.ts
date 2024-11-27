@@ -165,3 +165,18 @@ export function rangeToPosition(
         ? startingPosition[direction === Direction.forwards ? "end" : "start"]
         : startingPosition;
 }
+
+
+export function splitByRegex(regex: RegExp, text: string, selection: vscode.Selection): Array<[vscode.Position, vscode.Position]> {
+    const pattern = regex instanceof RegExp ? regex.source : regex;
+    const currentRegex = new RegExp(pattern, "g");
+    const matches: Array<[vscode.Position, vscode.Position]> = [];
+    let match;
+    while (match = currentRegex.exec(text)) {
+        matches.push([
+            new vscode.Position(selection.start.line, selection.start.character + match.index),
+            new vscode.Position(selection.start.line, selection.start.character + match.index + match[0].length)
+        ]);
+    }
+    return matches;
+}

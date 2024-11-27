@@ -836,7 +836,13 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.anchorSwap", 
         execute: async (manager) => {
-            await manager.insertEnd();
+            await manager.anchorSwap();
+        },
+    },
+    {
+        id: "vimAtHome.carry", 
+        execute: async (manager) => {
+            await manager.carry();
         },
     },
     

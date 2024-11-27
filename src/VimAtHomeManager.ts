@@ -1,3 +1,4 @@
+
 import * as vscode from "vscode";
 import { Config } from "./config";
 import { goToLine, quickCommandPicker } from "./utils/editor";
@@ -15,7 +16,7 @@ import { getWordDefinition, getVerticalSkipCount, setWordDefinition, getWordDefi
 import WordIO from "./io/WordIO";
 import { Direction } from "./common";
 import * as cacheCommands from "./CacheCommands";
-import { getMidPoint } from "./utils/selectionsAndRanges";
+import { getMidPoint, splitByRegex } from "./utils/selectionsAndRanges";
 import * as ncp from 'copy-paste'
 import { promisify } from "util";
 
@@ -42,6 +43,7 @@ export default class VimAtHomeManager {
 
     async changeEditor(editor: vscode.TextEditor | undefined) {
         this.clearSelections();
+        cacheCommands.StopCarry();
 
         if (!editor) {
             return;
@@ -109,8 +111,21 @@ export default class VimAtHomeManager {
     ) {
         this.clearSelections();
         this.setDecorations();
-        const selectedText = this.editor.document.getText(this.editor.selection);
-        
+
+        if (cacheCommands.IsSelectionChanging()) return;
+        if (cacheCommands.IsCarrying()) {
+            cacheCommands.SetSelectionChanging(true);
+
+            await this.mode.fixSelection();
+            const selectedText = this.editor.document.getText(this.editor.selection);
+            await cacheCommands.RestorePreviousSelection(this.editor);
+            outputChannel.appendLine(`selected text: ${selectedText}`);
+            await cacheCommands.SwapCarry(selectedText, this.editor);
+            outputChannel.appendLine(`carried text: ${cacheCommands.GetCarry()}`);
+            cacheCommands.SetPreviousSelection(this.editor.selection); // might need to fix
+            
+            cacheCommands.SetSelectionChanging(false);
+        }
         
         if (
             event.kind === vscode.TextEditorSelectionChangeKind.Command 
@@ -118,10 +133,12 @@ export default class VimAtHomeManager {
             event.kind === undefined
         ) {
             this.editor.revealRange(new vscode.Range(this.editor.selection.active, this.editor.selection.active));
+            outputChannel.appendLine("early return");
             return;
         }
         
         if (this.mode instanceof InsertMode) return;
+        outputChannel.appendLine("early return2");
         
         if (
             event.kind === vscode.TextEditorSelectionChangeKind.Mouse &&
@@ -129,6 +146,7 @@ export default class VimAtHomeManager {
             !event.selections[0].isEmpty
         ) {
             await this.changeMode({ kind: "INSERT" });
+            outputChannel.appendLine("early return3");
             return;
         }
         
@@ -905,49 +923,71 @@ export default class VimAtHomeManager {
     }
 
     async changeToWord() {
-        if (this.mode.name === "EXTEND" || this.mode.name === "INSERT" || this.mode.getSubjectName() === "CHAR" || this.mode.getSubjectName() === "SUBWORD" || 
-                (this.mode.getSubjectName() === "WORD" && getWordDefinitionIndex() != 5 && getWordDefinitionIndex() != 6 && getWordDefinitionIndex() != 0)) {
-            setWordDefinition(0);
-            await this.changeMode({ kind: "COMMAND", subjectName: "WORD" });
-            return;
-        }
-        
-        let changeRequest;
-        switch (this.mode.getSubjectName()) {
-            case "BLOCK": 
-            case "LINE": 
-            case "BRACKETS": 
-                changeRequest = await this.mode.collapseToCenter();
-                if (changeRequest) await this.changeMode(changeRequest)
-                if (this.mode.getSubjectName() != "WORD") {
+        try {
+            if (this.mode.name === "EXTEND" || this.mode.name === "INSERT" || this.mode.getSubjectName() === "CHAR" || this.mode.getSubjectName() === "SUBWORD" || 
+                    (this.mode.getSubjectName() === "WORD" && getWordDefinitionIndex() != 0)){
+                setWordDefinition(0);
+                await this.changeMode({ kind: "COMMAND", subjectName: "WORD" });
+                return;
+            }
+            
+            let changeRequest;
+            switch (this.mode.getSubjectName()) {
+                case "BLOCK": 
+                case "LINE": 
+                case "BRACKETS": 
                     changeRequest = await this.mode.collapseToCenter();
                     if (changeRequest) await this.changeMode(changeRequest)
-                } 
-            break;
-            default:
-                if (getWordDefinitionIndex() !== 0) {
-                    changeRequest = await this.mode.collapseToCenter();
-                    if (changeRequest) await this.changeMode(changeRequest)
-                } else {
-                    let line = this.editor.document.lineAt(this.editor.selection.active.line).text
-                    const start = line.search(/\S/);
-                    const end = line.length;
-                    let active = new vscode.Position(this.editor.selection.active.line, start); 
-                    let anchor = new vscode.Position(this.editor.selection.active.line, end); 
-                    let mockSelection = new vscode.Selection(active, anchor); // select full line
-                    setWordDefinition(5);
-                    changeRequest = await this.mode.collapseToCenter(mockSelection);
-                    if (changeRequest) await this.changeMode(changeRequest)
-                }
-            break;
+                    if (this.mode.getSubjectName() != "WORD") {
+                        changeRequest = await this.mode.collapseToCenter();
+                        if (changeRequest) await this.changeMode(changeRequest)
+                    } 
+                break;
+                default:
+                    if (getWordDefinitionIndex() !== 0) {
+                        changeRequest = await this.mode.collapseToCenter();
+                        if (changeRequest) await this.changeMode(changeRequest)
+                    } else {
+                        let line = this.editor.document.lineAt(this.editor.selection.active.line).text
+                        const start = line.search(/\S/);
+                        const end = line.length;
+                        let active = new vscode.Position(this.editor.selection.active.line, start); 
+                        let anchor = new vscode.Position(this.editor.selection.active.line, end); 
+                        let selection = new vscode.Selection(active, anchor);
+                        let text = this.editor.document.getText(selection);
+
+                        const wordDefinition = getWordDefinition();
+                        const selectedText = this.editor.document.getText(selection);
+                        if (!wordDefinition || !selectedText || selectedText.trim().length == 0) return;
+                        let matches = splitByRegex(wordDefinition, text, selection);
+                        if (matches.length) {
+                            const midIndex = Math.floor((matches.length) / 2);
+                            const [start, end] = matches[midIndex];
+                            this.editor.selection = new vscode.Selection(
+                                new vscode.Position(start.line, Math.floor((start.character + end.character + 1) / 2)),
+                                new vscode.Position(start.line, Math.floor((start.character + end.character + 1) / 2))
+                            );
+                        }
+
+                        this.changeMode({ kind: "COMMAND", subjectName: "WORD" });
+                    }
+                break;
+            }
+        } catch (exception) {
+
         }
 
     }
 
+    async carry() {
+        const text = this.editor.document.getText(this.editor.selection);
+        cacheCommands.Carry(text, this.editor.selection);
+    }
+    
     async anchorSwap() {
         let active = this.editor.selection.anchor;
         let anchor = this.editor.selection.active;
-        this.editor.selection = new vscode.Selection(active, anchor);
+        this.editor.selection = new vscode.Selection(anchor, active);
     }
 }
 
