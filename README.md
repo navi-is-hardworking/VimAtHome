@@ -51,8 +51,6 @@ I would recommend using the original but you are welcome to use this if you wish
 
 
 
-
-
 [
     {
         "key": "f16",
@@ -2541,7 +2539,7 @@ I would recommend using the original but you are welcome to use this if you wish
                 "vimAtHome.deleteLeft"
             ]
         },
-        "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND')"
+        "when": "editorTextFocus"
     },
     {
         "key": "ctrl+delete",
@@ -2551,7 +2549,7 @@ I would recommend using the original but you are welcome to use this if you wish
                 "vimAtHome.deleteRight"
             ]
         },
-        "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND')"
+        "when": "editorTextFocus"
     },
     {
         "key": "ctrl+alt+shift+up",
@@ -2630,9 +2628,9 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                // "editor.action.selectFromAnchorToCursor",
+                "editor.action.selectFromAnchorToCursor",
                 // "editor.action.clipboardCopyAction",
-                "vimAtHome.yoinkFromSkip"
+                // "vimAtHome.yoinkFromSkip"
             ]
         },
         "when": "editorTextFocus"
@@ -2686,7 +2684,7 @@ I would recommend using the original but you are welcome to use this if you wish
     {
         "key": "ctrl+left",
         "command": "vimAtHome.goToFirstSubjectInScope",
-        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && vimAtHome.subject == 'WORD'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+alt+y",
@@ -2835,18 +2833,17 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "vimAtHome.swapSubjectDown",
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && vimAtHome.subject == 'BLOCK'"
     },
-    {
-        "key": "delete",
-        "command": "vimAtHome.anchorSwap",
-        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
-    },
+    // {
+    //     "key": "delete",
+    //     "command": "vimAtHome.anchorSwap",
+    //     "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
+    // },
     {
         "key": "ctrl+alt+shift+delete",
         "command": "vimAtHome.carry",
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
 ]
-
 
 
 

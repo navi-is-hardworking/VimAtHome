@@ -12,16 +12,16 @@ import { SubjectName } from "./subjects/SubjectName";
 import * as modifications from "./utils/modifications";
 import { splitRange } from "./utils/decorations";
 import * as lineUtils from "./utils/lines";
-import { getWordDefinition, getVerticalSkipCount, setWordDefinition, getWordDefinitionIndex } from "./config";
+import { getWordDefinition, getVerticalSkipCount, setWordDefinition, getWordDefinitionIndex, getWordDefinitionByIndex } from "./config";
 import WordIO from "./io/WordIO";
 import { Direction } from "./common";
 import * as cacheCommands from "./CacheCommands";
 import { getMidPoint, splitByRegex } from "./utils/selectionsAndRanges";
 import * as ncp from 'copy-paste'
 import { promisify } from "util";
+import { dir } from "console";
 
 
-let outputChannel = vscode.window.createOutputChannel("selectionAnchor");
 const copyAsync = promisify((text: string) => ncp.copy(text));
 
 export default class VimAtHomeManager {
@@ -119,9 +119,7 @@ export default class VimAtHomeManager {
             await this.mode.fixSelection();
             const selectedText = this.editor.document.getText(this.editor.selection);
             await cacheCommands.RestorePreviousSelection(this.editor);
-            outputChannel.appendLine(`selected text: ${selectedText}`);
             await cacheCommands.SwapCarry(selectedText, this.editor);
-            outputChannel.appendLine(`carried text: ${cacheCommands.GetCarry()}`);
             cacheCommands.SetPreviousSelection(this.editor.selection); // might need to fix
             
             cacheCommands.SetSelectionChanging(false);
@@ -133,12 +131,10 @@ export default class VimAtHomeManager {
             event.kind === undefined
         ) {
             this.editor.revealRange(new vscode.Range(this.editor.selection.active, this.editor.selection.active));
-            outputChannel.appendLine("early return");
             return;
         }
         
         if (this.mode instanceof InsertMode) return;
-        outputChannel.appendLine("early return2");
         
         if (
             event.kind === vscode.TextEditorSelectionChangeKind.Mouse &&
@@ -146,7 +142,6 @@ export default class VimAtHomeManager {
             !event.selections[0].isEmpty
         ) {
             await this.changeMode({ kind: "INSERT" });
-            outputChannel.appendLine("early return3");
             return;
         }
         
@@ -549,17 +544,89 @@ export default class VimAtHomeManager {
     }
     
     async hopVertical(direction: common.Direction) {
-        let nextN = await this.getNthVerticalLine(direction, 2);
-        let nextBlockLine = await this.getNextSignificantBlockLocation(direction);
-        let newLine = 0;
-        if (direction === common.Direction.forwards) {
-            newLine = nextN > nextBlockLine ? nextN : nextBlockLine;
-        } else if (direction === common.Direction.backwards) {
-            newLine = nextN < nextBlockLine ? nextN : nextBlockLine;
+        if (this.mode.getSubjectName() === "LINE") {
+            await this.sameIntentBlockAfterIndentChange(direction);
         }
-        await this.updateEditorPosition(newLine);
+        else {
+            let nextN = await this.getNthVerticalLine(direction, 2);
+            let nextBlockLine = await this.getNextSignificantBlockLocation(direction);
+            let newLine = 0;
+            if (direction === common.Direction.forwards) {
+                newLine = nextN > nextBlockLine ? nextN : nextBlockLine;
+            } else if (direction === common.Direction.backwards) {
+                newLine = nextN < nextBlockLine ? nextN : nextBlockLine;
+            }
+            await this.updateEditorPosition(newLine);
+        }
+        
     }
     
+    async nextIndentUp(direction: common.Direction) {
+        const document = this.editor.document;
+        const currentPosition = this.editor.selection.active;
+        const currentLine = document.lineAt(currentPosition.line);
+        const currentIndentation = currentLine.firstNonWhitespaceCharacterIndex;
+
+        let targetLine: vscode.TextLine | undefined;
+        let lineIterator = lineUtils.iterLines(document, {
+            startingPosition: currentPosition,
+            direction: direction,
+            currentInclusive: false,
+        });
+
+        for (const line of lineIterator) {
+            if (line.text.trim().length >= 1 && line.firstNonWhitespaceCharacterIndex > currentIndentation) {
+                targetLine = line;
+                break;
+            }
+        }
+
+        if (targetLine)
+            await this.updateEditorPosition(targetLine.lineNumber);
+    }
+
+    async sameIntentBlockAfterIndentChange(direction: common.Direction) {
+        const document = this.editor.document;
+        const currentPosition = this.editor.selection.active;
+        const currentLine = document.lineAt(currentPosition.line);
+        const currentIndentation = currentLine.firstNonWhitespaceCharacterIndex;
+
+        let nextLine = lineUtils.getNextSignificantLine(document, currentPosition, direction);
+        if (!nextLine) return;
+
+        let targetIndentation = nextLine.firstNonWhitespaceCharacterIndex;
+        if (targetIndentation === currentIndentation) {
+            let lineIterator = lineUtils.iterLines(document, {
+                startingPosition: currentPosition,
+                direction: direction,
+                currentInclusive: false,
+            });
+            let lastSignificantLine = nextLine;
+            for (const line of lineIterator) {
+                if (line.text.trim().length > 0 && line.firstNonWhitespaceCharacterIndex !== targetIndentation) break;
+                lastSignificantLine = line;
+            }
+            await this.updateEditorPosition(lastSignificantLine.lineNumber);
+            return;
+        } else {
+            let lineIterator = lineUtils.iterLines(document, {
+                startingPosition: currentPosition,
+                direction: direction,
+                currentInclusive: false,
+            });
+            let targetLine: vscode.TextLine | undefined;
+            for (const line of lineIterator) {
+                if (line.text.trim().length > 0 && line.firstNonWhitespaceCharacterIndex === currentIndentation) {
+                    targetLine = line;
+                    break;
+                }
+            }
+            if (targetLine)
+                await this.updateEditorPosition(targetLine.lineNumber);
+            return;
+        }
+    }
+
     async nextIndentBlock(direction: common.Direction) {
         const document = this.editor.document;
         const currentPosition = this.editor.selection.active;
@@ -622,63 +689,48 @@ export default class VimAtHomeManager {
         });
     }
 
-    async deleteRight(): Promise<void> {
-        const wordIO = new WordIO();
+    async deleteNext(direction: common.Direction): Promise<void> {
+
+        if ((this.mode.name === "COMMAND" || this.mode.name === "EXTEND") && this.mode.getSubjectName() === "CHAR") {
+            cacheCommands.DeleteToAnchor(this.editor);
+            return;
+        }
         const { editor } = this;
     
         await editor.edit(editBuilder => {
             for (const selection of editor.selections) {
-                const currentWord = editor.document.getWordRangeAtPosition(selection.active, getWordDefinition());
-                if (!currentWord) continue;
-    
-                const currentLine = editor.document.lineAt(currentWord.end.line);
-                const lineEndPos = currentLine.range.end;
+                const wordDefinition = this.mode.name === "INSERT" ? getWordDefinitionByIndex(2) : getWordDefinition();
+                if (!wordDefinition) return;
                 
-                const ranges = wordIO.iterAll(editor.document, {
-                    startingPosition: currentWord,
-                    direction: Direction.forwards,
-                    currentInclusive: false,
-                    bounds: currentLine.range
-                }).toArray();
-    
-                const lastRange = ranges[0];
-                if (lastRange) {
-                    const deleteEnd = Math.min(lastRange.end.character, lineEndPos.character);
-                    editBuilder.delete(new vscode.Range(
-                        currentWord.end,
-                        new vscode.Position(currentWord.end.line, deleteEnd)
-                    ));
-                } else if (currentWord.end.character < lineEndPos.character) {
-                    editBuilder.delete(new vscode.Range(currentWord.end, lineEndPos));
-                }
-            }
-        });
-    }
-    
-    async deleteLeft(): Promise<void> {
-        const wordIO = new WordIO();
-        const { editor } = this;
-    
-        await editor.edit(editBuilder => {
-            for (const selection of editor.selections) {
-                const currentWord = editor.document.getWordRangeAtPosition(selection.active, getWordDefinition());
-                if (!currentWord) continue;
-    
-                const currentLine = editor.document.lineAt(currentWord.start.line);
                 
-                const ranges = wordIO.iterAll(editor.document, {
-                    startingPosition: currentWord,
-                    direction: Direction.backwards,
-                    currentInclusive: false,
-                    bounds: currentLine.range
-                }).toArray();
-    
-                const lastRange = ranges[0];
-                if (lastRange) {
-                    editBuilder.delete(new vscode.Range(lastRange.start, currentWord.start));
-                } else if (currentWord.start.character > 0) {
-                    editBuilder.delete(new vscode.Range(currentLine.range.start, currentWord.start));
+                if (direction === common.Direction.backwards) {
+                    let leftOfSelection = new vscode.Range(new vscode.Position(selection.start.line, 0), new vscode.Position(selection.start.line, selection.start.character));
+                    let leftSelection = new vscode.Selection(leftOfSelection.start, leftOfSelection.end);
+                    let leftText = editor.document.getText(leftOfSelection);
+                    let leftMatches = splitByRegex(wordDefinition, leftText, leftSelection);
+                    if (leftMatches.length > 0) {
+                        let lastMatch = leftMatches[leftMatches.length - 1];
+                        editBuilder.delete(new vscode.Range(
+                            new vscode.Position(selection.start.line, lastMatch[0].character),
+                            selection.start
+                        ));
+                    }
                 }
+                else {
+                    let rightOfSelection = new vscode.Range(new vscode.Position(selection.end.line, selection.end.character), new vscode.Position(selection.end.line, editor.document.lineAt(selection.end.line).text.length));
+                    let rightSelection = new vscode.Selection(rightOfSelection.start, rightOfSelection.end);
+
+                    let rightText = editor.document.getText(rightOfSelection);
+                    let rightMatches = splitByRegex(wordDefinition, rightText, rightSelection);
+                    if (rightMatches.length > 0) {
+                        let firstMatch = rightMatches[0];
+                        editBuilder.delete(new vscode.Range(
+                            selection.end,
+                            new vscode.Position(selection.end.line, firstMatch[1].character)
+                        ));
+                    }
+                }
+
             }
         });
     }
@@ -913,12 +965,10 @@ export default class VimAtHomeManager {
     }
     
     async yoinkAnchor() {
-        const tempRange = cacheCommands.YoinkFromAnchor(this.editor.selection);
+        const tempRange = cacheCommands.SelectFromAnchor(this.editor.selection);
         if (tempRange) {
             const text = this.editor.document.getText(tempRange);
             this.copySelection(text);
-            outputChannel.appendLine(`new yoink: ${text}`);
-            outputChannel.appendLine("");
         }
     }
 

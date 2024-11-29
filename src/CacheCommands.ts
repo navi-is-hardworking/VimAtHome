@@ -194,7 +194,7 @@ export function MergeSelection(cachedSelection: vscode.Selection, selection: vsc
     return [newActive, newAnchor]
 }
 
-export function YoinkFromAnchor(selection: vscode.Selection) {
+export function SelectFromAnchor(selection: vscode.Selection) {
     if (cachedSelection === undefined || !selection) return; 
 
     let newActive;
@@ -222,6 +222,16 @@ export function YoinkFromAnchor(selection: vscode.Selection) {
     }
 
     return new vscode.Range(newActive, newAnchor)
+}
+
+export function DeleteToAnchor(editor: vscode.TextEditor) {
+    if (cachedSelection === undefined) return;
+    const newSelection = SelectFromAnchor(editor.selection);
+    if (newSelection instanceof vscode.Range) {
+        editor.edit(editBuilder => {
+            editBuilder.delete(newSelection);
+        });
+    }
 }
 
 export function ClearSelectionAnchor() {

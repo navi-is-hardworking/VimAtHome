@@ -413,15 +413,25 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.goToFirstSubjectInScope",
         execute: async (manager) => {
-            await manager.executeSubjectCommand("firstObjectInScope");
-            setVirtualColumnNumber(0);
+            if (manager.mode.getSubjectName() === "LINE") {
+                await manager.nextIndentUp(Direction.backwards);
+            }
+            else {
+                await manager.executeSubjectCommand("firstObjectInScope");
+                setVirtualColumnNumber(0);
+            }
         },
     },
     {
         id: "vimAtHome.goToLastSubjectInScope",
         execute: async (manager) => {
-            await manager.executeSubjectCommand("lastObjectInScope");
-            setVirtualColumnNumber(1000);
+            if (manager.mode.getSubjectName() === "LINE") {
+                await manager.nextIndentUp(Direction.forwards);
+            }
+            else {
+                await manager.executeSubjectCommand("lastObjectInScope");
+                setVirtualColumnNumber(1000);
+            }
         },
     },
     {
@@ -738,13 +748,13 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.deleteLeft",
         execute: async (manager) => {
-            await manager.deleteLeft();
+            await manager.deleteNext("backwards");
         },
     },
     {
         id: "vimAtHome.deleteRight", 
         execute: async (manager) => {
-            await manager.deleteRight();
+            await manager.deleteNext("forwards");
         },
     },
     {
