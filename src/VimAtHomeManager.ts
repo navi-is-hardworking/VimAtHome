@@ -1,4 +1,3 @@
-
 import * as vscode from "vscode";
 import { Config } from "./config";
 import { goToLine, quickCommandPicker } from "./utils/editor";
@@ -527,11 +526,13 @@ export default class VimAtHomeManager {
         let currentLine = this.editor.selection.active.line;
         const increment = direction === common.Direction.forwards ? 1 : -1;
 
-        while (!lineUtils.lineIsSignificant(document.lineAt(currentLine + increment)) && currentLine < lineCount && currentLine >= 0) {
+        while (((direction === common.Direction.forwards && currentLine < lineCount - 1) || (direction === common.Direction.backwards && currentLine > 0)) 
+                && !lineUtils.lineIsSignificant(document.lineAt(currentLine + increment))) {
             currentLine += increment;
         }
         
-        while (lineUtils.lineIsSignificant(document.lineAt(currentLine + increment)) && currentLine < lineCount && currentLine >= 0) {
+        while (((direction === common.Direction.forwards && currentLine < lineCount - 1) || (direction === common.Direction.backwards && currentLine > 0)) 
+                && lineUtils.lineIsSignificant(document.lineAt(currentLine + increment))) {
             currentLine += increment;
         }
         
