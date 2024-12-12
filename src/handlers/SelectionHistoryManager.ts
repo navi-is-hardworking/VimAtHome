@@ -21,27 +21,30 @@ class FileSelectionHistory {
         if (this.isNavigatingHistory) {
             return;
         }
-        if (this.history.length > 0 && 
+
+        if (this.history.length > 0 && this.currentIndex >= 0 && 
             this.areSelectionsEqual(this.history[this.currentIndex].selection, selection) &&
             this.history[this.currentIndex].subjectName === subjectName) {
             return;
         }
 
-        if (this.currentIndex < this.history.length - 1) {
+        if (this.currentIndex >= 0 && this.currentIndex < this.history.length - 1) {
             this.history = this.history.slice(0, this.currentIndex + 1);
         }
 
         this.history.push(new SelectionHistoryEntry(selection, Date.now(), subjectName));
         
         if (this.history.length > this.maxHistorySize) {
-            this.history = this.history.slice(this.history.length - this.maxHistorySize);
+            const removeCount = this.history.length - this.maxHistorySize;
+            this.history = this.history.slice(removeCount);
+            this.currentIndex = Math.max(0, this.currentIndex - removeCount);
+        } else {
+            this.currentIndex = this.history.length - 1;
         }
-
-        this.currentIndex = this.history.length - 1;
     }
 
     public goToPreviousSelection(): SelectionHistoryEntry | undefined {
-        if (this.currentIndex <= 0) {
+        if (this.currentIndex <= 0 || this.history.length === 0) {
             return undefined;
         }
 
@@ -81,9 +84,11 @@ export class SelectionHistoryManager {
     private fileHistories: Map<string, FileSelectionHistory> = new Map();
     
     public recordSelection(editor: vscode.TextEditor, subjectName?: SubjectName) {
-        if (editor.selection.active.line === editor.selection.anchor.line && editor.selection.active.character === editor.selection.anchor.character) {
+        if (editor.selection.active.line === editor.selection.anchor.line && 
+            editor.selection.active.character === editor.selection.anchor.character) {
             return;
         }
+
         const fileUri = editor.document.uri.toString();
         let fileHistory = this.fileHistories.get(fileUri);
         

@@ -469,22 +469,13 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.newLineBelow",
         execute: async (manager) => {
-            collapseSelections(manager.editor, "end");
-            manager.changeMode({ kind: "INSERT" });
-
-            await vscode.commands.executeCommand(
-                "editor.action.insertLineAfter"
-            );
+            await manager.newLineBelow();
         },
     },
     {
         id: "vimAtHome.newLineAbove",
         execute: async (manager) => {
-            collapseSelections(manager.editor, "start");
-            manager.changeMode({ kind: "INSERT" });
-            await vscode.commands.executeCommand(
-                "editor.action.insertLineBefore"
-            );
+            await manager.newLineAbove();
         },
     },
     {
