@@ -19,9 +19,11 @@ import { getMidPoint, splitByRegex } from "./utils/selectionsAndRanges";
 import * as ncp from 'copy-paste'
 import { promisify } from "util";
 import { dir } from "console";
+import { SelectionHistoryManager } from "./handlers/SelectionHistoryManager";
 
 
 const copyAsync = promisify((text: string) => ncp.copy(text));
+let selectionHistory = new SelectionHistoryManager();
 
 export default class VimAtHomeManager {
     public mode: EditorMode;
@@ -57,6 +59,7 @@ export default class VimAtHomeManager {
             });
         }
 
+        this.mode.fixSelection();
         this.setUI();
     }
 
@@ -108,6 +111,7 @@ export default class VimAtHomeManager {
     async onDidChangeTextEditorSelection(
         event: vscode.TextEditorSelectionChangeEvent
     ) {
+        selectionHistory.recordSelection(this.editor);
         this.clearSelections();
         this.setDecorations();
 
@@ -145,6 +149,7 @@ export default class VimAtHomeManager {
         }
         
         this.mode.fixSelection();
+        selectionHistory.recordSelection(this.editor);
         this.setUI();
     }
 
@@ -981,6 +986,18 @@ export default class VimAtHomeManager {
                 await this.changeMode({ kind: "COMMAND", subjectName: "WORD" });
                 return;
             }
+
+            if (this.mode.getSubjectName() === "WORD") {
+                const currentSelection = this.editor.selection;
+                this.mode.fixSelection();
+                if (
+                    this.editor.selection.start.line !== currentSelection.start.line ||
+                    this.editor.selection.start.character !== currentSelection.start.character ||
+                    this.editor.selection.end.character !== currentSelection.end.character ||
+                    this.editor.selection.end.line !== currentSelection.end.line
+                )
+                return;
+            }
             
             let changeRequest;
             switch (this.mode.getSubjectName()) {
@@ -1039,6 +1056,14 @@ export default class VimAtHomeManager {
         let active = this.editor.selection.anchor;
         let anchor = this.editor.selection.active;
         this.editor.selection = new vscode.Selection(anchor, active);
+    }
+
+    async goPrevSelection() {
+        let selection = selectionHistory.goToPreviousSelection(this.editor);
+    }
+
+    async goNextSelection() {
+        let selection = selectionHistory.goToNextSelection(this.editor);
     }
 }
 

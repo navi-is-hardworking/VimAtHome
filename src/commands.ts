@@ -855,6 +855,32 @@ export let registeredCommands: ExtensionCommand[] = [
             await manager.carry();
         },
     },
+    {
+        id: "vimAtHome.findNext", 
+        execute: async (manager) => {
+            await vscode.commands.executeCommand("editor.action.nextSelectionMatchFindAction");
+            await vscode.commands.executeCommand("closeFindWidget");
+        },
+    },
+    {
+        id: "vimAtHome.findPrev", 
+        execute: async (manager) => {
+            await vscode.commands.executeCommand("editor.action.previousSelectionMatchFindAction");
+            await vscode.commands.executeCommand("closeFindWidget");
+        },
+    },
+    {
+        id: "vimAtHome.goPrevSelection", 
+        execute: async (manager) => {
+            await manager.goPrevSelection();
+        },
+    },
+    {
+        id: "vimAtHome.goNextSelection", 
+        execute: async (manager) => {
+            await manager.goNextSelection();
+        },
+    },
     
 ];
 
