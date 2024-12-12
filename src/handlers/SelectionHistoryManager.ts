@@ -1,9 +1,11 @@
 import * as vscode from "vscode";
+import { SubjectName } from "../subjects/SubjectName";
 
 class SelectionHistoryEntry {
     constructor(
         public readonly selection: vscode.Selection,
-        public readonly timestamp: number
+        public readonly timestamp: number,
+        public readonly subjectName?: SubjectName
     ) {}
 }
 
@@ -11,18 +13,17 @@ class FileSelectionHistory {
     private history: SelectionHistoryEntry[] = [];
     private currentIndex: number = -1;
     private maxHistorySize: number = 100;
-    
     private isNavigatingHistory: boolean = false;
 
     constructor(private fileUri: string) {}
 
-    public recordSelection(selection: vscode.Selection) {
+    public recordSelection(selection: vscode.Selection, subjectName?: SubjectName) {
         if (this.isNavigatingHistory) {
             return;
         }
-
         if (this.history.length > 0 && 
-            this.areSelectionsEqual(this.history[this.currentIndex].selection, selection)) {
+            this.areSelectionsEqual(this.history[this.currentIndex].selection, selection) &&
+            this.history[this.currentIndex].subjectName === subjectName) {
             return;
         }
 
@@ -30,7 +31,7 @@ class FileSelectionHistory {
             this.history = this.history.slice(0, this.currentIndex + 1);
         }
 
-        this.history.push(new SelectionHistoryEntry(selection, Date.now()));
+        this.history.push(new SelectionHistoryEntry(selection, Date.now(), subjectName));
         
         if (this.history.length > this.maxHistorySize) {
             this.history = this.history.slice(this.history.length - this.maxHistorySize);
@@ -39,30 +40,30 @@ class FileSelectionHistory {
         this.currentIndex = this.history.length - 1;
     }
 
-    public goToPreviousSelection(): vscode.Selection | undefined {
+    public goToPreviousSelection(): SelectionHistoryEntry | undefined {
         if (this.currentIndex <= 0) {
             return undefined;
         }
 
         this.isNavigatingHistory = true;
         this.currentIndex--;
-        const selection = this.history[this.currentIndex].selection;
+        const entry = this.history[this.currentIndex];
         this.isNavigatingHistory = false;
         
-        return selection;
+        return entry;
     }
 
-    public goToNextSelection(): vscode.Selection | undefined {
+    public goToNextSelection(): SelectionHistoryEntry | undefined {
         if (this.currentIndex >= this.history.length - 1) {
             return undefined;
         }
 
         this.isNavigatingHistory = true;
         this.currentIndex++;
-        const selection = this.history[this.currentIndex].selection;
+        const entry = this.history[this.currentIndex];
         this.isNavigatingHistory = false;
 
-        return selection;
+        return entry;
     }
 
     private areSelectionsEqual(a: vscode.Selection, b: vscode.Selection): boolean {
@@ -79,11 +80,10 @@ class FileSelectionHistory {
 export class SelectionHistoryManager {
     private fileHistories: Map<string, FileSelectionHistory> = new Map();
     
-    public recordSelection(editor: vscode.TextEditor) {
+    public recordSelection(editor: vscode.TextEditor, subjectName?: SubjectName) {
         if (editor.selection.active.line === editor.selection.anchor.line && editor.selection.active.character === editor.selection.anchor.character) {
             return;
         }
-        
         const fileUri = editor.document.uri.toString();
         let fileHistory = this.fileHistories.get(fileUri);
         
@@ -92,39 +92,39 @@ export class SelectionHistoryManager {
             this.fileHistories.set(fileUri, fileHistory);
         }
 
-        fileHistory.recordSelection(editor.selection);
+        fileHistory.recordSelection(editor.selection, subjectName);
     }
 
-    public goToPreviousSelection(editor: vscode.TextEditor): boolean {
+    public goToPreviousSelection(editor: vscode.TextEditor): SubjectName | undefined {
         const fileHistory = this.fileHistories.get(editor.document.uri.toString());
         if (!fileHistory) {
-            return false;
+            return undefined;
         }
 
-        const previousSelection = fileHistory.goToPreviousSelection();
-        if (previousSelection) {
-            editor.selection = previousSelection;
-            editor.revealRange(previousSelection, vscode.TextEditorRevealType.Default);
-            return true;
+        const previousEntry = fileHistory.goToPreviousSelection();
+        if (previousEntry) {
+            editor.selection = previousEntry.selection;
+            editor.revealRange(previousEntry.selection, vscode.TextEditorRevealType.Default);
+            return previousEntry.subjectName;
         }
 
-        return false;
+        return undefined;
     }
 
-    public goToNextSelection(editor: vscode.TextEditor): boolean {
+    public goToNextSelection(editor: vscode.TextEditor): SubjectName | undefined {
         const fileHistory = this.fileHistories.get(editor.document.uri.toString());
         if (!fileHistory) {
-            return false;
+            return undefined;
         }
 
-        const nextSelection = fileHistory.goToNextSelection();
-        if (nextSelection) {
-            editor.selection = nextSelection;
-            editor.revealRange(nextSelection, vscode.TextEditorRevealType.Default);
-            return true;
+        const nextEntry = fileHistory.goToNextSelection();
+        if (nextEntry) {
+            editor.selection = nextEntry.selection;
+            editor.revealRange(nextEntry.selection, vscode.TextEditorRevealType.Default);
+            return nextEntry.subjectName;
         }
 
-        return false;
+        return undefined;
     }
 
     public clearHistoryForFile(fileUri: string) {

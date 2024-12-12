@@ -59,7 +59,6 @@ export default class VimAtHomeManager {
             });
         }
 
-        this.mode.fixSelection();
         this.setUI();
     }
 
@@ -111,7 +110,9 @@ export default class VimAtHomeManager {
     async onDidChangeTextEditorSelection(
         event: vscode.TextEditorSelectionChangeEvent
     ) {
-        selectionHistory.recordSelection(this.editor);
+        if (this.mode.name === "COMMAND")
+            selectionHistory.recordSelection(this.editor, this.mode.getSubjectName());
+
         this.clearSelections();
         this.setDecorations();
 
@@ -1059,11 +1060,15 @@ export default class VimAtHomeManager {
     }
 
     async goPrevSelection() {
-        let selection = selectionHistory.goToPreviousSelection(this.editor);
+        let subject = selectionHistory.goToPreviousSelection(this.editor);
+        if (subject !== undefined)
+            this.changeMode({ kind: "COMMAND", subjectName: subject });
     }
-
+    
     async goNextSelection() {
-        let selection = selectionHistory.goToNextSelection(this.editor);
+        let subject = selectionHistory.goToNextSelection(this.editor);
+        if (subject !== undefined)
+            this.changeMode({ kind: "COMMAND", subjectName: subject });
     }
 }
 
