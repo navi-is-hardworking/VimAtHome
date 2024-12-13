@@ -884,7 +884,18 @@ export let registeredCommands: ExtensionCommand[] = [
             await manager.goNextSelection();
         },
     },
-    
+    {
+        id: "vimAtHome.replaceSelectionWithTerminalOutput", 
+        execute: async (manager) => {
+            await manager.runSelectionAndReplaceWithOutput();
+        },
+    },
+    {
+        id: "vimAtHome.runTerminalCommand", 
+        execute: async (manager) => {
+            await manager.runLineAndAppendOutput();
+        },
+    },
 ];
 
 export function popCustomCommands(num: number) {

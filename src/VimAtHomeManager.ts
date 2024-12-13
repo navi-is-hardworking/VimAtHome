@@ -20,10 +20,12 @@ import * as ncp from 'copy-paste'
 import { promisify } from "util";
 import { dir } from "console";
 import { SelectionHistoryManager } from "./handlers/SelectionHistoryManager";
+import {Terminal} from "./utils/terminal"
 
 
 const copyAsync = promisify((text: string) => ncp.copy(text));
 let selectionHistory = new SelectionHistoryManager();
+let Term = new Terminal();
 
 export default class VimAtHomeManager {
     public mode: EditorMode;
@@ -1143,5 +1145,15 @@ export default class VimAtHomeManager {
             editBuilder.delete(rangeToDelete);
         });
     }
+    
+    async runSelectionAndReplaceWithOutput() {
+        await Term.runSelectionAndReplaceWithOutput();
+    }
+    
+    async runLineAndAppendOutput() {
+        await Term.runLineAndAppendOutput();
+    }
+
+
 }
 
