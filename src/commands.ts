@@ -615,6 +615,18 @@ export let registeredCommands: ExtensionCommand[] = [
         },
     },
     {
+        id: "vimAtHome.deleteToEndOfLine",
+        execute: async (manager: VimAtHomeManager) => {
+            await manager.deleteToEndOfLine();
+        },
+    },
+    {
+        id: "vimAtHome.deleteToStartOfLine",
+        execute: async (manager: VimAtHomeManager) => {
+            await manager.deleteToStartOfLine();
+        },
+    },
+    {
         id: "vimAtHome.toggleCommentAtEndOfLine",
         execute: async (manager: VimAtHomeManager) => {
             await manager.toggleCommentAtEndOfLine();

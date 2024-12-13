@@ -887,42 +887,9 @@ export default class VimAtHomeManager {
         const clipText = await vscode.env.clipboard.readText();
         const currentSelections = this.editor.selections.length;
 
-        await this.editor.edit(editBuilder => {
+        this.editor.edit(editBuilder => {
             if (currentSelections === 1) {
-                const selection = this.editor.selections[0];
-                const line = this.editor.document.lineAt(selection.start.line);
-                const indentLevel = line.firstNonWhitespaceCharacterIndex;
-                
-                const lines = clipText.split(/\r?\n/);
-                
-                if (lines.length === 1) {
-                    editBuilder.replace(selection, clipText);
-                } else {
-                    const baseIndent = ' '.repeat(indentLevel);
-                    
-                    const nonEmptyLines = lines.filter(line => line.trim().length > 0);
-                    const minIndent = Math.min(...nonEmptyLines.map(line => {
-                        const match = line.match(/^\s*/);
-                        return match ? match[0].length : 0;
-                    }));
-                    
-                    const formattedLines = lines.map((line, index) => {
-                        if (line.trim().length === 0) {
-                            return '';
-                        }
-                        
-                        const lineContent = line.slice(minIndent);
-                        
-                        if (index === 0) {
-                            return lineContent;
-                        } else {
-                            return baseIndent + lineContent;
-                        }
-                    });
-                    
-                    const formattedText = formattedLines.join('\n');
-                    editBuilder.replace(selection, formattedText);
-                }
+                editBuilder.replace(this.editor.selections[0], clipText);
             } else {
                 const texts = clipText.split(/\r?\n/);
                 if (texts.length === currentSelections) {
@@ -1107,7 +1074,7 @@ export default class VimAtHomeManager {
     async newLineBelow(): Promise<void> {
         const document = this.editor.document;
         const selection = this.editor.selection;
-        const currentLine = document.lineAt(selection.active.line);
+        const currentLine = document.lineAt(selection.anchor.line);
         const indentMatch = currentLine.text.match(/^(\s*)/);
         const currentIndent = indentMatch ? indentMatch[1] : '';
         const insertPosition = currentLine.range.end;
@@ -1118,7 +1085,7 @@ export default class VimAtHomeManager {
         });
 
         const newPosition = new vscode.Position(
-            selection.active.line + 1,
+            selection.anchor.line + 1,
             currentIndent.length
         );
         this.editor.selection = new vscode.Selection(newPosition, newPosition);
@@ -1134,8 +1101,7 @@ export default class VimAtHomeManager {
         const currentIndent = indentMatch ? indentMatch[1] : '';
         
         const insertPosition = currentLine.range.start;
-
-        const newLineText = currentIndent + '\n' + currentIndent;
+        const newLineText = currentIndent + '\n';
 
         await this.editor.edit(editBuilder => {
             editBuilder.insert(insertPosition, newLineText);
@@ -1148,6 +1114,34 @@ export default class VimAtHomeManager {
         this.editor.selection = new vscode.Selection(newPosition, newPosition);
 
         await this.changeMode({ kind: "INSERT" });
+    }
+    
+    async deleteToEndOfLine(): Promise<void> {
+        const document = this.editor.document;
+        const selection = this.editor.selection;
+        const currentLine = document.lineAt(selection.anchor.line);
+
+        await this.editor.edit(editBuilder => {
+            const rangeToDelete = new vscode.Range(
+                selection.anchor,
+                currentLine.range.end
+            );
+            editBuilder.delete(rangeToDelete);
+        });
+    }
+    
+    async deleteToStartOfLine(): Promise<void> {
+        const document = this.editor.document;
+        const selection = this.editor.selection;
+        const currentLine = document.lineAt(selection.active.line);
+
+        await this.editor.edit(editBuilder => {
+            const rangeToDelete = new vscode.Range(
+                new vscode.Position(selection.active.line, currentLine.firstNonWhitespaceCharacterIndex),
+                selection.active
+            );
+            editBuilder.delete(rangeToDelete);
+        });
     }
 }
 
