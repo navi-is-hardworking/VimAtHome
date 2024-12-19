@@ -112,6 +112,8 @@ export default class VimAtHomeManager {
     async onDidChangeTextEditorSelection(
         event: vscode.TextEditorSelectionChangeEvent
     ) {
+        
+        
         if (this.mode.name === "COMMAND")
             selectionHistory.recordSelection(this.editor, this.mode.getSubjectName());
 
@@ -699,11 +701,6 @@ export default class VimAtHomeManager {
     }
 
     async deleteNext(direction: common.Direction): Promise<void> {
-
-        if ((this.mode.name === "COMMAND" || this.mode.name === "EXTEND") && this.mode.getSubjectName() === "CHAR") {
-            cacheCommands.DeleteToAnchor(this.editor);
-            return;
-        }
         const { editor } = this;
     
         await editor.edit(editBuilder => {
@@ -742,6 +739,14 @@ export default class VimAtHomeManager {
 
             }
         });
+    }
+    
+    async deleteToAnchor(): Promise<void> {
+        cacheCommands.DeleteToAnchor(this.editor);
+    }
+    
+    async yoinkToAnchor(): Promise<void> {
+        this.yoinkAnchor();
     }
 
     async downIndent(direction: common.Direction) {
@@ -1062,15 +1067,22 @@ export default class VimAtHomeManager {
     }
 
     async goPrevSelection() {
-        let subject = selectionHistory.goToPreviousSelection(this.editor);
-        if (subject !== undefined)
-            this.changeMode({ kind: "COMMAND", subjectName: subject });
+        const result = selectionHistory.goToPreviousSelection(this.editor);
+        
+        if (result !== undefined) {
+            await this.changeMode({ kind: "COMMAND", subjectName: result.subjectName });
+            this.editor.selection = result.selection;
+            this.editor.revealRange(result.selection, vscode.TextEditorRevealType.Default);
+        }
     }
-    
+
     async goNextSelection() {
-        let subject = selectionHistory.goToNextSelection(this.editor);
-        if (subject !== undefined)
-            this.changeMode({ kind: "COMMAND", subjectName: subject });
+        const result = selectionHistory.goToNextSelection(this.editor);
+        if (result !== undefined) {
+            await this.changeMode({ kind: "COMMAND", subjectName: result.subjectName });
+            this.editor.selection = result.selection;
+            this.editor.revealRange(result.selection, vscode.TextEditorRevealType.Default);
+        }
     }
 
     async newLineBelow(): Promise<void> {

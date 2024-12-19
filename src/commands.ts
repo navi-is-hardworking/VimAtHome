@@ -761,6 +761,18 @@ export let registeredCommands: ExtensionCommand[] = [
         },
     },
     {
+        id: "vimAtHome.deleteToAnchor", 
+        execute: async (manager) => {
+            await manager.deleteToAnchor();
+        },
+    },
+    {
+        id: "vimAtHome.yoinkToAnchor", 
+        execute: async (manager) => {
+            await manager.yoinkToAnchor();
+        },
+    },
+    {
         id: "vimAtHome.downIndentDown", 
         execute: async (manager) => {
             await manager.downIndent("forwards");
