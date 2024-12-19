@@ -83,7 +83,7 @@ export default class VimAtHomeManager {
     }
 
     async changeMode(newMode: EditorModeChangeRequest) {
-        cacheCommands.ClearSelectionAnchor();
+        // cacheCommands.ClearSelectionAnchor();
         this.clearSelections();
         if (this.mode.name === "EXTEND")
             this.mode = await this.mode.changeTo(newMode);
@@ -286,7 +286,8 @@ export default class VimAtHomeManager {
     }
 
     async skip(direction: common.Direction) {
-        cacheCommands.SetSelectionAnchor(this.editor.selection);
+        cacheCommands.SetSelectionAnchor(this.editor);
+        
         await this.mode.skip(direction);
         this.setUI();
     }
@@ -302,12 +303,12 @@ export default class VimAtHomeManager {
     }
 
     async jump() {
-        cacheCommands.SetSelectionAnchor(this.editor.selection);
+        cacheCommands.SetSelectionAnchor(this.editor);
         await this.mode.jump();
     }
 
     async jumpToSubject(subjectName: SubjectName) {
-        cacheCommands.SetSelectionAnchor(this.editor.selection);
+        cacheCommands.SetSelectionAnchor(this.editor);
         if (this.mode.getSubjectName() === subjectName) {
             await this.mode.jump();
             return;
@@ -745,10 +746,6 @@ export default class VimAtHomeManager {
         cacheCommands.DeleteToAnchor(this.editor);
     }
     
-    async yoinkToAnchor(): Promise<void> {
-        this.yoinkAnchor();
-    }
-
     async downIndent(direction: common.Direction) {
         const document = this.editor.document;
         const currentPosition = this.editor.selection.active;
@@ -846,7 +843,7 @@ export default class VimAtHomeManager {
         
         this.copyLine();
         this.copyBracket();
-        if (joinedText.length <= 1) {
+        if (joinedText.length <= 1) { // if selected text is only one character then no point in copying one character, so its probably in char mode, just select to anchor.
             this.yoinkAnchor();
         } else {
             this.copySelection(joinedText);
@@ -978,7 +975,7 @@ export default class VimAtHomeManager {
         this.editor.selection = newSelection;
     }
     
-    async yoinkAnchor() {
+    async yoinkAnchor(): Promise<void> {
         const tempRange = cacheCommands.SelectFromAnchor(this.editor.selection);
         if (tempRange) {
             const text = this.editor.document.getText(tempRange);
@@ -1164,6 +1161,16 @@ export default class VimAtHomeManager {
     
     async runLineAndAppendOutput() {
         await Term.runLineAndAppendOutput();
+    }
+    
+    async deleteSubject() {
+        
+        if (this.mode.getSubjectName() === "CHAR" && this.mode.name === "COMMAND") {
+            await this.deleteToAnchor();
+        }
+        else {
+            await this.executeSubjectCommand("deleteObject");
+        }
     }
 
 

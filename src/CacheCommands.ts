@@ -175,9 +175,11 @@ export const pasteBracket = ()  => {
 }
 
 let cachedSelection: vscode.Selection | undefined;
-export function SetSelectionAnchor(selection: vscode.Selection) {
+export function SetSelectionAnchor(editor: vscode.TextEditor) {
+    const selection = editor.selection; 
     if (!selection) return;
-    outputchannel.appendLine("changing selection anchor");
+    let selectionString: string = editor.document.getText(selection);
+    outputchannel.appendLine(`setting anchor ${selectionString}`);
     cachedSelection = selection;
 }
 
