@@ -1161,6 +1161,10 @@ export default class VimAtHomeManager {
         await Term.runLineAndAppendOutput();
     }
     
+    async SetSelectionAnchor() {
+        cacheCommands.SetSelectionAnchor(this.editor);
+    }
+    
     async deleteSubject() {
         
         if (this.mode.getSubjectName() === "CHAR" && this.mode.name === "COMMAND") {

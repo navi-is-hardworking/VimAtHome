@@ -417,6 +417,7 @@ export let registeredCommands: ExtensionCommand[] = [
                 await manager.nextIndentUp(Direction.backwards);
             }
             else {
+                await manager.SetSelectionAnchor();
                 await manager.executeSubjectCommand("firstObjectInScope");
                 setVirtualColumnNumber(0);
             }
@@ -429,6 +430,7 @@ export let registeredCommands: ExtensionCommand[] = [
                 await manager.nextIndentUp(Direction.forwards);
             }
             else {
+                await manager.SetSelectionAnchor();
                 await manager.executeSubjectCommand("lastObjectInScope");
                 setVirtualColumnNumber(1000);
             }
@@ -870,20 +872,20 @@ export let registeredCommands: ExtensionCommand[] = [
             await manager.carry();
         },
     },
-    {
-        id: "vimAtHome.findNext", 
-        execute: async (manager) => {
-            await vscode.commands.executeCommand("editor.action.nextSelectionMatchFindAction");
-            await vscode.commands.executeCommand("closeFindWidget");
-        },
-    },
-    {
-        id: "vimAtHome.findPrev", 
-        execute: async (manager) => {
-            await vscode.commands.executeCommand("editor.action.previousSelectionMatchFindAction");
-            await vscode.commands.executeCommand("closeFindWidget");
-        },
-    },
+    // {
+    //     id: "vimAtHome.findNext", 
+    //     execute: async (manager) => {
+    //         await vscode.commands.executeCommand("editor.action.nextSelectionMatchFindAction");
+    //         await vscode.commands.executeCommand("closeFindWidget");
+    //     },
+    // },
+    // {
+    //     id: "vimAtHome.findPrev", 
+    //     execute: async (manager) => {
+    //         await vscode.commands.executeCommand("editor.action.previousSelectionMatchFindAction");
+    //         await vscode.commands.executeCommand("closeFindWidget");
+    //     },
+    // },
     {
         id: "vimAtHome.goPrevSelection", 
         execute: async (manager) => {

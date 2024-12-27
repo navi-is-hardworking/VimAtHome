@@ -201,16 +201,6 @@
             }
         ],
         "keybindings": [
-            {
-                "key": "ctrl+f3",
-                "command": "vimAtHome.findNext",
-                "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
-            },
-            {
-                "key": "ctrl+shift+f3",
-                "command": "vimAtHome.findPrev",
-                "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
-            }
         ]
     },
     "scripts": {
