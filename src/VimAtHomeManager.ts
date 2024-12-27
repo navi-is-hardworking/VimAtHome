@@ -85,8 +85,6 @@ export default class VimAtHomeManager {
     async changeMode(newMode: EditorModeChangeRequest) {
         // cacheCommands.ClearSelectionAnchor();
         this.clearSelections();
-        if (this.mode.name === "EXTEND")
-            this.mode = await this.mode.changeTo(newMode);
         this.mode = await this.mode.changeTo(newMode);
         const half = newMode.kind === "INSERT" ? undefined : newMode.half;
         this.setUI();

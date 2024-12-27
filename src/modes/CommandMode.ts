@@ -156,7 +156,7 @@ export default class CommandMode extends modes.EditorMode {
             
             case "COMMAND":
                 if (editor) {
-                    const collapsePos = newMode.half === "RIGHT" ? "start" : "end";
+                    const collapsePos = newMode.half === "RIGHT" ? "end" : "start";
                     selections.collapseSelections(this.context.editor, collapsePos);
                 }
                 

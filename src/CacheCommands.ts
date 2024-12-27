@@ -228,6 +228,10 @@ export function SelectFromAnchor(selection: vscode.Selection) {
 
 export function DeleteToAnchor(editor: vscode.TextEditor) {
     if (cachedSelection === undefined) return;
+    
+    let cachedText = editor.document.getText(cachedSelection);
+    outputchannel.appendLine(`deleting to anchor ${cachedText}`);
+    
     const newSelection = SelectFromAnchor(editor.selection);
     if (newSelection instanceof vscode.Range) {
         editor.edit(editBuilder => {
