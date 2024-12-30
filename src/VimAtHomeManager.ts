@@ -304,9 +304,15 @@ export default class VimAtHomeManager {
         cacheCommands.SetSelectionAnchor(this.editor);
         await this.mode.jump();
     }
-
+    
     async jumpToSubject(subjectName: SubjectName) {
-        cacheCommands.SetSelectionAnchor(this.editor);
+        if (subjectName === "LINE") {
+            // set selection anchor to start and end of line
+            cacheCommands.SetLineSelectionAnchor(this.editor);
+        }
+        else {
+            cacheCommands.SetSelectionAnchor(this.editor);
+        }
         if (this.mode.getSubjectName() === subjectName) {
             await this.mode.jump();
             return;

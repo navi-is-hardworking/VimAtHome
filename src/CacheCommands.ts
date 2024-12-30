@@ -183,6 +183,23 @@ export function SetSelectionAnchor(editor: vscode.TextEditor) {
     cachedSelection = selection;
 }
 
+export function SetLineSelectionAnchor(editor: vscode.TextEditor) {
+    const selection = editor.selection;
+    if (!selection) return;
+    
+    const startLine = selection.start.line;
+    const endLine = selection.end.line;
+    
+    const newSelection = new vscode.Selection(
+        new vscode.Position(startLine, 0),
+        new vscode.Position(endLine, editor.document.lineAt(endLine).text.length)
+    );
+    
+    let selectionString: string = editor.document.getText(newSelection);
+    outputchannel.appendLine(`setting line anchor ${selectionString}`);
+    cachedSelection = newSelection;
+}
+
 export function MergeSelection(cachedSelection: vscode.Selection, selection: vscode.Selection) {
     let newActive = new vscode.Position(
         Math.min(selection.active.line, selection.anchor.line),
