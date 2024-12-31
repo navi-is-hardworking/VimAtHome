@@ -121,7 +121,11 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.changeToWordSubject",
         execute: async (manager: VimAtHomeManager) => {
-            await manager.changeToWord();
+            setWordDefinition(0);
+            await manager.changeMode({
+                kind: "COMMAND",
+                subjectName: "WORD",
+            });
         },
     },
     {
@@ -678,18 +682,6 @@ export let registeredCommands: ExtensionCommand[] = [
         },
     },
     {
-        id: "vimAtHome.join",
-        execute: async (manager: VimAtHomeManager) => {
-            cacheCommands.pasteTop(manager.editor);
-        },
-    },
-    {
-        id: "vimAtHome.unjoin",
-        execute: async (manager: VimAtHomeManager) => {
-            cacheCommands.pasteTop(manager.editor);
-        },
-    },
-    {
         id: "vimAtHome.nextWordBlockUp",
         execute: async (manager: VimAtHomeManager) => {
             await manager.nextSignificantBlock(Direction.backwards);
@@ -864,6 +856,18 @@ export let registeredCommands: ExtensionCommand[] = [
         id: "vimAtHome.anchorSwap", 
         execute: async (manager) => {
             await manager.anchorSwap();
+        },
+    },
+    {
+        id: "vimAtHome.join",
+        execute: async (manager) => {
+            await manager.join();
+        },
+    },
+    {
+        id: "vimAtHome.split",
+        execute: async (manager) => {
+            await manager.split();
         },
     },
     {

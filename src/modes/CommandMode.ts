@@ -13,7 +13,8 @@ import { SubjectName } from "../subjects/SubjectName";
 import { seq } from "../utils/seq";
 import { setWordDefinition, getWordDefinition, getCommandColor, getWordDefinitionIndex, setCharDefinition, getWordDefinitionByIndex } from "../config";
 import { collapseSelections, splitByRegex } from "../utils/selectionsAndRanges";
-import { InlineInput } from '../utils/inlineInput';  // Adjust path as needed
+import { InlineInput } from '../utils/inlineInput';
+import { FirstLetterPreview } from '../utils/firstLetterPreview';
 
 let outputchannel = vscode.window.createOutputChannel("VimAtHome");
 
@@ -219,36 +220,61 @@ export default class CommandMode extends modes.EditorMode {
     }
 
     async skip(direction: common.Direction): Promise<void> {
-        return new Promise<void>((resolve) => {
-            const handleInput = (_: string, char: common.Char) => {
-                let finalDirection = direction;
-                if (char >= 'A' && char <= 'Z') {
-                    finalDirection = common.reverseDirection(direction);
+    return new Promise<void>((resolve) => {
+        // Show preview when starting skip, but only if in word mode
+        FirstLetterPreview.getInstance().showFirstLettersPreview(this.context.editor, direction);
+
+        const handleInput = async (_: string, char: common.Char) => {
+            let finalDirection = direction;
+            if (char >= 'A' && char <= 'Z') {
+                finalDirection = common.reverseDirection(direction);
+            }
+
+            // If we're in WORD mode and trying to skip to a non-word character,
+            // switch to CHAR mode first
+            if (this.subject.name === "WORD" && !/[a-zA-Z0-9_]/.test(char)) {
+                const newMode = await this.changeTo({ kind: "COMMAND", subjectName: "CHAR" });
+                if (newMode instanceof CommandMode) {
+                    const skip: common.Skip = {
+                        kind: "SkipTo",
+                        char,
+                        subject: "CHAR" as const,
+                        direction: finalDirection
+                    };
+                    common.setLastSkip(skip);
+                    await newMode.subject.skip(finalDirection, skip);
                 }
-                
-                const skip = {
-                    kind: "SkipTo" as const,
-                    char,  // Now char is properly typed as Char
+            } else {
+                const skip: common.Skip = {
+                    kind: "SkipTo",
+                    char,
                     subject: this.subject.name,
                     direction: finalDirection
                 };
-                
                 common.setLastSkip(skip);
-                this.subject.skip(finalDirection, skip).then(resolve);
-            };
-    
-            const inlineInput = new InlineInput({
-                textEditor: this.context.editor,  // Use context.editor instead of editor
-                onInput: handleInput,
-                onCancel: resolve
-            });
-    
-            inlineInput.updateStatusBar(
-                `Skip ${direction} to ${this.subject.displayName} by first character`,
-                0
-            );
+                await this.subject.skip(finalDirection, skip);
+            }
+            // Clear preview after skip completes 
+            FirstLetterPreview.getInstance().clearDecorations(this.context.editor);
+            resolve();
+        };
+
+        const inlineInput = new InlineInput({
+            textEditor: this.context.editor,
+            onInput: handleInput,
+            onCancel: () => {
+                // Also clear preview if skip is cancelled
+                FirstLetterPreview.getInstance().clearDecorations(this.context.editor);
+                resolve();
+            }
         });
-    }
+
+        inlineInput.updateStatusBar(
+            `Skip ${direction} to ${this.subject.displayName} by first character`,
+            0
+        );
+    });
+}
 
     async skipOver(direction: common.Direction): Promise<void> {
         const skipChar = await editor.inputBoxChar(

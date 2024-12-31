@@ -915,7 +915,6 @@ export default class VimAtHomeManager {
 
     async changeToBracketSubject() {
         if (this.editor.selection.active.line == this.editor.selection.anchor.line) {
-            // find first to left, if not, then first to right, move curosr
             let line = this.editor.document.lineAt(this.editor.selection.active.line).text;
             let index = 1;
             if (line) 
@@ -1067,6 +1066,76 @@ export default class VimAtHomeManager {
         this.editor.selection = new vscode.Selection(anchor, active);
     }
 
+        async join() {
+        const { editor } = this;
+        const document = editor.document;
+        const originalSelections = editor.selections;
+        
+        await editor.edit(editBuilder => {
+            for (const selection of originalSelections) {
+                const currentLine = document.lineAt(selection.start.line);
+                
+                if (currentLine.lineNumber >= document.lineCount - 1) {
+                    continue;
+                }
+                
+                const nextLine = document.lineAt(currentLine.lineNumber + 1);
+                const nextLineText = nextLine.text.trim();
+                
+                if (nextLineText.length > 0) {
+                    const deleteRange = new vscode.Range(
+                        currentLine.range.end,
+                        nextLine.range.start
+                    );
+                    editBuilder.replace(deleteRange, " ");
+                    
+                    const leadingWhitespaceRange = new vscode.Range(
+                        nextLine.range.start,
+                        nextLine.range.start.translate(0, nextLine.firstNonWhitespaceCharacterIndex)
+                    );
+                    editBuilder.delete(leadingWhitespaceRange);
+                }
+            }
+        });
+
+        editor.selections = originalSelections;
+    }
+
+    async split() {
+        const { editor } = this;
+        const document = editor.document;
+        const originalSelections = editor.selections;
+        
+        await editor.edit(editBuilder => {
+            for (const selection of originalSelections) {
+                const currentLine = document.lineAt(selection.start.line);
+                const indentation = currentLine.text.substring(0, currentLine.firstNonWhitespaceCharacterIndex);
+                
+                const textBeforeCursor = document.getText(new vscode.Range(
+                    currentLine.range.start,
+                    selection.start
+                ));
+                const textAfterCursor = document.getText(new vscode.Range(
+                    selection.start,
+                    currentLine.range.end
+                ));
+
+                editBuilder.replace(currentLine.range, textBeforeCursor);
+                
+                editBuilder.insert(
+                    currentLine.range.end,
+                    '\n' + indentation + textAfterCursor.trim()
+                );
+            }
+        });
+
+        editor.selections = originalSelections.map(selection => {
+            const newPos = new vscode.Position(selection.start.line + 1, 
+                document.lineAt(selection.start.line + 1).firstNonWhitespaceCharacterIndex);
+            return new vscode.Selection(newPos, newPos);
+        });
+    }
+    
     async goPrevSelection() {
         const result = selectionHistory.goToPreviousSelection(this.editor);
         
