@@ -11,6 +11,12 @@ class SelectionHistoryEntry {
     toString(): string {
         return `Selection(${this.selection.anchor.line}:${this.selection.anchor.character} -> ${this.selection.active.line}:${this.selection.active.character}) Subject: ${this.subjectName || 'none'}`;
     }
+
+    equals(other: SelectionHistoryEntry): boolean {
+        return this.selection.active.isEqual(other.selection.active) && 
+               this.selection.anchor.isEqual(other.selection.anchor) &&
+               this.subjectName === other.subjectName;
+    }
 }
 
 class FileSelectionHistory {
@@ -26,10 +32,11 @@ class FileSelectionHistory {
             return;
         }
 
+        const newEntry = new SelectionHistoryEntry(selection, Date.now(), subjectName);
+
         if (this.currentIndex >= 0) {
             const currentEntry = this.history[this.currentIndex];
-            if (this.areSelectionsEqual(currentEntry.selection, selection) && 
-                currentEntry.subjectName === subjectName) {
+            if (newEntry.equals(currentEntry)) {
                 return;
             }
         }
@@ -38,7 +45,13 @@ class FileSelectionHistory {
             this.history = this.history.slice(0, this.currentIndex + 1);
         }
 
-        const newEntry = new SelectionHistoryEntry(selection, Date.now(), subjectName);
+        if (this.history.length > 0) {
+            const lastEntry = this.history[this.history.length - 1];
+            if (newEntry.equals(lastEntry)) {
+                return;
+            }
+        }
+
         this.history.push(newEntry);
         this.currentIndex = this.history.length - 1;
 
@@ -47,7 +60,6 @@ class FileSelectionHistory {
             this.history = this.history.slice(removeCount);
             this.currentIndex = Math.max(0, this.currentIndex - removeCount);
         }
-
     }
 
     public goToPreviousSelection(): { selection: vscode.Selection, subjectName?: SubjectName } | undefined {
@@ -55,14 +67,23 @@ class FileSelectionHistory {
             return undefined;
         }
 
-        this.currentIndex--;
-        this.lastNavigationTime = Date.now();
-        const entry = this.history[this.currentIndex];
-        
-        return {
-            selection: entry.selection,
-            subjectName: entry.subjectName
-        };
+        let targetIndex = this.currentIndex - 1;
+        const currentEntry = this.history[this.currentIndex];
+
+        while (targetIndex >= 0) {
+            const entry = this.history[targetIndex];
+            if (!entry.equals(currentEntry)) {
+                this.currentIndex = targetIndex;
+                this.lastNavigationTime = Date.now();
+                return {
+                    selection: entry.selection,
+                    subjectName: entry.subjectName
+                };
+            }
+            targetIndex--;
+        }
+
+        return undefined;
     }
 
     public goToNextSelection(): { selection: vscode.Selection, subjectName?: SubjectName } | undefined {
@@ -70,25 +91,29 @@ class FileSelectionHistory {
             return undefined;
         }
 
-        this.currentIndex++;
-        this.lastNavigationTime = Date.now();
-        const entry = this.history[this.currentIndex];
-        
-        return {
-            selection: entry.selection,
-            subjectName: entry.subjectName
-        };
-    }
+        let targetIndex = this.currentIndex + 1;
+        const currentEntry = this.history[this.currentIndex];
 
-    private areSelectionsEqual(a: vscode.Selection, b: vscode.Selection): boolean {
-        return a.active.isEqual(b.active) && a.anchor.isEqual(b.anchor);
+        while (targetIndex < this.history.length) {
+            const entry = this.history[targetIndex];
+            if (!entry.equals(currentEntry)) {
+                this.currentIndex = targetIndex;
+                this.lastNavigationTime = Date.now();
+                return {
+                    selection: entry.selection,
+                    subjectName: entry.subjectName
+                };
+            }
+            targetIndex++;
+        }
+
+        return undefined;
     }
 
     public clear() {
         this.history = [];
         this.currentIndex = -1;
     }
-    
 }
 
 export class SelectionHistoryManager {
@@ -107,26 +132,17 @@ export class SelectionHistoryManager {
             this.fileHistories.set(fileUri, fileHistory);
         }
 
-        const selectedText = editor.document.getText(editor.selection);
         fileHistory.recordSelection(editor.selection, subjectName);
     }
 
     public goToPreviousSelection(editor: vscode.TextEditor): { selection: vscode.Selection, subjectName?: SubjectName } | undefined {
         const fileHistory = this.fileHistories.get(editor.document.uri.toString());
-        if (!fileHistory) {
-            return undefined;
-        }
-
-        return fileHistory.goToPreviousSelection();
+        return fileHistory?.goToPreviousSelection();
     }
 
     public goToNextSelection(editor: vscode.TextEditor): { selection: vscode.Selection, subjectName?: SubjectName } | undefined {
         const fileHistory = this.fileHistories.get(editor.document.uri.toString());
-        if (!fileHistory) {
-            return undefined;
-        }
-
-        return fileHistory.goToNextSelection();
+        return fileHistory?.goToNextSelection();
     }
 
     public clearHistoryForFile(fileUri: string) {

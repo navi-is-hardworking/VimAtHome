@@ -221,8 +221,9 @@ export default class CommandMode extends modes.EditorMode {
 
     async skip(direction: common.Direction): Promise<void> {
     return new Promise<void>((resolve) => {
-        // Show preview when starting skip, but only if in word mode
-        FirstLetterPreview.getInstance().showFirstLettersPreview(this.context.editor, direction);
+        if (this.subject.name === "WORD") {
+            FirstLetterPreview.getInstance().showFirstLettersPreview(this.context.editor, direction);
+        }
 
         const handleInput = async (_: string, char: common.Char) => {
             let finalDirection = direction;
@@ -254,7 +255,6 @@ export default class CommandMode extends modes.EditorMode {
                 common.setLastSkip(skip);
                 await this.subject.skip(finalDirection, skip);
             }
-            // Clear preview after skip completes 
             FirstLetterPreview.getInstance().clearDecorations(this.context.editor);
             resolve();
         };
@@ -263,7 +263,6 @@ export default class CommandMode extends modes.EditorMode {
             textEditor: this.context.editor,
             onInput: handleInput,
             onCancel: () => {
-                // Also clear preview if skip is cancelled
                 FirstLetterPreview.getInstance().clearDecorations(this.context.editor);
                 resolve();
             }
@@ -289,7 +288,7 @@ export default class CommandMode extends modes.EditorMode {
 
         await this.subject.skip(direction, {kind: "SkipTo", char: skipChar, subject: this.subject.name, direction: direction});
     }
-
+    
     async repeatLastSkip(direction: common.Direction): Promise<void> {
         const lastSkip = common.getLastSkip();
         if (!lastSkip) {

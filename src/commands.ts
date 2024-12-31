@@ -181,9 +181,10 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.changeToSubwordSubject",
         execute: async (manager: VimAtHomeManager) => {
+            setWordDefinition(2);
             await manager.changeMode({
                 kind: "COMMAND",
-                subjectName: "SUBWORD",
+                subjectName: "WORD",
             });
             
         },

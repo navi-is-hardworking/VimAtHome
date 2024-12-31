@@ -285,7 +285,6 @@ export default class VimAtHomeManager {
 
     async skip(direction: common.Direction) {
         cacheCommands.SetSelectionAnchor(this.editor);
-        
         await this.mode.skip(direction);
         this.setUI();
     }
@@ -296,6 +295,10 @@ export default class VimAtHomeManager {
     }
     
     async repeatLastSkip(direction: common.Direction) {
+        if (common.getLastSkip()?.subject !== this.mode.getSubjectName()) {
+            await this.changeMode({ subjectName: common.getLastSkip()?.subject, kind: "COMMAND" });
+        }
+        
         await this.mode.repeatLastSkip(direction);
         this.setUI();
     }
@@ -307,7 +310,6 @@ export default class VimAtHomeManager {
     
     async jumpToSubject(subjectName: SubjectName) {
         if (subjectName === "LINE") {
-            // set selection anchor to start and end of line
             cacheCommands.SetLineSelectionAnchor(this.editor);
         }
         else {
