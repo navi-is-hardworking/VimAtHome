@@ -12,16 +12,12 @@ import * as modifications from "./utils/modifications";
 import { splitRange } from "./utils/decorations";
 import * as lineUtils from "./utils/lines";
 import { getWordDefinition, getVerticalSkipCount, setWordDefinition, getWordDefinitionIndex, getWordDefinitionByIndex } from "./config";
-import WordIO from "./io/WordIO";
-import { Direction } from "./common";
 import * as cacheCommands from "./CacheCommands";
-import { getMidPoint, splitByRegex } from "./utils/selectionsAndRanges";
+import { splitByRegex } from "./utils/selectionsAndRanges";
 import * as ncp from 'copy-paste'
 import { promisify } from "util";
-import { dir } from "console";
 import { SelectionHistoryManager } from "./handlers/SelectionHistoryManager";
 import {Terminal} from "./utils/terminal"
-
 
 const copyAsync = promisify((text: string) => ncp.copy(text));
 let selectionHistory = new SelectionHistoryManager();
@@ -300,6 +296,23 @@ export default class VimAtHomeManager {
         }
         
         await this.mode.repeatLastSkip(direction);
+        this.setUI();
+    }
+    
+    async repeatLastSkipOverLine() {
+        let lastSkip = common.getLastSkip();
+        if (!lastSkip) return;
+        
+        if (lastSkip.subject !== this.mode.getSubjectName()) {
+            await this.changeMode({ subjectName: common.getLastSkip()?.subject, kind: "COMMAND" });
+        }
+        
+        let dir = lastSkip.direction === "forwards" ? 1000 : 1;
+        
+        let selection = this.editor.selection;
+        this.editor.selection = new vscode.Selection(new vscode.Position(selection.active.line, dir), new vscode.Position(selection.active.line, dir));
+        
+        await this.mode.repeatLastSkip("forwards");
         this.setUI();
     }
 
@@ -1251,7 +1264,17 @@ export default class VimAtHomeManager {
             await this.executeSubjectCommand("deleteObject");
         }
     }
-
+    
+    async copyDiagnostics() {
+        const activeEditor = vscode.window.activeTextEditor;
+        if (activeEditor) {
+            const currentFileDiagnostics = vscode.languages.getDiagnostics(activeEditor.document.uri);
+            // filter to only get error severity
+            const errorDiagnostics = currentFileDiagnostics.filter(d => d.severity === vscode.DiagnosticSeverity.Error);
+            const messages = errorDiagnostics.map(d => d.message).join('\n');
+            this.copySelection(messages);
+        }
+    }
 
 }
 

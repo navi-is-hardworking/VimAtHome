@@ -347,6 +347,13 @@ export let registeredCommands: ExtensionCommand[] = [
         },
     },
     {
+        id: "vimAtHome.repeatLastSkipOverLine",
+        execute: async (manager) => {
+            // TODO: switch to last mode if not already in it
+            await manager.repeatLastSkipOverLine();
+        },
+    },
+    {
         id: "vimAtHome.repeatLastSkipBackwards",
         execute: async (manager) => {
             // TODO: switch to last mode if not already in it
@@ -913,6 +920,12 @@ export let registeredCommands: ExtensionCommand[] = [
         id: "vimAtHome.runTerminalCommand", 
         execute: async (manager) => {
             await manager.runLineAndAppendOutput();
+        },
+    },
+    {
+        id: "vimAtHome.copyDiagnostics", 
+        execute: async (manager) => {
+            await manager.copyDiagnostics();
         },
     },
 ];

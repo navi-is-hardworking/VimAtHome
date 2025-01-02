@@ -157,8 +157,14 @@ export default class CommandMode extends modes.EditorMode {
             
             case "COMMAND":
                 if (editor) {
+                    if (newMode.subjectName === "LINE") {
+                        const collapsePos = newMode.half === "RIGHT" ? "start" : "end";
+                        selections.collapseSelections(this.context.editor, collapsePos);
+                    }
+                    else {
                     const collapsePos = newMode.half === "RIGHT" ? "end" : "start";
                     selections.collapseSelections(this.context.editor, collapsePos);
+                    }
                 }
                 
                 if (!newMode.subjectName) {
@@ -294,6 +300,7 @@ export default class CommandMode extends modes.EditorMode {
         if (!lastSkip) {
             return;
         }
+        
         if (this.subject.name !== lastSkip.subject) {
             await vscode.commands.executeCommand(`vimAtHome.changeTo${lastSkip.subject.charAt(0).toUpperCase() + lastSkip.subject.slice(1).toLowerCase()}Subject`);
         }
