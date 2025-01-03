@@ -1061,13 +1061,25 @@ I would recommend using the original but you are welcome to use this if you wish
         "when": "editorTextFocus"
     },
     {
-        "key": "home",
-        "command": "vimAtHome.insertHome",
+        "key": "end",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "vimAtHome.changeToInsertMode",
+                "cursorEnd"
+            ]
+        },
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
-        "key": "end",
-        "command": "vimAtHome.insertEnd",
+        "key": "home",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "vimAtHome.changeToInsertMode",
+                "cursorHome"
+            ]
+        },
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
@@ -2301,26 +2313,26 @@ I would recommend using the original but you are welcome to use this if you wish
     //     },
     //     "when": "editorTextFocus && vimAtHome.mode != 'COMMAND' && vimAtHome.mode != 'EXTEND'"
     // },
-    {
-        "key": "shift+f20",
-        "command": "runCommands",
-        "args": {
-            "commands": [
-                "cursorLeft",
-            ]
-        },
-        "when": "editorTextFocus && vimAtHome.mode != 'COMMAND' && vimAtHome.mode != 'EXTEND'"
-    },
-    {
-        "key": "shift+f20",
-        "command": "runCommands",
-        "args": {
-            "commands": [
-                "cursorLeft",
-            ]
-        },
-        "when": "editorTextFocus && vimAtHome.mode != 'COMMAND' && vimAtHome.mode != 'EXTEND'"
-    },
+    // {
+    //     "key": "shift+f20",
+    //     "command": "runCommands",
+    //     "args": {
+    //         "commands": [
+    //             "cursorLeft",
+    //         ]
+    //     },
+    //     "when": "editorTextFocus && vimAtHome.mode != 'COMMAND' && vimAtHome.mode != 'EXTEND'"
+    // },
+    // {
+    //     "key": "shift+f20",
+    //     "command": "runCommands",
+    //     "args": {
+    //         "commands": [
+    //             "cursorLeft",
+    //         ]
+    //     },
+    //     "when": "editorTextFocus && vimAtHome.mode != 'COMMAND' && vimAtHome.mode != 'EXTEND'"
+    // },
     {
         "key": "ctrl+x",
         "command": "runCommands",
@@ -2761,23 +2773,25 @@ I would recommend using the original but you are welcome to use this if you wish
         "when": "editorTextFocus"
     },
     {
-        
-        "key": "ctrl+f3",
-        "command": "vimAtHome.goToNextOccurrence",
+        "key": "alt+m",
+        "command": "vimAtHome.createWaypoint",
         "when": "editorTextFocus"
     },
     {
-        "key": "ctrl+shift+f3",
-        "command": "vimAtHome.goToPrevOccurrence",
+        "key": "alt+f17",
+        "command": "vimAtHome.teleportToWaypoint",
         "when": "editorTextFocus"
-    
+    },
+    {
+        "key": "ctrl+alt+shift+'",
+        "command": "vimAtHome.clearWaypoints",
+        "when": "editorTextFocus"
     },
     
     // z
     
     
 ]
-
 
 
 ```
