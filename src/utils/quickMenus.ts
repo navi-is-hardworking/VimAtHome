@@ -112,6 +112,15 @@ export const ModifyCommands: QuickCommand[] = [
             );
         },
     },
+    {
+        quickKey: char("r"),
+        label: "Replace with Terminal Output",
+        async execute() {
+            await vscode.commands.executeCommand(
+                "vimAtHome.replaceSelectionWithTerminalOutput"
+            );
+        },
+    },
 ];
 
 export const GoToCommands: QuickCommand[] = [
@@ -237,6 +246,14 @@ export const GoToCommands: QuickCommand[] = [
             await vscode.commands.executeCommand("vimAtHome.toggleCommentAtEndOfLine");
         },
     },
+    {
+        quickKey: char("d"),
+        label: "Copy Error Diagnostics",
+        execute: async () => {
+            await vscode.commands.executeCommand("vimAtHome.copyDiagnostics");
+        },
+    },
+
 ];
 
 export const ViewCommands: QuickCommand[] = [
