@@ -282,6 +282,9 @@ export default class VimAtHomeManager {
     async skip(direction: common.Direction) {
         cacheCommands.SetSelectionAnchor(this.editor);
         await this.mode.skip(direction);
+        if (common.getLastSkip()?.subject !== this.mode.getSubjectName()) {
+            await this.changeMode({ subjectName: common.getLastSkip()?.subject, kind: "COMMAND" });
+        }
         this.setUI();
     }
     

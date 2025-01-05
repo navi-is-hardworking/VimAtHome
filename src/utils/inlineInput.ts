@@ -2,6 +2,7 @@
 
 import { commands, Disposable, StatusBarAlignment, StatusBarItem, TextEditor, window } from 'vscode';
 import { Char } from '../common';
+import * as vscode from "vscode";
 
 const cancellationChars = new Set('\n');
 const subscriptions: Disposable[] = [];
@@ -20,6 +21,7 @@ export class InlineInput {
             window.onDidChangeTextEditorSelection(this._onCancel),
         );
 
+        vscode.commands.executeCommand('setContext', 'vimAtHome.waitingForChar', true);
         this.statusBarItem = window.createStatusBarItem(
             StatusBarAlignment.Right,
             1000
@@ -39,6 +41,7 @@ export class InlineInput {
     public destroy = (): void => {
         this.statusBarItem.dispose();
         subscriptions.forEach(subscription => subscription.dispose());
+        vscode.commands.executeCommand('setContext', 'vimAtHome.waitingForChar', false);
     };
 
     public deleteLastCharacter = (): string => {
