@@ -430,6 +430,9 @@ export let registeredCommands: ExtensionCommand[] = [
             if (manager.mode.getSubjectName() === "LINE") {
                 await manager.nextIndentUp(Direction.backwards);
             }
+            else if (manager.mode.getSubjectName() === "CHAR") {
+                await manager.mockRepeatSkip(Direction.backwards);
+            }
             else {
                 await manager.SetSelectionAnchor();
                 await manager.executeSubjectCommand("firstObjectInScope");
@@ -442,6 +445,9 @@ export let registeredCommands: ExtensionCommand[] = [
         execute: async (manager) => {
             if (manager.mode.getSubjectName() === "LINE") {
                 await manager.nextIndentUp(Direction.forwards);
+            }
+            else if (manager.mode.getSubjectName() === "CHAR") {
+                await manager.mockRepeatSkip(Direction.forwards);
             }
             else {
                 await manager.SetSelectionAnchor();
@@ -947,7 +953,19 @@ export let registeredCommands: ExtensionCommand[] = [
         execute: async () => {
             waypointManager.clearWaypoints();
         },
-    }
+    },
+    {
+        id: "vimAtHome.findNextExact",
+        execute: async (manager) => {
+            await manager.findNextExact();
+        },
+    },
+    {
+        id: "vimAtHome.findPrevExact",
+        execute: async (manager) => {
+            await manager.findPrevExact();
+        },
+    },
 ];
 
 

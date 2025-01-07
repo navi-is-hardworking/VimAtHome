@@ -374,6 +374,15 @@ export const ViewCommands: QuickCommand[] = [
             );
         },
     },
+    {
+        quickKey: char("r"),
+        label: "reload window",
+        execute: async () => {
+            await vscode.commands.executeCommand(
+                "workbench.action.reloadWindow"
+            );
+        },
+    },
 ];
 
 export const SpaceCommands: QuickCommand[] = [

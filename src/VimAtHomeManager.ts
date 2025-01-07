@@ -19,6 +19,8 @@ import { promisify } from "util";
 import { SelectionHistoryManager } from "./handlers/SelectionHistoryManager";
 import {Terminal} from "./utils/terminal"
 
+let outputChannel = vscode.window.createOutputChannel("Vah.Manager");
+
 const copyAsync = promisify((text: string) => ncp.copy(text));
 let selectionHistory = new SelectionHistoryManager();
 let Term = new Terminal();
@@ -1272,11 +1274,102 @@ export default class VimAtHomeManager {
         const activeEditor = vscode.window.activeTextEditor;
         if (activeEditor) {
             const currentFileDiagnostics = vscode.languages.getDiagnostics(activeEditor.document.uri);
-            // filter to only get error severity
             const errorDiagnostics = currentFileDiagnostics.filter(d => d.severity === vscode.DiagnosticSeverity.Error);
             const messages = errorDiagnostics.map(d => d.message).join('\n');
             this.copySelection(messages);
         }
+    }
+    
+    async mockRepeatSkip(direction: common.Direction) {
+        
+        outputChannel.appendLine(`Mocking repeat skip to`);
+        
+        let char = this.editor.document.getText(
+            new vscode.Range(
+                new vscode.Position(this.editor.selection.active.line, this.editor.selection.active.character), 
+                new vscode.Position(this.editor.selection.active.line, this.editor.selection.active.character + 1)
+            )
+        );
+        
+        outputChannel.appendLine(`Mocking repeat skip to ${char}`);
+        
+        
+        if (char.length !== 1) return;
+        
+        const skip: common.Skip = {
+            kind: "SkipTo",
+            char: char as common.Char,
+            subject: "CHAR" as const,
+            direction: direction
+        };
+        common.setLastSkip(skip);
+        await this.repeatLastSkip(direction);
+    }
+    
+    async createAndSetLastSkip(char: string, direction: common.Direction) {
+        const subjectName = this.mode.getSubjectName();
+        if (subjectName === undefined) return;
+        
+        const skip: common.Skip = {
+            kind: "SkipTo",
+            char: char as common.Char,
+            subject: subjectName,
+            direction: direction
+        };
+        
+        common.setLastSkip(skip);
+    }
+    
+    async findNextExact() {
+        const currentText = this.editor.document.getText(this.editor.selection);
+        if (!currentText) return;
+        
+        this.createAndSetLastSkip(currentText, "forwards");
+        
+        const startOffset = this.editor.document.offsetAt(this.editor.selection.end);
+        const endOffset = this.editor.document.getText().length;
+        const textToSearch = this.editor.document.getText().substring(startOffset, endOffset);
+        
+        const nextIndex = textToSearch.indexOf(currentText);
+        if (nextIndex >= 0) {
+            const absoluteIndex = startOffset + nextIndex;
+            const newPosition = this.editor.document.positionAt(absoluteIndex);
+            const newSelection = new vscode.Selection(
+                newPosition,
+                this.editor.document.positionAt(absoluteIndex + currentText.length)
+            );
+            this.editor.selection = newSelection;
+            this.editor.revealRange(newSelection, vscode.TextEditorRevealType.Default);
+        }
+    }
+
+    async findPrevExact() {
+        const currentText = this.editor.document.getText(this.editor.selection);
+        if (!currentText) return;
+        
+        this.createAndSetLastSkip(currentText, "backwards");
+        
+        const endOffset = this.editor.document.offsetAt(this.editor.selection.start);
+        const textToSearch = this.editor.document.getText().substring(0, endOffset);
+        
+        const prevIndex = textToSearch.lastIndexOf(currentText);
+        if (prevIndex >= 0) {
+            const newPosition = this.editor.document.positionAt(prevIndex);
+            const newSelection = new vscode.Selection(
+                newPosition,
+                this.editor.document.positionAt(prevIndex + currentText.length)
+            );
+            this.editor.selection = newSelection;
+            this.editor.revealRange(newSelection, vscode.TextEditorRevealType.Default);
+        }
+    }
+    
+    async nextSubjectUp() {
+        await this.executeSubjectCommand("nextObjectUp");
+    }
+    
+    async nextSubjectDown() {
+        await this.executeSubjectCommand("nextObjectDown");
     }
 
 }
