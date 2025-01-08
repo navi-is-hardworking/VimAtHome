@@ -2260,9 +2260,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "vimAtHome.changeToLineSubject",
-                "vimAtHome.changeToExtendMode",
-                "vimAtHome.nextSubjectUp",
+                "vimAtHome.changeToBlockSubjectHalfUp",
             ]
         },
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
@@ -2273,9 +2271,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "vimAtHome.changeToLineSubject",
-                "vimAtHome.changeToExtendMode",
-                "vimAtHome.nextSubjectDown",
+                "vimAtHome.changeToBlockSubjectHalfDown",
             ]
         },
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
@@ -2705,7 +2701,7 @@ I would recommend using the original but you are welcome to use this if you wish
     {
         "key": "alt+up",
         "command": "vimAtHome.swapSubjectUp",
-        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && vimAtHome.subject == 'BLOCK'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
     {
         "key": "alt+down",
@@ -2802,17 +2798,54 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "vimAtHome.findPrevExact",
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
-    // {
-    //     "key": "down",
-    //     "command": "cursorDown",
-    //     "when": "editorTextFocus",
-    //     "args": {
-    //         "by": "wrappedLine",
-    //         "value": 1
-    //     }
-    // }
     
-    // z
+    {
+        //[
+        "key": "ctrl+]",
+        "command": "vimAtHome.indentSelection",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+[", // ]
+        "command": "vimAtHome.outdentSelection",
+        "when": "editorTextFocus"
+    },
+    
+    {
+        "key": "alt+up",
+        "command": "vimAtHome.moveLinesUp",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "alt+down",
+        "command": "vimAtHome.moveLinesDown",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "alt+shift+up",
+        "command": "vimAtHome.copyLinesUp",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "alt+shift+down",
+        "command": "vimAtHome.copyLinesDown",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+k ctrl+k",
+        "command": "vimAtHome.selectToAnchor",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+/",
+        "command": "vimAtHome.commentLine",
+        "when": "editorTextFocus"
+    },
+    // {
+    //     "key": "up",
+    //     "command": "vimAtHome.nextSub",
+    //     "when": "editorTextFocus"
+    // },
     
     
 ]

@@ -142,7 +142,7 @@ export default class SelectionAnchor {
         
         const newSelection = this.GetSelectionRangeFromAnchor(editor.selection);
         if (newSelection instanceof vscode.Range) {
-            editor.selection = new vscode.Selection(newSelection.start, newSelection.end);
+            editor.selection = new vscode.Selection(newSelection.end, newSelection.start);
         }
         
         this.EndExtendMode();

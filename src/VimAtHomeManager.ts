@@ -1209,7 +1209,7 @@ export default class VimAtHomeManager {
     async newLineBelow(): Promise<void> {
         this.extendAnchor.SelectToAnchor(this.editor);
         
-        const document = this.editor.document;
+        const document = this.editor.document; // 
         const selection = this.editor.selection;
         const currentLine = document.lineAt(selection.anchor.line);
         const indentMatch = currentLine.text.match(/^(\s*)/);
