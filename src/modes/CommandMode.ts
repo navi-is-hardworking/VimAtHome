@@ -157,13 +157,13 @@ export default class CommandMode extends modes.EditorMode {
             
             case "COMMAND":
                 if (editor) {
-                    if (newMode.subjectName === "LINE") {
+                    if (newMode.subjectName === "LINE" || newMode.subjectName === "BLOCK") {
                         const collapsePos = newMode.half === "RIGHT" ? "start" : "end";
                         selections.collapseSelections(this.context.editor, collapsePos);
                     }
                     else {
-                    const collapsePos = newMode.half === "RIGHT" ? "end" : "start";
-                    selections.collapseSelections(this.context.editor, collapsePos);
+                        const collapsePos = newMode.half === "RIGHT" ? "end" : "start";
+                        selections.collapseSelections(this.context.editor, collapsePos);
                     }
                 }
                 

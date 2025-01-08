@@ -123,8 +123,7 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.changeToWordSubject",
         execute: async (manager: VimAtHomeManager) => {
-            setWordDefinition(0);
-            await manager.changeMode({
+            await manager.changeToWordMode({
                 kind: "COMMAND",
                 subjectName: "WORD",
             });
@@ -246,7 +245,32 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.changeToBlockSubject",
         execute: async (manager: VimAtHomeManager) => {
-            manager.changeToBlockSubject();
+            manager.changeToBlockSubject({
+                kind: "COMMAND",
+                subjectName: "BLOCK",
+            });
+        },
+    },
+    {
+        id: "vimAtHome.changeToBlockSubjectHalfUp",
+        execute: async (manager: VimAtHomeManager) => {
+            // manager.changeToBlockSubject("forwards");
+            manager.changeToBlockSubject({
+                kind: "COMMAND",
+                subjectName: "BLOCK",
+                half: "LEFT"
+            });
+        },
+    },
+    {
+        id: "vimAtHome.changeToBlockSubjectHalfDown",
+        execute: async (manager: VimAtHomeManager) => {
+            // manager.changeToBlockSubject("forwards");
+            manager.changeToBlockSubject({
+                kind: "COMMAND",
+                subjectName: "BLOCK",
+                half: "RIGHT"
+            });
         },
     },
     {
@@ -282,10 +306,6 @@ export let registeredCommands: ExtensionCommand[] = [
         id: "vimAtHome.changeToExtendMode",
         execute: async (manager: VimAtHomeManager) => {
             await manager.ToggleExtendMode();  
-            // manager.changeMode({
-            //     kind: "EXTEND",
-            //     subjectName: "WORD",
-            // });
         },
     },
     {
@@ -304,6 +324,7 @@ export let registeredCommands: ExtensionCommand[] = [
         id: "vimAtHome.changeToInsertModeAppend",
         execute: async (manager) => {
             collapseSelections(manager.editor, "end");
+            manager.EndExtendMode();
             return manager.changeMode({ kind: "INSERT" });
         },
     },
@@ -339,6 +360,7 @@ export let registeredCommands: ExtensionCommand[] = [
         id: "vimAtHome.changeToInsertModePrepend",
         execute: async (manager) => {
             collapseSelections(manager.editor, "start");
+            manager.EndExtendMode();
             manager.changeMode({ kind: "INSERT" });
         },
     },
@@ -967,7 +989,6 @@ export let registeredCommands: ExtensionCommand[] = [
             await manager.findPrevExact();
         },
     },
-
     {
         id: "vimAtHome.selectAtCurrentLevel",
         execute: async (manager) => {
@@ -975,6 +996,8 @@ export let registeredCommands: ExtensionCommand[] = [
         },
     },
     
+    
+    // COmmands for extend mode
     {
         id: "vimAtHome.indentSelection",
         execute: async (manager) => {
@@ -997,6 +1020,30 @@ export let registeredCommands: ExtensionCommand[] = [
         id: "vimAtHome.moveLinesDown",
         execute: async (manager) => {
             await manager.moveLinesDown();
+        },
+    },
+    {
+        id: "vimAtHome.copyLinesDown",
+        execute: async (manager) => {
+            await manager.copyLinesDown();
+        },
+    },
+    {
+        id: "vimAtHome.copyLinesUp",
+        execute: async (manager) => {
+            await manager.copyLinesUp();
+        },
+    },
+    {
+        id: "vimAtHome.selectToAnchor",
+        execute: async (manager) => {
+            await manager.SelectToAnchor();
+        },
+    },
+    {
+        id: "vimAtHome.commentLine",
+        execute: async (manager) => {
+            await manager.CommentLines();
         },
     },
 ];

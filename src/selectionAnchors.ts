@@ -27,11 +27,9 @@ export default class SelectionAnchor {
         this.ResetPhantomDecoration();
     }
     
-    ToggleExtendMode() {
-        this.extendModeEnabled = !this.extendModeEnabled;
-        if (!this.extendModeEnabled) {
-            this.ResetPhantomDecoration();
-        }
+    StartExtendMode() {
+        this.extendModeEnabled = true;
+        this.ResetPhantomDecoration();
     }
     
     IsExtendModeOn() {
@@ -70,6 +68,8 @@ export default class SelectionAnchor {
     }
 
     SetLineSelectionAnchor(editor: vscode.TextEditor) {
+        if (this.extendModeEnabled) return;
+        
         const selection = editor.selection;
         if (!selection) return;
         
@@ -131,23 +131,21 @@ export default class SelectionAnchor {
     DeleteToAnchor(editor: vscode.TextEditor) {
         if (this.cachedSelection === undefined) return;
         
-        const newSelection = this.GetSelectionRangeFromAnchor(editor.selection);
-        if (newSelection instanceof vscode.Range) {
-            editor.edit(editBuilder => {
-                editBuilder.delete(newSelection);
-            });
-        }
+        this.SelectToAnchor(editor, true);
+        editor.edit(editBuilder => {
+            editBuilder.delete(editor.selection);
+        });
     }
 
-    SelectToAnchor(editor: vscode.TextEditor) {
-        if (!this.IsExtendModeOn() || this.cachedSelection === undefined) return;
+    SelectToAnchor(editor: vscode.TextEditor, force: boolean = false) {
+        if ((!this.IsExtendModeOn() && !force) || this.cachedSelection === undefined) return;
         
         const newSelection = this.GetSelectionRangeFromAnchor(editor.selection);
         if (newSelection instanceof vscode.Range) {
             editor.selection = new vscode.Selection(newSelection.start, newSelection.end);
-    }
+        }
         
-        this.ToggleExtendMode();
+        this.EndExtendMode();
     }
     
     MoveLinesUp(editor: vscode.TextEditor) {

@@ -47,6 +47,7 @@ export default class VimAtHomeManager {
     async changeEditor(editor: vscode.TextEditor | undefined) {
         this.clearSelections();
         cacheCommands.StopCarry();
+        this.extendAnchor.EndExtendMode();
 
         if (!editor) {
             return;
@@ -83,11 +84,7 @@ export default class VimAtHomeManager {
     }
 
     async changeMode(newMode: EditorModeChangeRequest) {
-        if ((this.mode.name === "COMMAND" 
-        && newMode.kind === "COMMAND" 
-        && newMode.subjectName === this.mode.getSubjectName()
-        && newMode.subjectName === "WORD"
-        && getWordDefinitionIndex() === 0) || newMode.kind === "INSERT") 
+        if (newMode.kind === "INSERT" || newMode.subjectName === this.mode.getSubjectName()) 
         {
             this.extendAnchor.SelectToAnchor(this.editor);
             this.extendAnchor.EndExtendMode();
@@ -100,6 +97,25 @@ export default class VimAtHomeManager {
         
 
         await this.mode.fixSelection(half);
+        await this.setDecorations();
+    }
+    
+    async changeToWordMode(newMode: EditorModeChangeRequest) {
+        if (this.mode.getSubjectName() === "WORD" && getWordDefinitionIndex() === 0) {
+            this.extendAnchor.EndExtendMode();
+        }
+        setWordDefinition(0);
+        
+        this.clearSelections();
+        this.mode = await this.mode.changeTo(newMode);
+        const half = newMode.kind === "INSERT" ? undefined : newMode.half;
+        this.setUI();
+        
+
+        if (this.editor.selection.active.line !== this.editor.selection.anchor.line 
+            || lineUtils.lineIsSignificant(this.editor.document.lineAt(this.editor.selection.active.line))) {
+            this.mode.fixSelection(half);
+        }
         await this.setDecorations();
     }
     
@@ -339,6 +355,7 @@ export default class VimAtHomeManager {
         else {
             this.extendAnchor.SetSelectionAnchor(this.editor);
         }
+        
         if (this.mode.getSubjectName() === subjectName) {
             await this.mode.jump();
             return;
@@ -976,7 +993,7 @@ export default class VimAtHomeManager {
         });
     }
 
-    async changeToBlockSubject() {
+    async changeToBlockSubject(newMode: EditorModeChangeRequest) {
         let selection = this.editor.selection;
         if ((this.mode.getSubjectName() === 'BRACKETS' 
                 || this.mode.getSubjectName() === 'BRACKETS_INCLUSIVE') && selection.active.line !== selection.anchor.line) {
@@ -986,10 +1003,7 @@ export default class VimAtHomeManager {
             end = end.with(end.line, this.editor.document.lineAt(end.line).text.length);
             this.editor.selection = new vscode.Selection(start, end);
         } else {
-            await this.changeMode({
-                kind: "COMMAND",
-                subjectName: "BLOCK",
-            });
+            this.changeMode(newMode);
         }
     }
     
@@ -1193,6 +1207,8 @@ export default class VimAtHomeManager {
     }
 
     async newLineBelow(): Promise<void> {
+        this.extendAnchor.SelectToAnchor(this.editor);
+        
         const document = this.editor.document;
         const selection = this.editor.selection;
         const currentLine = document.lineAt(selection.anchor.line);
@@ -1215,6 +1231,8 @@ export default class VimAtHomeManager {
     }
     
     async newLineAbove(): Promise<void> {
+        this.extendAnchor.SelectToAnchor(this.editor);
+        
         const document = this.editor.document;
         const selection = this.editor.selection;
         const currentLine = document.lineAt(selection.active.line);
@@ -1390,11 +1408,29 @@ export default class VimAtHomeManager {
         await this.executeSubjectCommand("nextObjectDown");
     }
     
-    async ToggleExtendMode() {
-        
+    async EndExtendMode() {
+        this.extendAnchor.EndExtendMode();
+    }
+    
+    async StartExtendMode() {
         this.extendAnchor.SetSelectionAnchor(this.editor);
-        this.extendAnchor.ToggleExtendMode();
-        
+        this.extendAnchor.StartExtendMode();
+        this.extendAnchor.updatePhantomSelection(this.editor);
+    }
+    
+    async ToggleExtendMode() {
+        if (this.extendAnchor.IsExtendModeOn()) {
+            this.extendAnchor.SelectToAnchor(this.editor);
+            return;
+        }
+        else {
+            this.StartExtendMode();
+        }
+    }
+    
+    async JumpToExtendMode() {
+        this.extendAnchor.SelectToAnchor(this.editor);
+        await vscode.commands.executeCommand("editor.action.indentLines");
     }
     
     async indentSelection() {
@@ -1415,6 +1451,28 @@ export default class VimAtHomeManager {
     async moveLinesDown() {
         this.extendAnchor.SelectToAnchor(this.editor);
         await vscode.commands.executeCommand("editor.action.moveLinesDownAction");
+    }
+    
+    async copyLinesUp() {
+        this.extendAnchor.SelectToAnchor(this.editor);
+        await vscode.commands.executeCommand("editor.action.copyLinesUpAction");
+    }
+    
+    async copyLinesDown() {
+        this.extendAnchor.SelectToAnchor(this.editor);
+        await vscode.commands.executeCommand("editor.action.copyLinesDownAction");
+    }
+    
+    async SelectToAnchor() {
+        this.extendAnchor.StartExtendMode();
+        this.extendAnchor.SelectToAnchor(this.editor);
+        this.extendAnchor.StartExtendMode();
+    }
+    
+    
+    async CommentLines() {
+        this.extendAnchor.SelectToAnchor(this.editor);
+        await vscode.commands.executeCommand("editor.action.commentLine");
     }
 
 }
