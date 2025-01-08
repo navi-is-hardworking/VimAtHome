@@ -14,6 +14,15 @@ export type QuickCommand = {
 
 export const ModifyCommands: QuickCommand[] = [
     {
+        quickKey: char("q"),
+        label: "Quick fix",
+        async execute() {
+            await vscode.commands.executeCommand(
+                "editor.action.quickFix"
+            );
+        },
+    },
+    {
         quickKey: char("k"),
         label: "Transform to kebab case",
         async execute() {

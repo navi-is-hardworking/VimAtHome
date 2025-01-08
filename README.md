@@ -490,11 +490,11 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "-vimAtHome.",
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
-    {
-        "key": "shift+enter",
-        "command": "-vimAtHome.repeatLastSkipBackwards",
-        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
-    },
+    // {
+    //     "key": "shift+enter",
+    //     "command": "-vimAtHome.repeatLastSkipBackwards",
+    //     "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
+    // },
     {
         "key": "s",
         "command": "-vimAtHome.skip",
@@ -1065,7 +1065,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "vimAtHome.changeToInsertMode",
+                // "vimAtHome.changeToInsertMode",
                 "cursorEnd"
             ]
         },
@@ -1076,7 +1076,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "vimAtHome.changeToInsertMode",
+                // "vimAtHome.changeToInsertMode",
                 "cursorHome"
             ]
         },
@@ -2267,6 +2267,7 @@ I would recommend using the original but you are welcome to use this if you wish
         },
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
+    
     {
         "key": "ctrl+shift+down",
         "command": "runCommands",
@@ -2279,6 +2280,7 @@ I would recommend using the original but you are welcome to use this if you wish
         },
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
+    
     {
         "key": "ctrl+shift+up",
         "command": "runCommands",
@@ -2543,7 +2545,7 @@ I would recommend using the original but you are welcome to use this if you wish
     {
         "key": "ctrl+right",
         "command": "vimAtHome.goToLastSubjectInScope",
-        "when": "(editorTextFocus && editorTextFocus && vimAtHome.subject != 'CHAR') && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
+        "when": "(editorTextFocus && vimAtHome.subject != 'CHAR') && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+left",
@@ -2655,7 +2657,7 @@ I would recommend using the original but you are welcome to use this if you wish
                         "value": 25
                     }
                 },
-                // "vimAtHome.ascrollToCursor",
+                "vimAtHome.scrollToCursor",
             ]
         },
         "when": "editorTextFocus"
@@ -2664,14 +2666,17 @@ I would recommend using the original but you are welcome to use this if you wish
         "key": "pageDown",
         "command": "runCommands",
         "args": {
-            "commands": [{
+            "commands": [
+                {
                     "command": "cursorMove",
                     "args": {
                         "to": "down",
                         "by": "line",
                         "value": 25
                     }
-            },]
+                },
+                "vimAtHome.scrollToCursor",
+            ]
         },
        "when": "editorTextFocus"
     },
@@ -2749,12 +2754,12 @@ I would recommend using the original but you are welcome to use this if you wish
     },
     {
         "key": "ctrl+shift+alt+delete",
-        "command": "vimAtHome.join",
+        "command": "vimAtHome.goPrevSelection",
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
     {
         "key": "delete",
-        "command": "vimAtHome.split",
+        "command": "vimAtHome.join",
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
     {
@@ -2787,11 +2792,29 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "vimAtHome.clearWaypoints",
         "when": "editorTextFocus"
     },
+    {
+        "key": "ctrl+f3",
+        "command": "vimAtHome.findNextExact",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
+    },
+    {
+        "key": "ctrl+shift+f3",
+        "command": "vimAtHome.findPrevExact",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
+    },
+    // {
+    //     "key": "down",
+    //     "command": "cursorDown",
+    //     "when": "editorTextFocus",
+    //     "args": {
+    //         "by": "wrappedLine",
+    //         "value": 1
+    //     }
+    // }
     
     // z
     
     
 ]
-
 
 ```

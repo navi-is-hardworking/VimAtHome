@@ -201,6 +201,7 @@
             }
         ],
         "keybindings": [
+            { "key": "space", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
             { "key": "a", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
             { "key": "b", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
             { "key": "c", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },

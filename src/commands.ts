@@ -966,6 +966,13 @@ export let registeredCommands: ExtensionCommand[] = [
             await manager.findPrevExact();
         },
     },
+
+    {
+        id: "vimAtHome.selectAtCurrentLevel",
+        execute: async (manager) => {
+            await manager.findPrevExact();
+        },
+    }
 ];
 
 
