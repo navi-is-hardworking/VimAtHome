@@ -13,11 +13,13 @@ import { splitRange } from "./utils/decorations";
 import * as lineUtils from "./utils/lines";
 import { getWordDefinition, getVerticalSkipCount, setWordDefinition, getWordDefinitionIndex, getWordDefinitionByIndex } from "./config";
 import * as cacheCommands from "./CacheCommands";
+import SelectionAnchor from "./selectionAnchors";
 import { splitByRegex } from "./utils/selectionsAndRanges";
 import * as ncp from 'copy-paste'
 import { promisify } from "util";
 import { SelectionHistoryManager } from "./handlers/SelectionHistoryManager";
 import {Terminal} from "./utils/terminal"
+import { createHistogram } from "perf_hooks";
 
 let outputChannel = vscode.window.createOutputChannel("Vah.Manager");
 
@@ -29,6 +31,7 @@ export default class VimAtHomeManager {
     public mode: EditorMode;
     public statusBar: vscode.StatusBarItem;
     public editor: vscode.TextEditor = undefined!;
+    public extendAnchor: SelectionAnchor = new SelectionAnchor();
 
     constructor(public config: Config) {
         this.statusBar = vscode.window.createStatusBarItem(
@@ -38,7 +41,6 @@ export default class VimAtHomeManager {
         );
 
         this.mode = new NullMode(this);
-
         this.statusBar.show();
     }
 
@@ -81,19 +83,24 @@ export default class VimAtHomeManager {
     }
 
     async changeMode(newMode: EditorModeChangeRequest) {
-        // cacheCommands.ClearSelectionAnchor();
+        if ((this.mode.name === "COMMAND" 
+        && newMode.kind === "COMMAND" 
+        && newMode.subjectName === this.mode.getSubjectName()
+        && newMode.subjectName === "WORD"
+        && getWordDefinitionIndex() === 0) || newMode.kind === "INSERT") 
+        {
+            this.extendAnchor.SelectToAnchor(this.editor);
+            this.extendAnchor.EndExtendMode();
+        }
+        
         this.clearSelections();
         this.mode = await this.mode.changeTo(newMode);
         const half = newMode.kind === "INSERT" ? undefined : newMode.half;
         this.setUI();
-        if (this.editor.selection.active.line !== this.editor.selection.anchor.line 
-                || this.mode.getSubjectName() !== "WORD" 
-                || getWordDefinitionIndex() !== 0 
-                || lineUtils.lineIsSignificant(this.editor.document.lineAt(this.editor.selection.active.line))) {
-            this.mode.fixSelection(half);
-        }
+        
 
-        this.setDecorations();
+        await this.mode.fixSelection(half);
+        await this.setDecorations();
     }
     
     async executeSubjectCommand(command: SubjectAction) {
@@ -108,13 +115,12 @@ export default class VimAtHomeManager {
     async onDidChangeTextEditorSelection(
         event: vscode.TextEditorSelectionChangeEvent
     ) {
-        
-        
         if (this.mode.name === "COMMAND")
             selectionHistory.recordSelection(this.editor, this.mode.getSubjectName());
 
         this.clearSelections();
         this.setDecorations();
+        this.extendAnchor.updatePhantomSelection(this.editor);
 
         if (cacheCommands.IsSelectionChanging()) return;
         if (cacheCommands.IsCarrying()) {
@@ -282,7 +288,7 @@ export default class VimAtHomeManager {
     }
 
     async skip(direction: common.Direction) {
-        cacheCommands.SetSelectionAnchor(this.editor);
+        this.extendAnchor.SetSelectionAnchor(this.editor);
         await this.mode.skip(direction);
         if (common.getLastSkip()?.subject !== this.mode.getSubjectName()) {
             await this.changeMode({ subjectName: common.getLastSkip()?.subject, kind: "COMMAND" });
@@ -322,16 +328,16 @@ export default class VimAtHomeManager {
     }
 
     async jump() {
-        cacheCommands.SetSelectionAnchor(this.editor);
+        this.extendAnchor.SetSelectionAnchor(this.editor);
         await this.mode.jump();
     }
     
     async jumpToSubject(subjectName: SubjectName) {
         if (subjectName === "LINE") {
-            cacheCommands.SetLineSelectionAnchor(this.editor);
+            this.extendAnchor.SetLineSelectionAnchor(this.editor);
         }
         else {
-            cacheCommands.SetSelectionAnchor(this.editor);
+            this.extendAnchor.SetSelectionAnchor(this.editor);
         }
         if (this.mode.getSubjectName() === subjectName) {
             await this.mode.jump();
@@ -400,6 +406,8 @@ export default class VimAtHomeManager {
     }
 
     async deleteLineAbove() {
+        this.extendAnchor.SelectToAnchor(this.editor);
+        
         const { editor } = this;
         const document = editor.document;
         
@@ -429,6 +437,8 @@ export default class VimAtHomeManager {
     }
 
     async deleteLineBelow() {
+        this.extendAnchor.SelectToAnchor(this.editor);
+        
         const { editor } = this;
         const document = editor.document;
         
@@ -767,7 +777,7 @@ export default class VimAtHomeManager {
     }
     
     async deleteToAnchor(): Promise<void> {
-        cacheCommands.DeleteToAnchor(this.editor);
+        this.extendAnchor.DeleteToAnchor(this.editor);
     }
     
     async downIndent(direction: common.Direction) {
@@ -859,6 +869,11 @@ export default class VimAtHomeManager {
     }
     
     async copyAll() {
+        if (this.extendAnchor.IsExtendModeOn()) {
+            this.yoinkAnchor();
+            return;
+        }
+        
         const selections = this.editor.selections;
         const texts = selections.map(selection => 
             this.editor.document.getText(selection)
@@ -912,6 +927,8 @@ export default class VimAtHomeManager {
     }
 
     async pasteSubject() {
+        this.extendAnchor.SelectToAnchor(this.editor);
+        
         const clipText = await vscode.env.clipboard.readText();
         const currentSelections = this.editor.selections.length;
 
@@ -999,7 +1016,7 @@ export default class VimAtHomeManager {
     }
     
     async yoinkAnchor(): Promise<void> {
-        const tempRange = cacheCommands.SelectFromAnchor(this.editor.selection);
+        const tempRange = this.extendAnchor.GetSelectionRangeFromAnchor(this.editor.selection);
         if (tempRange) {
             const text = this.editor.document.getText(tempRange);
             this.copySelection(text);
@@ -1196,7 +1213,7 @@ export default class VimAtHomeManager {
 
         await this.changeMode({ kind: "INSERT" });
     }
-
+    
     async newLineAbove(): Promise<void> {
         const document = this.editor.document;
         const selection = this.editor.selection;
@@ -1257,13 +1274,14 @@ export default class VimAtHomeManager {
     }
     
     async SetSelectionAnchor() {
-        cacheCommands.SetSelectionAnchor(this.editor);
+        this.extendAnchor.SetSelectionAnchor(this.editor);
     }
     
     async deleteSubject() {
+        this.extendAnchor.SelectToAnchor(this.editor);
         
-        if (this.mode.getSubjectName() === "CHAR" && this.mode.name === "COMMAND") {
-            await this.deleteToAnchor();
+        if (this.extendAnchor.IsExtendModeOn()) {
+            await this.extendAnchor.DeleteToAnchor(this.editor);
         }
         else {
             await this.executeSubjectCommand("deleteObject");
@@ -1370,6 +1388,33 @@ export default class VimAtHomeManager {
     
     async nextSubjectDown() {
         await this.executeSubjectCommand("nextObjectDown");
+    }
+    
+    async ToggleExtendMode() {
+        
+        this.extendAnchor.SetSelectionAnchor(this.editor);
+        this.extendAnchor.ToggleExtendMode();
+        
+    }
+    
+    async indentSelection() {
+        this.extendAnchor.SelectToAnchor(this.editor);
+        await vscode.commands.executeCommand("editor.action.indentLines");
+    }
+    
+    async outdentSelection() {
+        this.extendAnchor.SelectToAnchor(this.editor);
+        await vscode.commands.executeCommand("editor.action.outdentLines");
+    }
+    
+    async moveLinesUp() {
+        this.extendAnchor.SelectToAnchor(this.editor);
+        await vscode.commands.executeCommand("editor.action.moveLinesUpAction");
+    }
+    
+    async moveLinesDown() {
+        this.extendAnchor.SelectToAnchor(this.editor);
+        await vscode.commands.executeCommand("editor.action.moveLinesDownAction");
     }
 
 }

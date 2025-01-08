@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import * as editor from "./utils/editor";
-import type VimAtHomeManager from "./VimAtHomeManager";
+import VimAtHomeManager from "./VimAtHomeManager";
 import { collapseSelections } from "./utils/selectionsAndRanges";
 import { Direction } from "./common";
 import { setWordDefinition, nextWordDefinition, prevWordDefinition, getWordDefinitionIndex } from "./config";
@@ -281,10 +281,11 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.changeToExtendMode",
         execute: async (manager: VimAtHomeManager) => {
-            manager.changeMode({
-                kind: "EXTEND",
-                subjectName: "WORD",
-            });
+            await manager.ToggleExtendMode();  
+            // manager.changeMode({
+            //     kind: "EXTEND",
+            //     subjectName: "WORD",
+            // });
         },
     },
     {
@@ -972,7 +973,32 @@ export let registeredCommands: ExtensionCommand[] = [
         execute: async (manager) => {
             await manager.findPrevExact();
         },
-    }
+    },
+    
+    {
+        id: "vimAtHome.indentSelection",
+        execute: async (manager) => {
+            await manager.indentSelection();
+        },
+    },
+    {
+        id: "vimAtHome.outdentSelection",
+        execute: async (manager) => {
+            await manager.outdentSelection();
+        },
+    },
+    {
+        id: "vimAtHome.moveLinesUp",
+        execute: async (manager) => {
+            await manager.moveLinesUp();
+        },
+    },
+    {
+        id: "vimAtHome.moveLinesDown",
+        execute: async (manager) => {
+            await manager.moveLinesDown();
+        },
+    },
 ];
 
 
