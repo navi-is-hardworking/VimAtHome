@@ -35,7 +35,6 @@ function iterVertically(
                     options.direction, 
                     foldMap
                 );
-                
                 currentPosition = currentPosition.with(column);
                 if (nextLine) {
                     const newPosition = currentPosition.with(

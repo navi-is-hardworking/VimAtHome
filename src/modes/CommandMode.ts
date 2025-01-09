@@ -52,12 +52,12 @@ export default class CommandMode extends modes.EditorMode {
             subject.name
         );
         super();
-        const commandColor = getCommandColor();
+        // const commandColor = getCommandColor();
         common.setVirtualColumn(this.context.editor.selection);
 
         this.decorationType = vscode.window.createTextEditorDecorationType({
             dark: {
-                backgroundColor: commandColor,
+                // backgroundColor: commandColor,
                 borderStyle: "solid",
                 borderColor: subject.outlineColour.dark,
                 borderWidth: "1.5px",
@@ -71,7 +71,7 @@ export default class CommandMode extends modes.EditorMode {
 
         this.decorationTypeTop = vscode.window.createTextEditorDecorationType({
             dark: {
-                backgroundColor: commandColor,
+                // backgroundColor: commandColor,
                 borderStyle: "solid none none solid",
                 borderColor: subject.outlineColour.dark,
                 borderWidth: "1.5px",
@@ -85,7 +85,7 @@ export default class CommandMode extends modes.EditorMode {
 
         this.decorationTypeMid = vscode.window.createTextEditorDecorationType({
             dark: {
-                backgroundColor: commandColor,
+                // backgroundColor: commandColor,
                 borderStyle: "none none none solid",
                 borderColor: subject.outlineColour.dark,
                 borderWidth: "1.5px",
@@ -100,7 +100,7 @@ export default class CommandMode extends modes.EditorMode {
         this.decorationTypeBottom =
             vscode.window.createTextEditorDecorationType({
                 dark: {
-                    backgroundColor: commandColor,
+                    // backgroundColor: commandColor,
                     borderStyle: "none none solid solid",
                     borderColor: subject.outlineColour.dark,
                     borderWidth: "1.5px",

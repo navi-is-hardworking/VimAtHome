@@ -84,7 +84,7 @@ export default class VimAtHomeManager {
     }
 
     async changeMode(newMode: EditorModeChangeRequest) {
-        if (newMode.kind === "INSERT" || newMode.subjectName === this.mode.getSubjectName()) 
+        if (newMode.kind === "INSERT") 
         {
             this.extendAnchor.SelectToAnchor(this.editor);
             this.extendAnchor.EndExtendMode();
@@ -94,7 +94,6 @@ export default class VimAtHomeManager {
         this.mode = await this.mode.changeTo(newMode);
         const half = newMode.kind === "INSERT" ? undefined : newMode.half;
         this.setUI();
-        
 
         await this.mode.fixSelection(half);
         await this.setDecorations();
