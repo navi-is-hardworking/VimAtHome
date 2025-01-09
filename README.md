@@ -2729,7 +2729,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "when": "editorTextFocus"
     },
     {
-        "key": "ctrl+alt+backspace",
+        "key": "ctrl+alt+x",
         "command": "vimAtHome.deleteToAnchor",
         "when": "editorTextFocus"
     },
@@ -2841,13 +2841,20 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "vimAtHome.commentLine",
         "when": "editorTextFocus"
     },
+    {
+        "key": "ctrl+enter",
+        "command": "vimAtHome.split",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && vimAtHome.subject == 'CHAR'"
+    },
     // {
-    //     "key": "up",
-    //     "command": "vimAtHome.nextSub",
-    //     "when": "editorTextFocus"
-    // },
-    
+    //     "key": "down",
+    //     "command": "cursorDown",
+    //     "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'",
+    //     "args": {
+    //         "by": "wrappedLine",
+    //         "value": 1
+    //     }
+    // }
     
 ]
-
 ```
