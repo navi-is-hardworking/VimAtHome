@@ -162,7 +162,7 @@ export function rangeToPosition(
     direction: common.Direction
 ): vscode.Position {
     return startingPosition instanceof vscode.Range
-        ? startingPosition[direction === Direction.forwards ? "start" : "end"]
+        ? startingPosition[direction === Direction.forwards ? "end" : "start"]
         : startingPosition;
 }
 
