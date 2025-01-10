@@ -5,7 +5,9 @@ import * as lineUtils from "../utils/lines";
 import { rangeToPosition } from "./selectionsAndRanges";
 import { IterationOptions } from "../io/SubjectIOBase";
 import { Direction, directionToDelta } from "../common";
-import { getWordDefinition } from "../config";
+import { getWordDefinition, IsWordWrapEnabled, GetWordWrapColumn } from "../config";
+
+let outputChannel = vscode.window.createOutputChannel("Vah.lines");
 
 export type LinePair =
     | { prev: undefined; current: vscode.TextLine }
@@ -136,6 +138,34 @@ export function getNextSignificantLine(
     }
 }
 
+export function getNextSignificantPosition(
+    document: vscode.TextDocument,
+    position: vscode.Position,
+    direction: common.Direction,
+    foldMap: boolean[] | undefined = undefined
+): vscode.Position | undefined {
+    const wordRegex = getWordDefinition(true);
+    if (!wordRegex) return undefined;
+
+    outputChannel.appendLine(`starting position ${position.line}, ${position.character}`);
+    for (const [line, character] of iterPosition(document, {
+        startingPosition: position,
+        direction,
+        currentInclusive: false,
+    })) {
+        if (wordRegex.test(line.text)) {
+            if (foldMap && foldMap.length > 0 && isLineInFoldedRange(line.lineNumber, foldMap)) {
+                continue;
+            }
+            
+            return new vscode.Position(line.lineNumber, character); 
+        }
+    }
+    return undefined;
+}
+
+
+
 export function lineIsSignificant(line: vscode.TextLine, ) {
     const wordRegex = getWordDefinition(true);
     return wordRegex ? wordRegex.test(line.text) : false;
@@ -191,6 +221,7 @@ export function iterLines(
     document: vscode.TextDocument,
     options: IterationOptions
 ): Seq<vscode.TextLine> {
+    
     const advance = directionToDelta(options.direction);
     let currentLineNumber = rangeToPosition(
         options.startingPosition,
@@ -207,14 +238,112 @@ export function iterLines(
         function* () {
             while (withinBounds()) {
                 const newLine = document.lineAt(currentLineNumber);
-
                 yield newLine;
-
                 currentLineNumber = advance(currentLineNumber);
             }
         }
     ).skip(options.currentInclusive ? 0 : 1);
 }
+
+export function iterPosition(
+    document: vscode.TextDocument,
+    options: IterationOptions
+): Seq<[vscode.TextLine, number]> {
+    let currentPosition = rangeToPosition(options.startingPosition, options.direction);
+    const lineDelta = options.direction === "forwards" ? 1 : -1;
+    const wrapColumn = GetWordWrapColumn();
+    
+    const withinBounds = () => currentPosition.line >= 0 &&
+        (!options.bounds || currentPosition.line >= options.bounds.start.line) &&
+        (!options.bounds || currentPosition.line <= options.bounds.end.line) &&
+        currentPosition.line < document.lineCount;
+
+    return seq<[vscode.TextLine, number]>(function* () {
+        while (withinBounds()) {
+            const newLine = document.lineAt(currentPosition.line);
+            outputChannel.appendLine(`newLine: ${newLine}`);
+            outputChannel.appendLine(`newChar: ${currentPosition.character}`);
+            yield [newLine, currentPosition.character];
+            
+            
+            // not a wrapped line so we can just ignore just do normally
+            if (!IsWordWrapEnabled() || newLine.text.length < wrapColumn) {
+                currentPosition = new vscode.Position(currentPosition.line + lineDelta, common.getVirtualColumn());
+                if (options.direction === "backwards") {
+                    const newerLine = document.lineAt(currentPosition.line);
+                    if (newerLine.text.length >= wrapColumn) {
+                        let numSegments = Math.ceil(newerLine.text.length / wrapColumn);
+                        let segment = numSegments;
+                        let offset = currentPosition.character % wrapColumn;
+                        currentPosition = new vscode.Position(
+                            currentPosition.line,
+                            (segment) * wrapColumn + offset
+                        );
+                    }
+                }
+            }
+            else {
+                let numSegments = Math.ceil(newLine.text.length / wrapColumn);
+                let segment = Math.floor(currentPosition.character / wrapColumn);
+                let offset = currentPosition.character % wrapColumn;
+                
+                outputChannel.appendLine(`numSegments: ${numSegments}`);
+                outputChannel.appendLine(`segment: ${segment}`);
+                outputChannel.appendLine(`offset: ${offset}`);
+
+                if (options.direction === "forwards") {
+                    if (segment < numSegments - 1) {
+                        const newCol = (segment + 1) * wrapColumn + offset;
+                        outputChannel.appendLine(`newCol: ${newCol}`);
+                        outputChannel.appendLine(`currentPosition.line: ${currentPosition.line}`);
+                        
+                        currentPosition = new vscode.Position(
+                            currentPosition.line,
+                            (segment + 1) * wrapColumn + offset
+                        );
+                    } else {
+                        let nextLineIndex = currentPosition.line + lineDelta;
+                        outputChannel.appendLine(`nextLineIndex: ${nextLineIndex}`);
+                        
+                        
+                        let nextLine = document.lineAt(nextLineIndex);
+                        let newChar = 0 + offset; 
+                        newChar = Math.min(newChar, nextLine.text.length);
+                        
+                        outputChannel.appendLine(`newChar: ${newChar}`);
+                        
+                        currentPosition = new vscode.Position(nextLineIndex, newChar);
+                    }
+                } else {
+                    if (segment > 0) {
+                        currentPosition = new vscode.Position(
+                            currentPosition.line,
+                            (segment - 1) * wrapColumn + offset
+                        );
+                    } else {
+                        let nextLineIndex = currentPosition.line + lineDelta;
+                        
+                        let nextLine = document.lineAt(nextLineIndex);
+                        let nextNumSegments = Math.ceil(nextLine.text.length / wrapColumn);
+                        
+                        let lastSegment = nextNumSegments - 1;
+                        let newChar = lastSegment * wrapColumn + offset;
+                        newChar = Math.max(0, Math.min(newChar, nextLine.text.length));
+                        
+                        outputChannel.appendLine(`nextLineIndex: ${nextLineIndex}`);
+                        outputChannel.appendLine(`nextLine: ${nextLine}`);
+                        outputChannel.appendLine(`lastSegment: ${lastSegment}`);
+                        outputChannel.appendLine(`newChar: ${newChar}`);
+                        
+                        currentPosition = new vscode.Position(nextLineIndex, newChar);
+                    }
+                }
+            }
+
+        }
+    }).skip(options.currentInclusive ? 0 : 1);
+}
+
 
 function getNearestLineOfChangeOfIndentation(
     document: vscode.TextDocument,

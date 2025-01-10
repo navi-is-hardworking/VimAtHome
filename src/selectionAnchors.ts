@@ -128,13 +128,15 @@ export default class SelectionAnchor {
         return new vscode.Range(newActive, newAnchor);
     }
 
-    DeleteToAnchor(editor: vscode.TextEditor) {
+    async DeleteToAnchor(editor: vscode.TextEditor) {
         if (this.cachedSelection === undefined) return;
-        
-        this.SelectToAnchor(editor, true);
-        editor.edit(editBuilder => {
-            editBuilder.delete(editor.selection);
-        });
+        const anchoredRange = this.GetSelectionRangeFromAnchor(editor.selection);
+        if (anchoredRange instanceof vscode.Range) {
+            let newSelection = new vscode.Selection(anchoredRange.end, anchoredRange.start);
+            await editor.edit(editBuilder => {
+                editBuilder.delete(newSelection);
+            });
+        }
     }
 
     SelectToAnchor(editor: vscode.TextEditor, force: boolean = false) {

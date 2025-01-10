@@ -475,7 +475,7 @@ export let registeredCommands: ExtensionCommand[] = [
             else {
                 await manager.SetSelectionAnchor();
                 await manager.executeSubjectCommand("lastObjectInScope");
-                setVirtualColumnNumber(1000);
+                setVirtualColumnNumber(10000);
             }
         },
     },
@@ -654,9 +654,7 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.deleteLine",
         execute: async (manager: VimAtHomeManager) => {
-            vscode.commands.executeCommand(
-                "editor.action.deleteLines"
-            );
+            await manager.deleteLines();
         },
     },
     {
@@ -1046,6 +1044,13 @@ export let registeredCommands: ExtensionCommand[] = [
             await manager.CommentLines();
         },
     },
+    {
+        id: "vimAtHome.debugWrapped",
+        execute: async (manager) => {
+            await manager.DebugWrapped();
+        },
+    },
+
 ];
 
 

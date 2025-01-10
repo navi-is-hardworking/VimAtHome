@@ -52,12 +52,12 @@ export default class CommandMode extends modes.EditorMode {
             subject.name
         );
         super();
-        // const commandColor = getCommandColor();
+        const commandColor = getCommandColor();
         common.setVirtualColumn(this.context.editor.selection);
 
         this.decorationType = vscode.window.createTextEditorDecorationType({
             dark: {
-                // backgroundColor: commandColor,
+                backgroundColor: commandColor,
                 borderStyle: "solid",
                 borderColor: subject.outlineColour.dark,
                 borderWidth: "1.5px",
@@ -71,7 +71,7 @@ export default class CommandMode extends modes.EditorMode {
 
         this.decorationTypeTop = vscode.window.createTextEditorDecorationType({
             dark: {
-                // backgroundColor: commandColor,
+                backgroundColor: commandColor,
                 borderStyle: "solid none none solid",
                 borderColor: subject.outlineColour.dark,
                 borderWidth: "1.5px",
@@ -85,7 +85,7 @@ export default class CommandMode extends modes.EditorMode {
 
         this.decorationTypeMid = vscode.window.createTextEditorDecorationType({
             dark: {
-                // backgroundColor: commandColor,
+                backgroundColor: commandColor,
                 borderStyle: "none none none solid",
                 borderColor: subject.outlineColour.dark,
                 borderWidth: "1.5px",
@@ -100,7 +100,7 @@ export default class CommandMode extends modes.EditorMode {
         this.decorationTypeBottom =
             vscode.window.createTextEditorDecorationType({
                 dark: {
-                    // backgroundColor: commandColor,
+                    backgroundColor: commandColor,
                     borderStyle: "none none solid solid",
                     borderColor: subject.outlineColour.dark,
                     borderWidth: "1.5px",
@@ -157,13 +157,13 @@ export default class CommandMode extends modes.EditorMode {
             
             case "COMMAND":
                 if (editor) {
-                    if (newMode.subjectName === "LINE" || newMode.subjectName === "BLOCK") {
+                    if (newMode.subjectName === "LINE") {
                         const collapsePos = newMode.half === "RIGHT" ? "start" : "end";
                         selections.collapseSelections(this.context.editor, collapsePos);
                     }
                     else {
-                        const collapsePos = newMode.half === "RIGHT" ? "end" : "start";
-                        selections.collapseSelections(this.context.editor, collapsePos);
+                    const collapsePos = newMode.half === "RIGHT" ? "end" : "start";
+                    selections.collapseSelections(this.context.editor, collapsePos);
                     }
                 }
                 
@@ -228,10 +228,6 @@ export default class CommandMode extends modes.EditorMode {
     async skip(direction: common.Direction): Promise<void> {
     return new Promise<void>((resolve) => {
         
-        // if (this.subject.name === "WORD") {
-        //     FirstLetterPreview.getInstance().showFirstLettersPreview(this.context.editor, direction);
-        // }
-
         const handleInput = async (_: string, char: common.Char) => {
             let finalDirection = direction;
             if (char >= 'A' && char <= 'Z') {
@@ -262,7 +258,6 @@ export default class CommandMode extends modes.EditorMode {
                 common.setLastSkip(skip);
                 await this.subject.skip(finalDirection, skip);
             }
-            // FirstLetterPreview.getInstance().clearDecorations(this.context.editor);
             resolve();
         };
 

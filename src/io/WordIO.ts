@@ -25,30 +25,27 @@ function iterVertically(
             );
             
             const foldMap = lineUtils.getLineToFoldedMap();
-            const column = common.getVirtualColumn();
+            
             while (cont) {
                 cont = false;
                 
-                const nextLine = lineUtils.getNextSignificantLine(
+                const nextPosition = lineUtils.getNextSignificantPosition(
                     document,
                     currentPosition,
                     options.direction, 
                     foldMap
                 );
-                currentPosition = currentPosition.with(column);
-                if (nextLine) {
-                    const newPosition = currentPosition.with(
-                        nextLine.lineNumber,
-                        column
-                    );
-                    const wordRange = findWordClosestTo(document, newPosition, {
-                            limitToCurrentLine: true,
-                            isVertical: true });
+                
+                if (nextPosition) {
+                    const wordRange = findWordClosestTo(document, nextPosition, {
+                        limitToCurrentLine: true,
+                        isVertical: true 
+                    });
                     
                     if (wordRange) {
                         yield wordRange;
-
-                        options.startingPosition = positionToRange(newPosition);
+                        options.startingPosition = positionToRange(nextPosition);
+                        currentPosition = nextPosition;
                         cont = true;
                     }
                 }

@@ -452,6 +452,11 @@ export default class VimAtHomeManager {
         });
     }
 
+    async deleteLines() {
+        this.extendAnchor.SelectToAnchor(this.editor);
+        vscode.commands.executeCommand( "editor.action.deleteLines" );
+    }
+    
     async deleteLineBelow() {
         this.extendAnchor.SelectToAnchor(this.editor);
         
@@ -1472,6 +1477,26 @@ export default class VimAtHomeManager {
     async CommentLines() {
         this.extendAnchor.SelectToAnchor(this.editor);
         await vscode.commands.executeCommand("editor.action.commentLine");
+    }
+    
+    async DebugWrapped() {
+        
+        return;
+        // function isPositionWrapped(editor: vscode.TextEditor, position: vscode.Position): boolean {
+        //     const line = editor.document.lineAt(position.line);
+        //     const lineLength = line.text.length;
+        //     const wrappingColumn = editor.options.wordWrapColumn || 80; // default to 80 if not set
+            
+        //     return lineLength > wrappingColumn;
+        // }
+        
+        // const editor = vscode.window.activeTextEditor;
+        // if (editor) {
+        //     const position = editor.selection.active;
+        //     const isWrapped = isPositionWrapped(editor, position);
+        //     console.log(`Current line is wrapped: ${isWrapped}`);
+        // }
+        
     }
 
 }

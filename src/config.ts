@@ -30,6 +30,9 @@ let currentWordDefinition = 0;
 let verticalSkipCount = 4;
 let customCommandsAdded = 0;
 
+let wordWrapEnabled = false
+let wordWrapColumn = 0
+
 export type JumpConfig = {
     characters: string;
 };
@@ -55,6 +58,15 @@ export function loadConfig(): Config {
         extend: config.get<string>("color.extend") || "#006005af",
         insert: config.get<string>("color.insert") || "#00eeff34",
     };
+    
+    
+    const config2 = vscode.workspace.getConfiguration('editor');
+    
+    let wordWrapConfig = config2.get<string>('wordWrap') || "no";
+    if (wordWrapConfig && wordWrapConfig === "wordWrapColumn") {
+        wordWrapEnabled = true;
+        wordWrapColumn = config2.get<number>('wordWrapColumn') || 500;
+    }
     
     wordKeys = config.get<string>("wordKeys", "");
     
@@ -148,4 +160,12 @@ export function getWordDefinitionByIndex(index: number): RegExp | undefined {
         return wordDefinitions[index];
     }
     return undefined;
+}
+
+export function IsWordWrapEnabled(): boolean {
+    return wordWrapEnabled;
+}
+
+export function GetWordWrapColumn(): number {
+    return wordWrapColumn;
 }
