@@ -1,7 +1,8 @@
-import { Config } from "./config";
+import { Config, GetWordWrapColumn, IsWordWrapEnabled } from "./config";
 import * as vscode from "vscode";
 import { Range } from "vscode";
 import { SubjectName } from "./subjects/SubjectName";
+import  {outputChannel}  from "./utils/wrapIterator";
 
 export type TextObject = vscode.Range;
 export type DirectionOrNearest = Direction | "nearest";
@@ -104,11 +105,19 @@ export function reverseDirection(direction: Direction) {
 }
 
 export function setVirtualColumnNumber(col: number): void {
-    column = col;
+    column = GetNormalizeColumn(col);
 }
 
 export function setVirtualColumn(range: Range): void {
-    column = range.start.character + (range.end.character - range.start.character) / 2;
+    column = GetNormalizeColumn(range.start.character + (range.end.character - range.start.character) / 2, range.end.character);
+}
+
+export function GetNormalizeColumn(col: number, end = 0) {
+    if (IsWordWrapEnabled() || col >= GetWordWrapColumn()) {
+        col = col % GetWordWrapColumn();
+    }
+    outputChannel.appendLine(`normalized col: ${col}`);
+    return col;
 }
 
 export function getVirtualColumn(): number {
