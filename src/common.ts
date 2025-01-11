@@ -12,8 +12,6 @@ export let column: number = 0;
 export let blockCache: vscode.Range[] = [];
 export let LazyPassSubjectName: SubjectName | undefined = undefined;
 
-
-
 export type SubTextRange = {
     text: string;
     range: { start: number; end: number };
@@ -105,19 +103,11 @@ export function reverseDirection(direction: Direction) {
 }
 
 export function setVirtualColumnNumber(col: number): void {
-    column = GetNormalizeColumn(col);
+    column = col;
 }
 
 export function setVirtualColumn(range: Range): void {
-    column = GetNormalizeColumn(range.start.character + (range.end.character - range.start.character) / 2, range.end.character);
-}
-
-export function GetNormalizeColumn(col: number, end = 0) {
-    if (IsWordWrapEnabled() || col >= GetWordWrapColumn()) {
-        col = col % GetWordWrapColumn();
-    }
-    outputChannel.appendLine(`normalized col: ${col}`);
-    return col;
+    column = range.start.character + (range.end.character - range.start.character) / 2;
 }
 
 export function getVirtualColumn(): number {

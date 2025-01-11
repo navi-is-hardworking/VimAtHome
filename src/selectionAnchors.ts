@@ -1,3 +1,5 @@
+import { config } from "process";
+import { getExtendColor } from "./config";
 import * as vscode from "vscode";
 
 export default class SelectionAnchor {
@@ -8,7 +10,7 @@ export default class SelectionAnchor {
     constructor() {
         this.disposePhantomDecoration();
         this.phantomDecoration = vscode.window.createTextEditorDecorationType({
-            backgroundColor: "#09831566",
+            backgroundColor: getExtendColor(),
             border: '1px solid #4444FF40'
         });
     }
@@ -17,7 +19,7 @@ export default class SelectionAnchor {
     ResetPhantomDecoration() {
         this.disposePhantomDecoration();
         this.phantomDecoration = vscode.window.createTextEditorDecorationType({
-            backgroundColor: "#09831566",
+            backgroundColor: getExtendColor(),
             border: '1px solid #4444FF40'
         });
     }

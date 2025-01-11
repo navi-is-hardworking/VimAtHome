@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { Config } from "./config";
+import { Config, GetWordWrapColumn, IsWordWrapEnabled } from "./config";
 import { goToLine, quickCommandPicker } from "./utils/editor";
 import * as quickMenus from "./utils/quickMenus";
 import { SubjectAction } from "./subjects/SubjectActions";
@@ -225,6 +225,7 @@ export default class VimAtHomeManager {
     }
 
     async openSpaceMenu() {
+        this.extendAnchor.SelectToAnchor(this.editor);
         const choice = await quickCommandPicker(quickMenus.SpaceCommands);
 
         if (choice) {
@@ -233,6 +234,7 @@ export default class VimAtHomeManager {
     }
 
     async openSubjectMenu() {
+        this.extendAnchor.SelectToAnchor(this.editor);
         const choice = await quickCommandPicker(quickMenus.SubjectChangeCommands);
         if (choice) {
             await choice.execute();
@@ -240,6 +242,7 @@ export default class VimAtHomeManager {
     }
 
     async openGoToMenu() {
+        this.extendAnchor.SelectToAnchor(this.editor);
         const choice = await quickCommandPicker(quickMenus.GoToCommands, {
             label: "Go to line...",
             detail: "Enter a line number",
@@ -263,8 +266,9 @@ export default class VimAtHomeManager {
     }
 
     async openModifyMenu() {
-        const choice = await quickCommandPicker(quickMenus.ModifyCommands);
+        this.extendAnchor.SelectToAnchor(this.editor);
 
+        const choice = await quickCommandPicker(quickMenus.ModifyCommands);
         if (choice) {
             await choice.execute();
         }
@@ -273,6 +277,8 @@ export default class VimAtHomeManager {
     }
 
     async openViewMenu() {
+        this.extendAnchor.SelectToAnchor(this.editor);
+        
         const choice = await quickCommandPicker(quickMenus.ViewCommands);
 
         if (choice) {
@@ -369,6 +375,7 @@ export default class VimAtHomeManager {
     }
 
     async pullSubject(subjectName: SubjectName) {
+        this.extendAnchor.SelectToAnchor(this.editor);
         const newMode = await this.mode.pullSubject(subjectName);
         if (newMode === undefined) return;
         this.clearSelections();
@@ -757,6 +764,8 @@ export default class VimAtHomeManager {
     }
 
     async deleteNext(direction: common.Direction): Promise<void> {
+        this.extendAnchor.SelectToAnchor(this.editor);
+        
         const { editor } = this;
     
         await editor.edit(editBuilder => {
@@ -911,10 +920,12 @@ export default class VimAtHomeManager {
     }
 
     async copyLine() {
+        this.extendAnchor.SelectToAnchor(this.editor);
         cacheCommands.copyLine(this.editor.document.lineAt(this.editor.selection.active).text);
     }
     
     async copyBracket() {
+        this.extendAnchor.SelectToAnchor(this.editor);
         cacheCommands.copyBracket(this.editor.document.lineAt(this.editor.selection.active).text);
     }
 
@@ -1301,13 +1312,7 @@ export default class VimAtHomeManager {
     
     async deleteSubject() {
         this.extendAnchor.SelectToAnchor(this.editor);
-        
-        if (this.extendAnchor.IsExtendModeOn()) {
-            await this.extendAnchor.DeleteToAnchor(this.editor);
-        }
-        else {
             await this.executeSubjectCommand("deleteObject");
-        }
     }
     
     async copyDiagnostics() {
@@ -1361,6 +1366,8 @@ export default class VimAtHomeManager {
     }
     
     async findNextExact() {
+        this.extendAnchor.SelectToAnchor(this.editor);
+        
         const currentText = this.editor.document.getText(this.editor.selection);
         if (!currentText) return;
         
@@ -1384,6 +1391,8 @@ export default class VimAtHomeManager {
     }
 
     async findPrevExact() {
+        this.extendAnchor.SelectToAnchor(this.editor);
+        
         const currentText = this.editor.document.getText(this.editor.selection);
         if (!currentText) return;
         
@@ -1405,10 +1414,34 @@ export default class VimAtHomeManager {
     }
     
     async nextSubjectUp() {
+        if (this.editor.selection.active.line - 1 < 0) return;
+        
+        if (IsWordWrapEnabled()) {
+            const curLineLength = this.editor.document.lineAt(this.editor.selection.active.line).text.length;
+            const lineAboveLength = this.editor.document.lineAt(this.editor.selection.active.line - 1).text.length;
+            
+            if (curLineLength > GetWordWrapColumn() || lineAboveLength > GetWordWrapColumn()) {
+                await vscode.commands.executeCommand("cursorUp");
+                return;
+            }
+        }
+        
         await this.executeSubjectCommand("nextObjectUp");
     }
     
     async nextSubjectDown() {
+        if (this.editor.selection.active.line + 1 >= this.editor.document.lineCount) return;
+        
+        if (IsWordWrapEnabled()) {
+            const curLineLength = this.editor.document.lineAt(this.editor.selection.active.line).text.length;
+            const lineBelowLength = this.editor.document.lineAt(this.editor.selection.active.line + 1).text.length;
+            
+            if (curLineLength > GetWordWrapColumn() || lineBelowLength > GetWordWrapColumn()) {
+                await vscode.commands.executeCommand("cursorDown");
+                return;
+            }
+        }
+        
         await this.executeSubjectCommand("nextObjectDown");
     }
     
@@ -1437,66 +1470,33 @@ export default class VimAtHomeManager {
         await vscode.commands.executeCommand("editor.action.indentLines");
     }
     
-    async indentSelection() {
+    async selectToAnchor() {
         this.extendAnchor.SelectToAnchor(this.editor);
-        await vscode.commands.executeCommand("editor.action.indentLines");
     }
     
-    async outdentSelection() {
-        this.extendAnchor.SelectToAnchor(this.editor);
-        await vscode.commands.executeCommand("editor.action.outdentLines");
-    }
-    
-    async moveLinesUp() {
-        this.extendAnchor.SelectToAnchor(this.editor);
-        await vscode.commands.executeCommand("editor.action.moveLinesUpAction");
-    }
-    
-    async moveLinesDown() {
-        this.extendAnchor.SelectToAnchor(this.editor);
-        await vscode.commands.executeCommand("editor.action.moveLinesDownAction");
-    }
-    
-    async copyLinesUp() {
-        this.extendAnchor.SelectToAnchor(this.editor);
-        await vscode.commands.executeCommand("editor.action.copyLinesUpAction");
-    }
-    
-    async copyLinesDown() {
-        this.extendAnchor.SelectToAnchor(this.editor);
-        await vscode.commands.executeCommand("editor.action.copyLinesDownAction");
-    }
-    
-    async SelectToAnchor() {
+    async showSelectionToAnchor() {
         this.extendAnchor.StartExtendMode();
         this.extendAnchor.SelectToAnchor(this.editor);
         this.extendAnchor.StartExtendMode();
     }
     
-    
-    async CommentLines() {
+    async AddSubjectDown() {
         this.extendAnchor.SelectToAnchor(this.editor);
-        await vscode.commands.executeCommand("editor.action.commentLine");
+        await this.executeSubjectCommand("addObjectBelow");
+    }
+    
+    async AddSubjectUp() {
+        this.extendAnchor.SelectToAnchor(this.editor);
+        await this.executeSubjectCommand("addObjectAbove");
     }
     
     async DebugWrapped() {
-        
-        return;
-        // function isPositionWrapped(editor: vscode.TextEditor, position: vscode.Position): boolean {
-        //     const line = editor.document.lineAt(position.line);
-        //     const lineLength = line.text.length;
-        //     const wrappingColumn = editor.options.wordWrapColumn || 80; // default to 80 if not set
-            
-        //     return lineLength > wrappingColumn;
-        // }
-        
-        // const editor = vscode.window.activeTextEditor;
-        // if (editor) {
-        //     const position = editor.selection.active;
-        //     const isWrapped = isPositionWrapped(editor, position);
-        //     console.log(`Current line is wrapped: ${isWrapped}`);
-        // }
-        
+        let editor = this.editor;
+        const visibleRanges = editor.visibleRanges;
+        for (const range of visibleRanges) {
+            const text = editor.document.getText(range);
+            console.log(`(${text})`);
+        }
     }
 
 }

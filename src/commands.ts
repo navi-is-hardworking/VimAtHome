@@ -23,36 +23,42 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.swapSubjectUp",
         execute: async (manager) => {
+            await manager.selectToAnchor();
             await manager.executeSubjectCommand("swapWithObjectAbove");
         },
     },
     {
         id: "vimAtHome.swapSubjectDown",
         execute: async (manager) => {
+            await manager.selectToAnchor();
             await manager.executeSubjectCommand("swapWithObjectBelow");
         },
     },
     {
         id: "vimAtHome.swapSubjectLeft",
         execute: async (manager) => {
+            await manager.selectToAnchor();
             await manager.executeSubjectCommand("swapWithObjectToLeft");
         },
     },
     {
         id: "vimAtHome.swapSubjectRight",
         execute: async (manager) => {
+            await manager.selectToAnchor();
             await manager.executeSubjectCommand("swapWithObjectToRight");
         },
     },
     {
         id: "vimAtHome.addSubjectUp",
         execute: async (manager) => {
+            await manager.selectToAnchor();
             await manager.executeSubjectCommand("addObjectAbove");
         },
     },
     {
         id: "vimAtHome.addSubjectDown",
         execute: async (manager) => {
+            await manager.selectToAnchor();
             await manager.executeSubjectCommand("addObjectBelow");
         },
     },
@@ -83,13 +89,13 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.nextSubjectUp",
         execute: async (manager) => {
-            await manager.executeSubjectCommand("nextObjectUp");
+            await manager.nextSubjectUp();
         },
     },
     {
         id: "vimAtHome.nextSubjectDown",
         execute: async (manager) => {
-            await manager.executeSubjectCommand("nextObjectDown");
+            await manager.nextSubjectDown();
         },
     },
     {
@@ -117,7 +123,7 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.jumpToBracketSubject",
         execute: async (manager: VimAtHomeManager) => {
-            manager.jumpToSubject('BRACKETS');
+            await manager.jumpToSubject('BRACKETS');
         },
     },
     {
@@ -132,14 +138,14 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.jumpToWordSubject",
         execute: async (manager: VimAtHomeManager) => {
-            manager.jumpToSubject('WORD');
+            await manager.jumpToSubject('WORD');
         },
     },
     {
         id: "vimAtHome.nextWordDefinition",
         execute: async (manager: VimAtHomeManager) => {
             nextWordDefinition();
-            manager.changeMode({
+            await manager.changeMode({
                 kind: "COMMAND",
                 subjectName: "WORD",
             });
@@ -149,7 +155,7 @@ export let registeredCommands: ExtensionCommand[] = [
         id: "vimAtHome.prevWordDefinition",
         execute: async (manager: VimAtHomeManager) => {
             prevWordDefinition();
-            manager.changeMode({
+            await manager.changeMode({
                 kind: "COMMAND",
                 subjectName: "WORD",
             });
@@ -167,13 +173,13 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.jumpToLineSubject",
         execute: async (manager: VimAtHomeManager) => {
-            manager.jumpToSubject('LINE');
+            await manager.jumpToSubject('LINE');
         },
     },
     {
         id: "vimAtHome.changeToInterwordSubject",
         execute: async (manager: VimAtHomeManager) => {
-            manager.changeMode({
+            await manager.changeMode({
                 kind: "COMMAND",
                 subjectName: "INTERWORD",
             });
@@ -204,7 +210,7 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.changeToHalfBracketSubjectLeft",
         execute: async (manager: VimAtHomeManager) => {
-            manager.changeMode({
+            await manager.changeMode({
                 kind: "COMMAND",
                 subjectName: "BRACKETS",
                 half: "LEFT"
@@ -236,7 +242,7 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.changeToCharSubject",
         execute: async (manager: VimAtHomeManager) => {
-            manager.changeMode({
+            await manager.changeMode({
                 kind: "COMMAND",
                 subjectName: "CHAR",
             });
@@ -245,7 +251,7 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.changeToBlockSubject",
         execute: async (manager: VimAtHomeManager) => {
-            manager.changeToBlockSubject({
+            await manager.changeToBlockSubject({
                 kind: "COMMAND",
                 subjectName: "BLOCK",
             });
@@ -255,7 +261,7 @@ export let registeredCommands: ExtensionCommand[] = [
         id: "vimAtHome.changeToBlockSubjectHalfUp",
         execute: async (manager: VimAtHomeManager) => {
             // manager.changeToBlockSubject("forwards");
-            manager.changeToBlockSubject({
+            await manager.changeToBlockSubject({
                 kind: "COMMAND",
                 subjectName: "BLOCK",
                 half: "LEFT"
@@ -265,8 +271,7 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.changeToBlockSubjectHalfDown",
         execute: async (manager: VimAtHomeManager) => {
-            // manager.changeToBlockSubject("forwards");
-            manager.changeToBlockSubject({
+            await manager.changeToBlockSubject({
                 kind: "COMMAND",
                 subjectName: "BLOCK",
                 half: "RIGHT"
@@ -276,19 +281,19 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.jumpToBlockSubject",
         execute: async (manager: VimAtHomeManager) => {
-            manager.jumpToSubject('BLOCK');
+            await manager.jumpToSubject('BLOCK');
         },
     },
     {
         id: "vimAtHome.changeToInsertMode",
         execute: async (manager: VimAtHomeManager) => {
-            manager.changeMode({ kind: "INSERT" });
+            await manager.changeMode({ kind: "INSERT" });
         },
     },
     {
         id: "vimAtHome.changeToCommandModeDefault",
         execute: async (manager: VimAtHomeManager) => {
-            manager.changeMode({
+            await manager.changeMode({
                 kind: "COMMAND",
                 subjectName: manager.config.defaultSubject,
             });
@@ -297,8 +302,17 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.changeToCommandModeLast",
         execute: async (manager: VimAtHomeManager) => {
-            manager.changeMode({
+            await manager.changeMode({
                 kind: "COMMAND",
+            });
+        },
+    },
+    {
+        id: "vimAtHome.changeToExtendOld",
+        execute: async (manager: VimAtHomeManager) => {
+            await manager.changeMode({
+                kind: "EXTEND",
+                subjectName: "WORD",
             });
         },
     },
@@ -913,20 +927,6 @@ export let registeredCommands: ExtensionCommand[] = [
             await manager.carry();
         },
     },
-    // {
-    //     id: "vimAtHome.findNext", 
-    //     execute: async (manager) => {
-    //         await vscode.commands.executeCommand("editor.action.nextSelectionMatchFindAction");
-    //         await vscode.commands.executeCommand("closeFindWidget");
-    //     },
-    // },
-    // {
-    //     id: "vimAtHome.findPrev", 
-    //     execute: async (manager) => {
-    //         await vscode.commands.executeCommand("editor.action.previousSelectionMatchFindAction");
-    //         await vscode.commands.executeCommand("closeFindWidget");
-    //     },
-    // },
     {
         id: "vimAtHome.goPrevSelection", 
         execute: async (manager) => {
@@ -995,59 +995,73 @@ export let registeredCommands: ExtensionCommand[] = [
     },
     
     
-    // COmmands for extend mode
+    // Set selection anchor be before any commands that require selection
     {
         id: "vimAtHome.indentSelection",
         execute: async (manager) => {
-            await manager.indentSelection();
+            await manager.selectToAnchor();
+            await vscode.commands.executeCommand("editor.action.indentLines");
         },
     },
     {
         id: "vimAtHome.outdentSelection",
         execute: async (manager) => {
-            await manager.outdentSelection();
+            await manager.selectToAnchor();
+            await vscode.commands.executeCommand("editor.action.outdentLines");
         },
     },
     {
         id: "vimAtHome.moveLinesUp",
         execute: async (manager) => {
-            await manager.moveLinesUp();
+            await manager.selectToAnchor();
+            await vscode.commands.executeCommand("editor.action.moveLinesUpAction");
         },
     },
     {
         id: "vimAtHome.moveLinesDown",
         execute: async (manager) => {
-            await manager.moveLinesDown();
+            await manager.selectToAnchor();
+            await vscode.commands.executeCommand("editor.action.moveLinesDownAction");
         },
     },
     {
         id: "vimAtHome.copyLinesDown",
         execute: async (manager) => {
-            await manager.copyLinesDown();
+            await manager.selectToAnchor();
+            await vscode.commands.executeCommand("editor.action.copyLinesDownAction");
         },
     },
     {
         id: "vimAtHome.copyLinesUp",
         execute: async (manager) => {
-            await manager.copyLinesUp();
+            await manager.selectToAnchor();
+            await vscode.commands.executeCommand("editor.action.copyLinesUpAction");
         },
     },
     {
-        id: "vimAtHome.selectToAnchor",
+        id: "vimAtHome.showSelectToAnchor",
         execute: async (manager) => {
-            await manager.SelectToAnchor();
+            await manager.showSelectionToAnchor();
         },
     },
     {
         id: "vimAtHome.commentLine",
         execute: async (manager) => {
-            await manager.CommentLines();
+            await manager.selectToAnchor();
+            await vscode.commands.executeCommand("editor.action.commentLine");
         },
     },
     {
         id: "vimAtHome.debugWrapped",
         execute: async (manager) => {
             await manager.DebugWrapped();
+        },
+    },
+    {
+        id: "vimAtHome.selectAllMatches",
+        execute: async (manager) => {
+            await manager.selectToAnchor();
+            await vscode.commands.executeCommand("editor.action.selectHighlights");
         },
     },
 
