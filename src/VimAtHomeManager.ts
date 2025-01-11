@@ -1481,12 +1481,12 @@ export default class VimAtHomeManager {
     }
     
     async AddSubjectDown() {
-        this.extendAnchor.SelectToAnchor(this.editor);
+        // this.extendAnchor.SelectToAnchor(this.editor);
         await this.executeSubjectCommand("addObjectBelow");
     }
     
     async AddSubjectUp() {
-        this.extendAnchor.SelectToAnchor(this.editor);
+        // this.extendAnchor.SelectToAnchor(this.editor);
         await this.executeSubjectCommand("addObjectAbove");
     }
     

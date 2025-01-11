@@ -19,17 +19,30 @@ export default abstract class SubjectBase implements SubjectActions {
     public abstract jumpPhaseType: common.JumpPhaseType;
     public abstract readonly displayName: string;
 
-    async nextObjectDown() {
+    async nextObjectDown(virtualColumn = true) {
         selections.tryMap(this.context.editor, (selection) =>
             this.subjectIO
                 .iterVertically(this.context.editor.document, {
                     startingPosition: selection,
                     direction: Direction.forwards,
+                    virtualColumn: virtualColumn,
                 })
                 .tryFirst()
         );
     }
-
+    
+    async nextObjectUp(virtualColumn = true) {
+        selections.tryMap(this.context.editor, (selection) =>
+            this.subjectIO
+                .iterVertically(this.context.editor.document, {
+                    startingPosition: selection,
+                    direction: Direction.backwards,
+                    virtualColumn: virtualColumn
+                })
+                .tryFirst()
+        );
+    }
+    
     async nextObjectRight() {
         selections.tryMap(this.context.editor, (selection) =>
             this.subjectIO
@@ -41,16 +54,6 @@ export default abstract class SubjectBase implements SubjectActions {
         );
     }
 
-    async nextObjectUp() {
-        selections.tryMap(this.context.editor, (selection) =>
-            this.subjectIO
-                .iterVertically(this.context.editor.document, {
-                    startingPosition: selection,
-                    direction: Direction.backwards,
-                })
-                .tryFirst()
-        );
-    }
 
     async nextObjectLeft() {
         selections.tryMap(this.context.editor, (selection) =>
@@ -66,7 +69,7 @@ export default abstract class SubjectBase implements SubjectActions {
     async addObjectAbove(): Promise<void> {
         const existingSelections = this.context.editor.selections;
 
-        await this.nextObjectUp();
+        await this.nextObjectUp(false);
 
         this.context.editor.selections =
             this.context.editor.selections.concat(existingSelections);
@@ -75,7 +78,7 @@ export default abstract class SubjectBase implements SubjectActions {
     async addObjectBelow() {
         const existingSelections = this.context.editor.selections;
 
-        await this.nextObjectDown();
+        await this.nextObjectDown(false);
 
         this.context.editor.selections =
             this.context.editor.selections.concat(existingSelections);

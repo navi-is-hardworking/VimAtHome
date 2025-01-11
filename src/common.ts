@@ -106,8 +106,12 @@ export function setVirtualColumnNumber(col: number): void {
     column = col;
 }
 
+export function getMiddleColumn(range: Range): number {
+    return range.start.character + (range.end.character - range.start.character) / 2;
+}
+
 export function setVirtualColumn(range: Range): void {
-    column = range.start.character + (range.end.character - range.start.character) / 2;
+    column = getMiddleColumn(range);
 }
 
 export function getVirtualColumn(): number {

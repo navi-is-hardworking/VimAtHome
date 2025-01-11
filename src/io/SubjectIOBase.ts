@@ -12,6 +12,7 @@ export type IterationOptions = {
     currentInclusive?: boolean;
     bounds?: TextObject;
     isVertical?: boolean;
+    virtualColumn?: boolean;
 };
 
 export default abstract class SubjectIOBase {

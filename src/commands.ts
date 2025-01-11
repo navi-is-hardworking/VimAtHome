@@ -51,15 +51,13 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.addSubjectUp",
         execute: async (manager) => {
-            await manager.selectToAnchor();
-            await manager.executeSubjectCommand("addObjectAbove");
+            await manager.AddSubjectUp();
         },
     },
     {
         id: "vimAtHome.addSubjectDown",
         execute: async (manager) => {
-            await manager.selectToAnchor();
-            await manager.executeSubjectCommand("addObjectBelow");
+            await manager.AddSubjectDown();
         },
     },
     {

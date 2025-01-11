@@ -24,20 +24,28 @@ function iterVertically(
                 options.direction
             );
             
-            const foldMap = lineUtils.getLineToFoldedMap();
+            let column = currentPosition.character;
+            if (options.virtualColumn) {
+                column = common.getVirtualColumn();
+            }
+            else if (options.startingPosition instanceof vscode.Range) {
+                let range: vscode.Range = options.startingPosition;
+                column = common.getMiddleColumn(range);
+            }
+            
             while (cont) {
                 cont = false;
                 
                 const nextLine = lineUtils.getNextSignificantLine(
                     document,
                     currentPosition,
-                    options.direction, 
-                    foldMap
+                    options.direction
                 );
+                
                 if (nextLine) {
                     const newPosition = currentPosition.with(
                         nextLine.lineNumber,
-                        common.getVirtualColumn()
+                        column
                     );
                     const wordRange = findWordClosestTo(document, newPosition, {
                             limitToCurrentLine: true,
