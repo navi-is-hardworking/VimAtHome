@@ -1311,8 +1311,6 @@ export default class VimAtHomeManager {
     }
     
     async deleteSubject() {
-        this.extendAnchor.SelectToAnchor(this.editor);
-            await this.executeSubjectCommand("deleteObject");
     }
     
     async copyDiagnostics() {
@@ -1337,7 +1335,6 @@ export default class VimAtHomeManager {
         );
         
         outputChannel.appendLine(`Mocking repeat skip to ${char}`);
-        
         
         if (char.length !== 1) return;
         

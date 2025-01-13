@@ -99,7 +99,8 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.deleteSubject",
         execute: async (manager) => {
-            await manager.deleteSubject();
+            manager.selectToAnchor();
+            await manager.executeSubjectCommand("deleteObject");
         },
     },
     {
