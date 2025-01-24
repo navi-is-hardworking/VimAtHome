@@ -1127,9 +1127,11 @@ export default class VimAtHomeManager {
     }
     
     async anchorSwap() {
-        let active = this.editor.selection.anchor;
-        let anchor = this.editor.selection.active;
-        this.editor.selection = new vscode.Selection(anchor, active);
+        let extendPiviot = this.extendAnchor.GetSelectionAnchor();
+        if (extendPiviot) {
+            this.SetSelectionAnchor();
+            this.editor.selection = extendPiviot;
+        }
     }
 
         async join() {
@@ -1494,6 +1496,25 @@ export default class VimAtHomeManager {
             const text = editor.document.getText(range);
             console.log(`(${text})`);
         }
+    }
+    
+    async addCursorToStartOfLines() {
+        // this.extendAnchor.SelectToAnchor(this.editor);
+        const editor = this.editor;
+        const document = editor.document;
+        const selection = editor.selection;
+        
+        const startLine = Math.min(selection.start.line, selection.end.line);
+        const endLine = Math.max(selection.start.line, selection.end.line);
+        
+        const selections: vscode.Selection[] = [];
+        for (let i = startLine; i <= endLine; i++) {
+            const line = document.lineAt(i);
+            const pos = new vscode.Position(i, line.firstNonWhitespaceCharacterIndex);
+            selections.push(new vscode.Selection(pos, pos));
+        }
+        
+        editor.selections = selections;
     }
 
 }

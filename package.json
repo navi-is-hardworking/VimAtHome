@@ -1,13 +1,13 @@
 {
-    "name": "VimAtHome",
+    "name": "vimathome",
     "displayName": "VimAtHome",
     "description": "Mom can we get Vim??",
     "publisher": "collin-m-brown",
     "repository": {
-        "url": "https://github.com/Collin-M-Brown/VimAtHome"
+        "url": "git+https://github.com/Collin-M-Brown/VimAtHome.git"
     },
     "engines": {
-        "vscode": "^1.63.0"
+        "vscode": "^1.96.0"
     },
     "extensionKind": [
         "ui"
@@ -201,53 +201,241 @@
             }
         ],
         "keybindings": [
-            { "key": "space", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "a", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "b", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "c", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "d", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "e", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "f", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "g", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "h", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "i", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "j", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "k", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "l", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "m", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "n", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "o", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "p", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "q", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "r", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "s", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "t", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "u", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "v", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "w", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "x", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "y", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "z", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "1", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "2", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "3", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "4", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "5", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "6", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "7", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "8", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "9", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "'", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": ";", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "!", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "@", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "#", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "$", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "%", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "^", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "&", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "*", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" },
-            { "key": "/", "command": "noop", "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false" }
+            {
+                "key": "space",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "a",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "b",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "c",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "d",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "e",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "f",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "g",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "h",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "i",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "j",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "k",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "l",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "m",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "n",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "o",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "p",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "q",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "r",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "s",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "t",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "u",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "v",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "w",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "x",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "y",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "z",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "1",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "2",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "3",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "4",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "5",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "6",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "7",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "8",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "9",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "'",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": ";",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "!",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "@",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "#",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "$",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "%",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "^",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "&",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "*",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            },
+            {
+                "key": "/",
+                "command": "noop",
+                "when": "editorTextFocus && (vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND') && vimAtHome.waitingForChar == false"
+            }
         ]
     },
     "scripts": {
@@ -260,7 +448,7 @@
     },
     "devDependencies": {
         "@types/node": "^16.11.7",
-        "@types/vscode": "^1.34.0",
+        "@types/vscode": "^1.96.0",
         "@typescript-eslint/eslint-plugin": "^5.42.0",
         "@typescript-eslint/parser": "^5.42.0",
         "eslint": "^8.26.0",
@@ -270,5 +458,14 @@
     "dependencies": {
         "@types/copy-paste": "^1.1.33",
         "copy-paste": "^1.5.3"
-    }
+    },
+    "directories": {
+        "doc": "docs"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/Collin-M-Brown/VimAtHome/issues"
+    },
+    "homepage": "https://github.com/Collin-M-Brown/VimAtHome#readme"
 }

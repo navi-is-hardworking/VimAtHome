@@ -1063,6 +1063,12 @@ export let registeredCommands: ExtensionCommand[] = [
             await vscode.commands.executeCommand("editor.action.selectHighlights");
         },
     },
+    {
+        id: "vimAtHome.addCursorToStartOfSelectedLines",
+        execute: async (manager) => {
+            await manager.addCursorToStartOfLines();
+        },
+    },
 
 ];
 

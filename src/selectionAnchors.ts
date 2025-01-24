@@ -183,6 +183,10 @@ export default class SelectionAnchor {
         }
     }
     
+    GetSelectionAnchor(): vscode.Selection | undefined {
+        return this.cachedSelection;
+    }
+    
     // ClearSelectionAnchor() {
     //     if (this.phantomDecoration) {
     //         this.cachedSelection = undefined;
