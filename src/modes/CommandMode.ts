@@ -51,6 +51,7 @@ export default class CommandMode extends modes.EditorMode {
             "vimAtHome.subject",
             subject.name
         );
+        
         super();
         // // const commandColor = getCommandColor();
         common.setVirtualColumn(this.context.editor.selection);
@@ -157,7 +158,7 @@ export default class CommandMode extends modes.EditorMode {
             
             case "COMMAND":
                 if (editor) {
-                    if (newMode.subjectName === "LINE") {
+                    if (newMode.subjectName === "LINE" || newMode.subjectName === "BLOCK") {
                         const collapsePos = newMode.half === "RIGHT" ? "start" : "end";
                         selections.collapseSelections(this.context.editor, collapsePos);
                     }
@@ -226,61 +227,53 @@ export default class CommandMode extends modes.EditorMode {
     }
 
     async skip(direction: common.Direction): Promise<void> {
-        await vscode.commands.executeCommand("setContext", "vimAtHome.awaitingInput", true);
-        try {
-            await new Promise<void>((resolve) => {
-                const handleInput = async (_: string, char: common.Char) => {
-                    let finalDirection = direction;
-                    if (char >= 'A' && char <= 'Z') {
-                        finalDirection = common.reverseDirection(direction);
-                    }
+        await new Promise<void>((resolve) => {
+            const handleInput = async (_: string, char: common.Char) => {
+                let finalDirection = direction;
+                if (char >= 'A' && char <= 'Z') {
+                    finalDirection = common.reverseDirection(direction);
+                }
 
-                    if (this.subject.name === "WORD" && !/[a-zA-Z0-9_]/.test(char)) {
-                        const newMode = await this.changeTo({ kind: "COMMAND", subjectName: "CHAR" });
-                        if (newMode instanceof CommandMode) {
-                            const skip: common.Skip = {
-                                kind: "SkipTo",
-                                char,
-                                subject: "CHAR" as const,
-                                direction: finalDirection
-                            };
-                            common.setLastSkip(skip);
-                            await newMode.subject.skip(finalDirection, skip);
-                        }
-                    } else {
+                if (this.subject.name === "WORD" && !/[a-zA-Z0-9_]/.test(char)) {
+                    const newMode = await this.changeTo({ kind: "COMMAND", subjectName: "CHAR" });
+                    if (newMode instanceof CommandMode) {
                         const skip: common.Skip = {
                             kind: "SkipTo",
                             char,
-                            subject: this.subject.name,
+                            subject: "CHAR" as const,
                             direction: finalDirection
                         };
                         common.setLastSkip(skip);
-                        await this.subject.skip(finalDirection, skip);
+                        await newMode.subject.skip(finalDirection, skip);
                     }
-                    
-                    await vscode.commands.executeCommand("setContext", "vimAtHome.awaitingInput", false);
+                } else {
+                    const skip: common.Skip = {
+                        kind: "SkipTo",
+                        char,
+                        subject: this.subject.name,
+                        direction: finalDirection
+                    };
+                    common.setLastSkip(skip);
+                    await this.subject.skip(finalDirection, skip);
+                }
+                
+                resolve();
+            };
+
+            const inlineInput = new InlineInput({
+                textEditor: this.context.editor,
+                onInput: handleInput,
+                onCancel: async () => {
+                    FirstLetterPreview.getInstance().clearDecorations(this.context.editor);
                     resolve();
-                };
-
-                const inlineInput = new InlineInput({
-                    textEditor: this.context.editor,
-                    onInput: handleInput,
-                    onCancel: async () => {
-                        FirstLetterPreview.getInstance().clearDecorations(this.context.editor);
-                        await vscode.commands.executeCommand("setContext", "vimAtHome.awaitingInput", false);
-                        resolve();
-                    }
-                });
-
-                inlineInput.updateStatusBar(
-                    `Skip ${direction} to ${this.subject.displayName} by first character`,
-                    0
-                );
+                }
             });
-        } catch (error) {
-            await vscode.commands.executeCommand("setContext", "vimAtHome.awaitingInput", false);
-            throw error;
-        }
+
+            inlineInput.updateStatusBar(
+                `Skip ${direction} to ${this.subject.displayName} by first character`,
+                0
+            );
+        });
     }
 
     async skipOver(direction: common.Direction): Promise<void> {
@@ -291,9 +284,7 @@ export default class CommandMode extends modes.EditorMode {
         if (skipChar === undefined) {
             return;
         }
-
         common.setLastSkip({kind: "SkipTo", char: skipChar, subject: this.subject.name, direction: direction});
-
         await this.subject.skip(direction, {kind: "SkipTo", char: skipChar, subject: this.subject.name, direction: direction});
     }
     
@@ -317,97 +308,47 @@ export default class CommandMode extends modes.EditorMode {
 
     
     async jump(): Promise<void> {
-        await vscode.commands.executeCommand( "setContext", "vimAtHome.awaitingInput", true );
-        try {
-            const combinedRange = this.context.editor.visibleRanges.reduce((acc, range) => acc.union(range));
-            const jumpLocations = this.subject
-                .iterAll(common.IterationDirection.alternate, combinedRange)
-                .map((range) => range.start)
-                .toArray();
-                
-            const jumpInterface = new JumpInterface(this.context);
-            let jumpType = this.subject.jumpPhaseType;
-
-            if (this.subject.name === "WORD") {
-                let wordDefinitionIndex = getWordDefinitionIndex();
-                if (wordDefinitionIndex == 0) {
-                    jumpType = "dual-phase";
-                } else {
-                    jumpType = "single-phase";
-                }
-            }
-        
-            common.setLazyPassSubjectName(this.subject.name);
-            let size: number = this.getSubjectName() === "CHAR" ? 0 : 1;
-            const jumpPosition = await jumpInterface.jump({
-                kind: jumpType,
-                locations: seq(jumpLocations)},);
-        
-            if (jumpPosition) {
-                this.context.editor.selection = selections.positionToSelection(jumpPosition);
-                common.setVirtualColumn(this.context.editor.selection);
-                await this.fixSelection();
-            }
-        }
-        finally {
-            await vscode.commands.executeCommand( "setContext", "vimAtHome.awaitingInput", false );
-        }
+        const combinedRange = this.context.editor.visibleRanges.reduce((acc, range) => acc.union(range));
+        const jumpLocations = this.subject
+            .iterAll(common.IterationDirection.alternate, combinedRange)
+            .map((range) => range.start)
+            .toArray();
             
+        const jumpInterface = new JumpInterface(this.context);
+        let jumpType = this.subject.jumpPhaseType;
+
+        if (this.subject.name === "WORD") {
+            let wordDefinitionIndex = getWordDefinitionIndex();
+            if (wordDefinitionIndex == 0) {
+                jumpType = "dual-phase";
+            } else {
+                jumpType = "single-phase";
+            }
+        }
+    
+        common.setLazyPassSubjectName(this.subject.name);
+        let size: number = this.getSubjectName() === "CHAR" ? 0 : 1;
+        const jumpPosition = await jumpInterface.jump({
+            kind: jumpType,
+            locations: seq(jumpLocations)},);
+    
+        if (jumpPosition) {
+            this.context.editor.selection = selections.positionToSelection(jumpPosition);
+            common.setVirtualColumn(this.context.editor.selection);
+            await this.fixSelection();
+        }
     }
 
     async jumpToSubject(subjectName: SubjectName) {
-        await vscode.commands.executeCommand( "setContext", "vimAtHome.awaitingInput", true );
-        try {
-            const tempSubject = subjects.createFrom(this.context, subjectName);
-            const combinedRange = this.context.editor.visibleRanges.reduce((acc, range) => acc.union(range));
-            const jumpLocations = tempSubject
-                .iterAll(common.IterationDirection.alternate, combinedRange)
-                .map((range) => range.start)
-                .toArray();
-    
-                const jumpInterface = new JumpInterface(this.context);
-                let jumpType = tempSubject.jumpPhaseType;
-                if (tempSubject.name === "WORD") {
-                    let wordDefinitionIndex = getWordDefinitionIndex();
-                    if (wordDefinitionIndex <= 1) {
-                        jumpType = "dual-phase";
-                    } else {
-                        jumpType = "single-phase";
-                    }
-                }
-                
-            common.setLazyPassSubjectName(subjectName);
-            const jumpPosition = await jumpInterface.jump({
-                kind: jumpType,
-                locations: seq(jumpLocations)},);
-    
-            if (jumpPosition) {
-                this.context.editor.selection =
-                    selections.positionToSelection(jumpPosition);
-    
-                // outputchannel.appendLine(`jumpToSubject: ${subjectName}`);
-                return await this.changeTo({ kind: "COMMAND", subjectName });
-            }
-        }
-        finally {
-            await vscode.commands.executeCommand( "setContext", "vimAtHome.awaitingInput", false );
-        }
-    }
-    
-    async pullSubject(subjectName: SubjectName) {
-        await vscode.commands.executeCommand( "setContext", "vimAtHome.awaitingInput", true );
-        try {
-            const tempSubject = subjects.createFrom(this.context, subjectName);
-            const combinedRange = this.context.editor.visibleRanges.reduce((acc, range) => acc.union(range));
-            const jumpLocations = tempSubject
-                .iterAll(common.IterationDirection.alternate, combinedRange)
-                .map((range) => range.start)
-                .toArray();
+        const tempSubject = subjects.createFrom(this.context, subjectName);
+        const combinedRange = this.context.editor.visibleRanges.reduce((acc, range) => acc.union(range));
+        const jumpLocations = tempSubject
+            .iterAll(common.IterationDirection.alternate, combinedRange)
+            .map((range) => range.start)
+            .toArray();
 
             const jumpInterface = new JumpInterface(this.context);
             let jumpType = tempSubject.jumpPhaseType;
-
-            outputchannel.appendLine(`subject nme ${tempSubject.name}`);
             if (tempSubject.name === "WORD") {
                 let wordDefinitionIndex = getWordDefinitionIndex();
                 if (wordDefinitionIndex <= 1) {
@@ -416,28 +357,59 @@ export default class CommandMode extends modes.EditorMode {
                     jumpType = "single-phase";
                 }
             }
+            
+        common.setLazyPassSubjectName(subjectName);
+        const jumpPosition = await jumpInterface.jump({
+            kind: jumpType,
+            locations: seq(jumpLocations)},);
 
-            common.setLazyPassSubjectName(subjectName);
-            const jumpPosition = await jumpInterface.jump({
-                kind: jumpType,
-                locations: seq(jumpLocations)},);
+        if (jumpPosition) {
+            this.context.editor.selection =
+                selections.positionToSelection(jumpPosition);
 
-            if (jumpPosition) {
-                const currentSelection = this.context.editor.selection;
-                const pulledRange = await tempSubject.pullSubject(
-                    this.context.editor.document,
-                    jumpPosition,
-                    currentSelection
-                );
+            // outputchannel.appendLine(`jumpToSubject: ${subjectName}`);
+            return await this.changeTo({ kind: "COMMAND", subjectName });
+        }
+    }
+    
+    async pullSubject(subjectName: SubjectName) {
+        const tempSubject = subjects.createFrom(this.context, subjectName);
+        const combinedRange = this.context.editor.visibleRanges.reduce((acc, range) => acc.union(range));
+        const jumpLocations = tempSubject
+            .iterAll(common.IterationDirection.alternate, combinedRange)
+            .map((range) => range.start)
+            .toArray();
 
-                if (pulledRange) {
-                    this.context.editor.selection = new vscode.Selection(pulledRange.start, pulledRange.end);
-                    await this.fixSelection();
-                }
+        const jumpInterface = new JumpInterface(this.context);
+        let jumpType = tempSubject.jumpPhaseType;
+
+        outputchannel.appendLine(`subject nme ${tempSubject.name}`);
+        if (tempSubject.name === "WORD") {
+            let wordDefinitionIndex = getWordDefinitionIndex();
+            if (wordDefinitionIndex <= 1) {
+                jumpType = "dual-phase";
+            } else {
+                jumpType = "single-phase";
             }
         }
-        finally {
-            await vscode.commands.executeCommand( "setContext", "vimAtHome.awaitingInput", true );
+
+        common.setLazyPassSubjectName(subjectName);
+        const jumpPosition = await jumpInterface.jump({
+            kind: jumpType,
+            locations: seq(jumpLocations)},);
+
+        if (jumpPosition) {
+            const currentSelection = this.context.editor.selection;
+            const pulledRange = await tempSubject.pullSubject(
+                this.context.editor.document,
+                jumpPosition,
+                currentSelection
+            );
+
+            if (pulledRange) {
+                this.context.editor.selection = new vscode.Selection(pulledRange.start, pulledRange.end);
+                await this.fixSelection();
+            }
         }
         return undefined;
     }

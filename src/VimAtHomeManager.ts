@@ -310,16 +310,28 @@ export default class VimAtHomeManager {
 
     async skip(direction: common.Direction) {
         this.extendAnchor.SetSelectionAnchor(this.editor);
-        await this.mode.skip(direction);
-        if (common.getLastSkip()?.subject !== this.mode.getSubjectName()) {
-            await this.changeMode({ subjectName: common.getLastSkip()?.subject, kind: "COMMAND" });
+        await vscode.commands.executeCommand( "setContext", "vimAtHome.awaitingInput", true );
+        try {
+            await this.mode.skip(direction);
+            if (common.getLastSkip()?.subject !== this.mode.getSubjectName()) {
+                await this.changeMode({ subjectName: common.getLastSkip()?.subject, kind: "COMMAND" });
+            }
+            this.setUI();
         }
-        this.setUI();
+        finally {
+            await vscode.commands.executeCommand( "setContext", "vimAtHome.awaitingInput", false );
+        }
     }
     
     async skipOver(direction: common.Direction) {
-        await this.mode.skipOver(direction);
-        this.setUI();
+        await vscode.commands.executeCommand( "setContext", "vimAtHome.awaitingInput", true );
+        try {
+            await this.mode.skipOver(direction);
+            this.setUI();
+        }
+        finally {
+            await vscode.commands.executeCommand( "setContext", "vimAtHome.awaitingInput", false );
+        }
     }
     
     async repeatLastSkip(direction: common.Direction) {
@@ -350,7 +362,13 @@ export default class VimAtHomeManager {
 
     async jump() {
         this.extendAnchor.SetSelectionAnchor(this.editor);
-        await this.mode.jump();
+        await vscode.commands.executeCommand( "setContext", "vimAtHome.awaitingInput", true );
+        try {
+            await this.mode.jump();
+        }
+        finally {
+            await vscode.commands.executeCommand( "setContext", "vimAtHome.awaitingInput", false );
+        }
     }
     
     async jumpToSubject(subjectName: SubjectName) {
@@ -361,17 +379,24 @@ export default class VimAtHomeManager {
             this.extendAnchor.SetSelectionAnchor(this.editor);
         }
         
-        if (this.mode.getSubjectName() === subjectName) {
-            await this.mode.jump();
-            return;
+        await vscode.commands.executeCommand( "setContext", "vimAtHome.awaitingInput", true );
+        try {
+            
+            if (this.mode.getSubjectName() === subjectName) {
+                await this.mode.jump();
+                return;
+            }
+            const newMode = await this.mode.jumpToSubject(subjectName);
+            if (newMode === undefined) return;
+            this.clearSelections();
+            this.mode = newMode;
+            this.setUI();
+            this.mode.fixSelection();
+            this.setDecorations();
         }
-        const newMode = await this.mode.jumpToSubject(subjectName);
-        if (newMode === undefined) return;
-        this.clearSelections();
-        this.mode = newMode;
-        this.setUI();
-        this.mode.fixSelection();
-        this.setDecorations();
+        finally {
+            await vscode.commands.executeCommand( "setContext", "vimAtHome.awaitingInput", false );
+        }
     }
 
     async pullSubject(subjectName: SubjectName) {
@@ -1009,14 +1034,16 @@ export default class VimAtHomeManager {
     }
 
     async changeToBlockSubject(newMode: EditorModeChangeRequest) {
-        let selection = this.editor.selection;
-        if ((this.mode.getSubjectName() === 'BRACKETS' 
-                || this.mode.getSubjectName() === 'BRACKETS_INCLUSIVE') && selection.active.line !== selection.anchor.line) {
-            let start = this.editor.selection.active;
-            start = start.with(start.line, this.editor.document.lineAt(start.line).firstNonWhitespaceCharacterIndex);
-            let end = this.editor.selection.anchor 
-            end = end.with(end.line, this.editor.document.lineAt(end.line).text.length);
-            this.editor.selection = new vscode.Selection(start, end);
+        if (newMode.kind === "COMMAND" && newMode.half !== undefined) {
+            
+            let lineSelection = this.editor.selection.active.line;
+            const lineRange = new vscode.Range(
+                new vscode.Position(lineSelection, 0),
+                new vscode.Position(lineSelection, Number.MAX_SAFE_INTEGER)
+            );
+            this.editor.selection = new vscode.Selection(lineRange.start, lineRange.end);
+            
+            this.changeMode(newMode);
         } else {
             this.changeMode(newMode);
         }
@@ -1128,13 +1155,18 @@ export default class VimAtHomeManager {
     
     async anchorSwap() {
         let extendPiviot = this.extendAnchor.GetSelectionAnchor();
+        let isExtending: boolean = this.extendAnchor.IsExtendModeOn();
         if (extendPiviot) {
-            this.SetSelectionAnchor();
+            this.extendAnchor.EndExtendMode();
+            this.extendAnchor.SetSelectionAnchor(this.editor);
             this.editor.selection = extendPiviot;
+            if (isExtending) {
+                this.extendAnchor.StartExtendMode();
+            }
         }
     }
 
-        async join() {
+    async join() {
         const { editor } = this;
         const document = editor.document;
         const originalSelections = editor.selections;
@@ -1395,7 +1427,7 @@ export default class VimAtHomeManager {
         const currentText = this.editor.document.getText(this.editor.selection);
         if (!currentText) return;
         
-        this.createAndSetLastSkip(currentText, "backwards");
+        this.createAndSetLastSkip(currentText, "backwards"); 
         
         const endOffset = this.editor.document.offsetAt(this.editor.selection.start);
         const textToSearch = this.editor.document.getText().substring(0, endOffset);

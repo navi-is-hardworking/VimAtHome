@@ -1,4 +1,4 @@
-// Taken from https://github.com/usernamehw/vscode-find-jump/blob/master/src/inlineInput.ts
+// Mostly from https://github.com/usernamehw/vscode-find-jump/blob/master/src/inlineInput.ts
 
 import { commands, Disposable, StatusBarAlignment, StatusBarItem, TextEditor, window } from 'vscode';
 import { Char } from '../common';

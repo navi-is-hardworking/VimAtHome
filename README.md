@@ -73,21 +73,23 @@ I would recommend using the original but you are welcome to use this if you wish
                 // "vimAtHome.scrollEditorDown",
                 // "editor.action.fontZoomReset",
                 // "workbench.action.zoomReset",
+                "closeFindWidget",
+                "workbench.action.focusFirstEditorGroup",
                 "vimAtHome.scrollToCursor",
             ]
         },
-        "when": "editorTextFocus"
+        // "when": "editorTextFocus"
     },
-    {
-        "key": "f16",
-        "command": "runCommands",
-        "args": {
-            "commands": [
-                "workbench.action.focusFirstEditorGroup",
-            ]
-        },
-        "when": "!editorTextFocus"
-    },
+    // {
+    //     "key": "f16",
+    //     "command": "runCommands",
+    //     "args": {
+    //         "commands": [
+    //             "workbench.action.focusFirstEditorGroup",
+    //         ]
+    //     },
+    //     "when": "!editorTextFocus"
+    // },
     {
         "key": "shift+f19",
         "command": "runCommands",
@@ -727,7 +729,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "cursorLeft",
                 "editor.action.selectFromAnchorToCursor"
             ]
@@ -800,7 +802,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.skipBackwards"
             ]
         },
@@ -811,7 +813,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.changeToWordSubject",
                 "vimAtHome.skipBackwards"
             ]
@@ -823,7 +825,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.skip"
             ]
         },
@@ -834,7 +836,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.changeToWordSubject",
                 "vimAtHome.skip"
             ]
@@ -846,7 +848,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.jump"
             ]
         },
@@ -857,7 +859,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.jump"
             ]
         },
@@ -868,7 +870,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.changeToSubwordSubject",
                 // "vimAtHome.changeToCharSubject",
                 "vimAtHome.skip",
@@ -881,7 +883,7 @@ I would recommend using the original but you are welcome to use this if you wish
     //     "command": "runCommands",
     //     "args": {
     //         "commands": [
-    //             "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
     //             "vimAtHome.skipBackwards"
     //         ]
     //     },
@@ -1117,9 +1119,9 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.changeToCharSubject",
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.jumpToLineSubject"
             ]
         },
@@ -1130,9 +1132,9 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.changeToCharSubject",
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.jumpToLineSubject"
             ]
         },
@@ -1143,9 +1145,9 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.changeToCharSubject",
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.jumpToBlockSubject"
             ]
         },
@@ -1156,9 +1158,9 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.changeToCharSubject",
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.jumpToBracketSubject"
             ]
         },
@@ -1169,7 +1171,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.jumpToLineSubject"
             ]
         },
@@ -1180,7 +1182,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.jumpToBlockSubject"
             ]
         },
@@ -1191,7 +1193,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.jumpToCustomWord6"
             ]
         },
@@ -1354,7 +1356,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.changeToCharSubject",
                 "vimAtHome.jump",
             ],
@@ -1366,7 +1368,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "args": {
             "commands": [
                 "vimAtHome.changeToInsertModePrepend",
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.changeToCharSubject",
                 "vimAtHome.skip"
             ],
@@ -1379,7 +1381,7 @@ I would recommend using the original but you are welcome to use this if you wish
             "commands": [
                 "vimAtHome.changeToInsertModeAppend",
                 "cursorLeft",
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.changeToCharSubject",
                 "vimAtHome.skipBackwards"
             ],
@@ -1399,7 +1401,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.changeToSubwordSubject",
                 "vimAtHome.jump",
             ],
@@ -1440,7 +1442,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.jumpToWordSubject",
             ],
         },
@@ -1488,7 +1490,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.jumpToCustomWord3",
             ],
         },
@@ -1527,7 +1529,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.jumpToBracketSubject",
             ],
         },
@@ -1566,7 +1568,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.jumpToLineSubject",
             ],
         },
@@ -1577,7 +1579,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "args": {
             "commands": [
                 "vimAtHome.changeToLineSubject",
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.jumpToLineSubject",
             ],
         },
@@ -1618,7 +1620,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.jumpToBlockSubject",
             ],
         },
@@ -1652,7 +1654,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.jumpToWordSubject",
             ],
         },
@@ -1663,7 +1665,7 @@ I would recommend using the original but you are welcome to use this if you wish
     //     "command": "runCommands",
     //     "args": {
     //         "commands": [
-    //             "editor.action.setSelectionAnchor",
+                "editor.action.setSelectionAnchor",
     //             "vimAtHome.changeToWordSubject",
     //             "vimAtHome.jump",
     //         ],
@@ -2105,7 +2107,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.skip"
             ]
         },
@@ -2399,7 +2401,8 @@ I would recommend using the original but you are welcome to use this if you wish
                 "list.focusUp"
             ]
         },
-        "when": "listFocus && !inputFocus && !inQuickOpen"
+        // "when": "listFocus && !inputFocus && !inQuickOpen"
+        "when": "listFocus"
     },
     {
         "key": "ctrl+down",
@@ -2412,7 +2415,36 @@ I would recommend using the original but you are welcome to use this if you wish
                 "list.focusDown"
             ]
         },
-        "when": "listFocus && !inputFocus && !inQuickOpen"
+        // "when": "listFocus && !inputFocus && !inQuickOpen"
+        "when": "listFocus"
+    },
+    {
+        "key": "ctrl+up",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "selectPrevSuggestion",
+                "selectPrevSuggestion",
+                "selectPrevSuggestion",
+                "selectPrevSuggestion",
+                "selectPrevSuggestion"
+            ]
+        },
+        "when": "suggestWidgetVisible && textInputFocus"
+    },
+    {
+        "key": "ctrl+down",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "selectNextSuggestion",
+                "selectNextSuggestion",
+                "selectNextSuggestion",
+                "selectNextSuggestion",
+                "selectNextSuggestion"
+            ]
+        },
+        "when": "suggestWidgetVisible && textInputFocus"
     },
     {
         "key": "ctrl+backspace",
@@ -2546,7 +2578,7 @@ I would recommend using the original but you are welcome to use this if you wish
             "commands": [
                 "vimAtHome.changeToInsertModePrepend",
                 "vimAtHome.changeToCharSubject",
-                "editor.action.setSelectionAnchor",
+                // "editor.action.setSelectionAnchor",
                 "vimAtHome.skip",
                 "editor.action.selectFromAnchorToCursor",
                 "editor.action.clipboardCopyAction",
@@ -2600,6 +2632,38 @@ I would recommend using the original but you are welcome to use this if you wish
                 "vimAtHome.changeToWordSubject"
             ]
         },
+        "when": "editorTextFocus && !suggestWidgetVisible"
+    },
+    {
+        "key": "left",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "vimAtHome.changeToWordSubject"
+            ]
+        },
+        "when": "suggestWidgetVisible"
+    },
+    {
+        "key": "right",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "vimAtHome.changeToWordSubject"
+            ]
+        },
+        "when": "suggestWidgetVisible"
+    },
+    {
+        "key": "f24",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "closeFindWidget",
+                "vimAtHome.changeToWordSubject"
+            ]
+        },
+        "when": "findWidgetVisible"
     },
     {
         "key": "ctrl+shift+[",
@@ -2805,12 +2869,12 @@ I would recommend using the original but you are welcome to use this if you wish
         "when": "editorTextFocus"
     },
     {
-        "key": "alt+m",
+        "key": "ctrl+m",
         "command": "vimAtHome.createWaypoint",
         "when": "editorTextFocus"
     },
     {
-        "key": "alt+f17",
+        "key": "ctrl+shift+m",
         "command": "vimAtHome.teleportToWaypoint",
         "when": "editorTextFocus"
     },
@@ -2900,24 +2964,14 @@ I would recommend using the original but you are welcome to use this if you wish
     {
         "key": "f",
         "command": "vimAtHome.skip",
-        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && !vimAtHome.awaitingInput"
     },
     {
         "key": "shift+f",
         "command": "vimAtHome.skipBackwards",
-        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && !vimAtHome.awaitingInput"
     }
-    // {
-    //     "key": "down",
-    //     "command": "cursorDown",
-    //     "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'",
-    //     "args": {
-    //         "by": "wrappedLine",
-    //         "value": 1
-    //     }
-    // }
     
 ]
-
 
 ```
