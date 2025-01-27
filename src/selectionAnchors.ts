@@ -135,6 +135,7 @@ export default class SelectionAnchor {
         const anchoredRange = this.GetSelectionRangeFromAnchor(editor.selection);
         if (anchoredRange instanceof vscode.Range) {
             let newSelection = new vscode.Selection(anchoredRange.end, anchoredRange.start);
+            
             await editor.edit(editBuilder => {
                 editBuilder.delete(newSelection);
             });

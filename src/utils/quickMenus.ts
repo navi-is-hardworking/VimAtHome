@@ -130,6 +130,16 @@ export const ModifyCommands: QuickCommand[] = [
             );
         },
     },
+    {
+        quickKey: char("b"),
+        label: "Surround Selection Brackets",
+        async execute() {
+            await vscode.commands.executeCommand(
+                "vimAtHome.bracketize"
+            );
+        },
+    },
+
 ];
 
 export const GoToCommands: QuickCommand[] = [

@@ -1069,6 +1069,12 @@ export let registeredCommands: ExtensionCommand[] = [
             await manager.addCursorToStartOfLines();
         },
     },
+    {
+        id: "vimAtHome.bracketize",
+        execute: async (manager) => {
+            await manager.Bracketize();
+        },
+    },
 
 ];
 

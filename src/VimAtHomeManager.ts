@@ -1548,6 +1548,59 @@ export default class VimAtHomeManager {
         
         editor.selections = selections;
     }
+    
+
+    async Bracketize() {
+        const editor = this.editor;
+        if (!editor) {
+            return;
+        }
+
+        const selection = editor.selection;
+        const startLine = selection.start.line;
+        const endLine = selection.end.line;
+        
+        const firstLine = editor.document.lineAt(startLine).text.match(/^\s*/);
+        if (!firstLine)
+            return;
+        const firstLineIndentation = firstLine[0];
+
+        let resultLines: string[] = [];
+        
+        resultLines.push(firstLineIndentation + '{');
+        
+        for (let i = startLine; i <= endLine; i++) {
+            const line = editor.document.lineAt(i);
+            const lineText = line.text;
+            
+            const lineIndent = lineText.match(/^\s*/);
+            if (!lineIndent)
+                continue;
+            const currentIndent = lineIndent[0];
+            const contentWithoutIndent = lineText.substring(currentIndent.length);
+            
+            if (contentWithoutIndent.length === 0) {
+                resultLines.push(lineText);
+                continue;
+            }
+            
+            resultLines.push(currentIndent + '    ' + contentWithoutIndent);
+        }
+        
+        resultLines.push(firstLineIndentation + '}');
+        
+        const finalText = resultLines.join('\n');
+        
+        const selectionRange = new vscode.Range(
+            new vscode.Position(startLine, 0),
+            new vscode.Position(endLine, editor.document.lineAt(endLine).text.length)
+        );
+        
+        editor.edit(editBuilder => {
+            editBuilder.replace(selectionRange, finalText);
+        });
+
+    }
 
 }
 
