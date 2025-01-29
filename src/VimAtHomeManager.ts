@@ -590,6 +590,7 @@ export default class VimAtHomeManager {
             this.changeMode(changeRequest)
     }
 
+    // do ctrl+back in block mode to get nearest encapsulating function
     async getNthVerticalLine(direction: common.Direction, distance: number) {
         const document = this.editor.document;
         const lineCount = document.lineCount;
@@ -1530,26 +1531,55 @@ export default class VimAtHomeManager {
         }
     }
     
-    async addCursorToStartOfLines() {
-        // this.extendAnchor.SelectToAnchor(this.editor);
-        const editor = this.editor;
-        const document = editor.document;
-        const selection = editor.selection;
+    async metaSelectStart() {
+        if (this.mode.getSubjectName() == "BLOCK") {
+            const editor = this.editor;
+            const document = editor.document;
+            const selection = editor.selection;
         
-        const startLine = Math.min(selection.start.line, selection.end.line);
-        const endLine = Math.max(selection.start.line, selection.end.line);
+            const startLine = Math.min(selection.start.line, selection.end.line);
+            const endLine = Math.max(selection.start.line, selection.end.line);
         
-        const selections: vscode.Selection[] = [];
-        for (let i = startLine; i <= endLine; i++) {
-            const line = document.lineAt(i);
-            const pos = new vscode.Position(i, line.firstNonWhitespaceCharacterIndex);
-            selections.push(new vscode.Selection(pos, pos));
+            const selections: vscode.Selection[] = [];
+            for (let i = startLine; i <= endLine; i++) {
+                const line = document.lineAt(i);
+                const pos = new vscode.Position(i, line.firstNonWhitespaceCharacterIndex);
+                selections.push(new vscode.Selection(pos, pos));
+            }
+        
+            editor.selections = selections;
         }
-        
-        editor.selections = selections;
+        else {
+            this.extendAnchor.SelectToAnchor(this.editor);
+            await vscode.commands.executeCommand("editor.action.addSelectionToPreviousFindMatch");
+        }
     }
     
-
+    async metaSelectEnd() {
+        
+        if (this.mode.getSubjectName() == "BLOCK") {
+            const editor = this.editor;
+            const document = editor.document;
+            const selection = editor.selection;
+            
+            const startLine = Math.min(selection.start.line, selection.end.line);
+            const endLine = Math.max(selection.start.line, selection.end.line);
+            
+            const selections: vscode.Selection[] = [];
+            for (let i = startLine; i <= endLine; i++) {
+                const line = document.lineAt(i);
+                const pos = new vscode.Position(i, 1000); 
+                selections.push(new vscode.Selection(pos, pos));
+            }
+            
+            editor.selections = selections;
+        }
+        else {
+            this.extendAnchor.SelectToAnchor(this.editor);
+            await vscode.commands.executeCommand("editor.action.addSelectionToNextFindMatch");
+        }
+    }
+    
     async Bracketize() {
         const editor = this.editor;
         if (!editor) {
@@ -1567,7 +1597,7 @@ export default class VimAtHomeManager {
 
         let resultLines: string[] = [];
         
-        resultLines.push(firstLineIndentation + '{');
+        resultLines.push(firstLineIndentation + '{'); // }
         
         for (let i = startLine; i <= endLine; i++) {
             const line = editor.document.lineAt(i);
@@ -1600,6 +1630,81 @@ export default class VimAtHomeManager {
             editBuilder.replace(selectionRange, finalText);
         });
 
+    }
+    
+    async goToNearestSymbolAbove(): Promise<void> {
+        const document = this.editor.document;
+        const currentPosition = this.editor.selection.active;
+        
+        const symbols = await vscode.commands.executeCommand<vscode.DocumentSymbol[]>(
+            'vscode.executeDocumentSymbolProvider',
+            document.uri
+        );
+
+        if (!symbols?.length) return;
+
+    function moveToNearestFunctionSymbol(symbols: vscode.DocumentSymbol[], position: vscode.Position): vscode.DocumentSymbol | undefined {
+            let closestSymbol: vscode.DocumentSymbol | undefined;
+            
+            for (const symbol of symbols) {
+                if (symbol.range.start.line < position.line && 
+                    (symbol.kind === vscode.SymbolKind.Function || 
+                    symbol.kind === vscode.SymbolKind.Method || 
+                    symbol.kind === vscode.SymbolKind.Constructor)) {
+                    
+                    if (!closestSymbol || symbol.range.start.line > closestSymbol.range.start.line) {
+                        closestSymbol = symbol;
+                    }
+                }
+
+                if (symbol.children?.length) {
+                    const childSymbol = moveToNearestFunctionSymbol(symbol.children, position);
+                    if (childSymbol && (!closestSymbol || childSymbol.range.start.line > closestSymbol.range.start.line)) {
+                        closestSymbol = childSymbol;
+                    }
+                }
+            }
+            
+            return closestSymbol;
+        }
+
+        const nearestSymbol = moveToNearestFunctionSymbol(symbols, currentPosition);
+        
+        if (nearestSymbol) {
+            const newPosition = nearestSymbol.selectionRange.start;
+            this.editor.selection = new vscode.Selection(newPosition, newPosition);
+        }
+    }
+
+    async goToEndOfLine() {
+        let lineNumber = this.editor.selection.active.line;
+        this.editor.selection = new vscode.Selection(new vscode.Position(lineNumber, 1000), new vscode.Position(lineNumber, 1000));
+    }
+
+    async firstSubjectInScope() {
+        switch (this.mode.getSubjectName()) {
+            case ("BLOCK"):
+                await this.goToNearestSymbolAbove();
+                await this.mode.fixSelection();
+                break;
+            case ("BRACKETS"):
+            case ("BRACKETS_INCLUSIVE"):
+                await this.goToNearestSymbolAbove();
+                await this.goToEndOfLine();
+                await this.mode.fixSelection();
+                break;
+            case ("LINE"): 
+                await this.nextIndentUp("backwards");
+                break;
+            case ("CHAR"): 
+                await this.mockRepeatSkip("backwards");
+                break;
+            default:
+                await this.SetSelectionAnchor();
+                await this.executeSubjectCommand("firstObjectInScope");
+                common.setVirtualColumnNumber(0);
+                break;
+        }
     }
 
 }

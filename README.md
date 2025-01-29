@@ -770,6 +770,24 @@ I would recommend using the original but you are welcome to use this if you wish
         }
     },
     {
+        "key": "f19 left",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "vimAtHome.changeToInsertModePrepend",
+            ]
+        }
+    },
+    {
+        "key": "f19 right",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "vimAtHome.changeToInsertModeAppend",
+            ]
+        }
+    },
+    {
         "key": "shift+f20",
         "command": "runCommands",
         "args": {
@@ -957,10 +975,10 @@ I would recommend using the original but you are welcome to use this if you wish
         "key": "ctrl+t",
         "command": "UnderScroll.toggleUnderSynchronizedScrolling"
     },
-    {
-        "key": "f19",
-        "command": "cursorWordEndLeft"
-    },
+    // {
+    //     "key": "f19",
+    //     "command": "cursorWordEndLeft"
+    // },
     {
         "key": "f21",
         "command": "cursorWordStartRight"
@@ -1074,12 +1092,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
-        "key": "ctrl+up",
-        "command": "vimAtHome.scrollEditorUp",
-        "when": "editorTextFocus"
-    },
-    {
-        "key": "ctrl+down",
+        "key": "pageDown",
         "command": "vimAtHome.scrollEditorDown",
         "when": "editorTextFocus"
     },
@@ -1818,7 +1831,8 @@ I would recommend using the original but you are welcome to use this if you wish
     {
         "key": "down",
         "command": "vimAtHome.nextSubjectDown",
-        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'",
+        "args": { "logicalLine": true },
     },
     {
         "key": "up",
@@ -1897,17 +1911,7 @@ I would recommend using the original but you are welcome to use this if you wish
     //     "when": "editorTextFocus && vimAtHome.subject == 'BLOCK' && vimAtHome.mode == 'COMMAND'"
     // },
     {
-        "key": "ctrl+up",
-        "command": "runCommands",
-        "args": {
-            "commands": [
-                "vimAtHome.scrollEditorUp",
-            ]
-        },
-        "when": "editorTextFocus"
-    },
-    {
-        "key": "ctrl+down",
+        "key": "pageDown",
         "command": "runCommands",
         "args": {
             "commands": [
@@ -2211,12 +2215,12 @@ I would recommend using the original but you are welcome to use this if you wish
         "when": "editorTextFocus"
     },
     {
-        "key": "ctrl+up",
+        "key": "pageUp",
         "command": "vimAtHome.hopVerticalUp",
         "when": "editorTextFocus"
     },
     {
-        "key": "ctrl+down",
+        "key": "pageDown",
         "command": "vimAtHome.hopVerticalDown",
         "when": "editorTextFocus"
     },
@@ -2279,7 +2283,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
     {
-        "key": "ctrl+shift+up",
+        "key": "shift+pageUp",
         "command": "runCommands",
         "args": {
             "commands": [
@@ -2290,7 +2294,7 @@ I would recommend using the original but you are welcome to use this if you wish
     },
     
     {
-        "key": "ctrl+shift+down",
+        "key": "shift+pageDown",
         "command": "runCommands",
         "args": {
             "commands": [
@@ -2365,7 +2369,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "when": "editorTextFocus"
     },
     {
-        "key": "ctrl+up",
+        "key": "pageUp",
         "command": "runCommands",
         "args": {
             "commands": [
@@ -2378,7 +2382,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "when": "inQuickOpen"
     },
     {
-        "key": "ctrl+down",
+        "key": "pageDown",
         "command": "runCommands",
         "args": {
             "commands": [
@@ -2391,7 +2395,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "when": "inQuickOpen"
     },
     {
-        "key": "ctrl+up",
+        "key": "pageUp",
         "command": "runCommands",
         "args": {
             "commands": [
@@ -2405,7 +2409,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "when": "listFocus"
     },
     {
-        "key": "ctrl+down",
+        "key": "pageDown",
         "command": "runCommands",
         "args": {
             "commands": [
@@ -2419,7 +2423,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "when": "listFocus"
     },
     {
-        "key": "ctrl+up",
+        "key": "pageUp",
         "command": "runCommands",
         "args": {
             "commands": [
@@ -2433,7 +2437,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "when": "suggestWidgetVisible && textInputFocus"
     },
     {
-        "key": "ctrl+down",
+        "key": "pageDown",
         "command": "runCommands",
         "args": {
             "commands": [
@@ -2604,12 +2608,12 @@ I would recommend using the original but you are welcome to use this if you wish
     {
         "key": "ctrl+right",
         "command": "vimAtHome.goToLastSubjectInScope",
-        "when": "(editorTextFocus && vimAtHome.subject != 'CHAR') && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+left",
         "command": "vimAtHome.goToFirstSubjectInScope",
-        "when": "(editorTextFocus && vimAtHome.subject != 'CHAR') &&vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+alt+y",
@@ -2736,7 +2740,7 @@ I would recommend using the original but you are welcome to use this if you wish
     },
 
     {
-        "key": "pageUp",
+        "key": "ctrl+up",
         "command": "runCommands",
         "args": {
             "commands": [
@@ -2754,7 +2758,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "when": "editorTextFocus"
     },
     {
-        "key": "pageDown",
+        "key": "ctrl+down",
         "command": "runCommands",
         "args": {
             "commands": [
@@ -2959,7 +2963,11 @@ I would recommend using the original but you are welcome to use this if you wish
     },
     {
         "key": "ctrl+shift+d",
-        "command": "vimAtHome.addCursorToStartOfSelectedLines"
+        "command": "vimAtHome.metaSelectStart"
+    },
+    {
+        "key": "ctrl+d",
+        "command": "vimAtHome.metaSelectEnd"
     },
     {
         "key": "f",
@@ -2970,7 +2978,17 @@ I would recommend using the original but you are welcome to use this if you wish
         "key": "shift+f",
         "command": "vimAtHome.skipBackwards",
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && !vimAtHome.awaitingInput"
-    }
+    },
+    {
+        "key": "f18",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "vimAtHome.changeToBlockSubject",
+            ]
+        },
+        "when": "editorTextFocus"
+    },
     
 ]
 

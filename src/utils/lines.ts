@@ -166,8 +166,6 @@ export function getNextSignificantPosition(
     return undefined;
 }
 
-
-
 export function lineIsSignificant(line: vscode.TextLine, ) {
     const wordRegex = getWordDefinition(true);
     return wordRegex ? wordRegex.test(line.text) : false;

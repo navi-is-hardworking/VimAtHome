@@ -463,17 +463,7 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.goToFirstSubjectInScope",
         execute: async (manager) => {
-            if (manager.mode.getSubjectName() === "LINE") {
-                await manager.nextIndentUp(Direction.backwards);
-            }
-            else if (manager.mode.getSubjectName() === "CHAR") {
-                await manager.mockRepeatSkip(Direction.backwards);
-            }
-            else {
-                await manager.SetSelectionAnchor();
-                await manager.executeSubjectCommand("firstObjectInScope");
-                setVirtualColumnNumber(0);
-            }
+            await manager.firstSubjectInScope();
         },
     },
     {
@@ -1064,9 +1054,15 @@ export let registeredCommands: ExtensionCommand[] = [
         },
     },
     {
-        id: "vimAtHome.addCursorToStartOfSelectedLines",
+        id: "vimAtHome.metaSelectStart",
         execute: async (manager) => {
-            await manager.addCursorToStartOfLines();
+            await manager.metaSelectStart();
+        },
+    },
+    {
+        id: "vimAtHome.metaSelectEnd",
+        execute: async (manager) => {
+            await manager.metaSelectEnd();
         },
     },
     {
@@ -1075,6 +1071,14 @@ export let registeredCommands: ExtensionCommand[] = [
             await manager.Bracketize();
         },
     },
+    {
+        id: "vimAtHome.firstSymbolAbove",
+        execute: async (manager) => {
+            await manager.goToNearestSymbolAbove();
+        },
+    },
+
+
 
 ];
 
