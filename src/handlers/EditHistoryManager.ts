@@ -20,14 +20,12 @@ interface SerializedEditHistory {
 export class EditHistoryManager {
     
     private fileHistories: Map<string, FileEditHistory> = new Map();
-    private maxPositionsPerFile: number = 100;
+    private maxPositionsPerFile: number = 10;
     private debounceTimeout: NodeJS.Timeout | undefined;
     private lastEditTime = 0;
     private readonly debounceDelay = 300;
     private historyChanged = false;
     private static instance: EditHistoryManager;
-    
-    
 
     public static getInstance(): EditHistoryManager {
     
@@ -181,6 +179,7 @@ export class EditHistoryManager {
 
         try {
             const historyFilePath = path.join(workspaceFolderPath, '.vscode', 'EditHistory.json');
+            console.log(`saving edit history to ${historyFilePath}`);
             fs.mkdirSync(path.dirname(historyFilePath), { recursive: true });
             fs.writeFileSync(historyFilePath, JSON.stringify(serialized, null, 2), 'utf8');
             console.log(`Edit history saved to ${historyFilePath}`);

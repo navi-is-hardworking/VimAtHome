@@ -1636,14 +1636,14 @@ export default class VimAtHomeManager {
 
     }
     
-    moveToNearestFunctionSymbol(symbols: vscode.DocumentSymbol[], position: vscode.Position, direction: common.Direction): vscode.DocumentSymbol | undefined {
+    // if symbols are sorted maybe we can do binary search for proper position
+    // can we return current/prev/next symbols?l
+    moveToNearestFunctionSymbol(symbols: vscode.DocumentSymbol[], position: vscode.Position): vscode.DocumentSymbol | undefined {
         let closestSymbol: vscode.DocumentSymbol | undefined;
-        
-        let start = direction === "forwards" ? 0 : symbols.length - 1;
-        const inc = direction === "forwards" ? 1 : -1;
-        for (var i = start; i >= 0 && i < symbols.length; i+=inc) {
-            let symbol = symbols[i];
-            if (symbol.range.start.line < position.line && 
+        for (const symbol of symbols) {
+            
+            // direciton we want bounto be either <= for up or < + 1
+            if (symbol.range.start.line <= position.line && 
                 (symbol.kind === vscode.SymbolKind.Function || 
                 symbol.kind === vscode.SymbolKind.Method || 
                 symbol.kind === vscode.SymbolKind.Constructor)) {
@@ -1654,14 +1654,14 @@ export default class VimAtHomeManager {
             }
 
             if (symbol.children?.length) {
-                const childSymbol = this.moveToNearestFunctionSymbol(symbol.children, position, direction);
+                const childSymbol = this.moveToNearestFunctionSymbol(symbol.children, position);
                 if (childSymbol && (!closestSymbol || childSymbol.range.start.line > closestSymbol.range.start.line)) {
                     closestSymbol = childSymbol;
                 }
             }
         }
         
-        return closestSymbol;
+        return closestSymbol
     }
     
     async goToNearestSymbol(direction: common.Direction): Promise<void> {
@@ -1684,11 +1684,14 @@ export default class VimAtHomeManager {
         
         // outputChannel.appendLine(JSON.stringify(symbols));
         
-        const nearestSymbol = this.moveToNearestFunctionSymbol(symbols, currentPosition, direction);
+        const nearestSymbol = this.moveToNearestFunctionSymbol(symbols, currentPosition);
         outputChannel.appendLine(JSON.stringify(nearestSymbol));
         if (nearestSymbol) {
-            const newPosition = direction === "forwards" ? nearestSymbol.selectionRange.start : nearestSymbol.selectionRange.end;
+            const newPosition = direction === "forwards" ? nearestSymbol.range.start : nearestSymbol.range.end;
             
+            outputChannel.appendLine(`range: ${JSON.stringify(nearestSymbol.selectionRange)}`);
+            outputChannel.appendLine(`start: ${JSON.stringify(nearestSymbol.selectionRange.start)}`);
+            outputChannel.appendLine(`end: ${JSON.stringify(nearestSymbol.selectionRange.end)}`);
             outputChannel.appendLine(`new position: ${JSON.stringify(newPosition)}`);
             this.editor.selection = new vscode.Selection(newPosition, newPosition);
         }

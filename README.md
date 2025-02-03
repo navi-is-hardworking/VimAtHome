@@ -1353,10 +1353,6 @@ I would recommend using the original but you are welcome to use this if you wish
         "when": "editorTextFocus"
     },
     {
-        "key": "ctrl+k ctrl+alt+left",
-        "command": "workbench.action.navigateBackInEditLocations",
-    },
-    {
         "key": "ctrl+k ctrl+alt+right",
         "command": "workbench.action.navigateForwardInEditLocations",
     },
@@ -2636,34 +2632,34 @@ I would recommend using the original but you are welcome to use this if you wish
                 "vimAtHome.changeToWordSubject"
             ]
         },
-        "when": "editorTextFocus && !suggestWidgetVisible"
+        "when": "editorTextFocus"
     },
-    {
-        "key": "left",
-        "command": "runCommands",
-        "args": {
-            "commands": [
-                "vimAtHome.changeToWordSubject"
-            ]
-        },
-        "when": "suggestWidgetVisible"
-    },
-    {
-        "key": "right",
-        "command": "runCommands",
-        "args": {
-            "commands": [
-                "vimAtHome.changeToWordSubject"
-            ]
-        },
-        "when": "suggestWidgetVisible"
-    },
+    // {
+    //     "key": "left",
+    //     "command": "runCommands",
+    //     "args": {
+    //         "commands": [
+    //             "vimAtHome.changeToWordSubject"
+    //         ]
+    //     },
+    //     "when": "suggestWidgetVisible"
+    // },
+    // {
+    //     "key": "right",
+    //     "command": "runCommands",
+    //     "args": {
+    //         "commands": [
+    //             "vimAtHome.changeToWordSubject"
+    //         ]
+    //     },
+    //     "when": "suggestWidgetVisible"
+    // },
     {
         "key": "f24",
         "command": "runCommands",
         "args": {
             "commands": [
-                "closeFindWidget",
+                // "closeFindWidget",
                 "vimAtHome.changeToWordSubject"
             ]
         },
@@ -2794,9 +2790,8 @@ I would recommend using the original but you are welcome to use this if you wish
                 "removeSecondaryCursors",
             ]
         },
-        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND' || inlineSuggestionVisible"
     },
-
     {
         "key": "alt+up",
         "command": "vimAtHome.swapSubjectUp",
@@ -2988,6 +2983,38 @@ I would recommend using the original but you are welcome to use this if you wish
             ]
         },
         "when": "editorTextFocus"
+    },
+    // {
+    //     "key": "ctrl+k ctrl+alt+left",
+    //     "command": "workbench.action.navigateBackInEditLocations"
+    // },
+    // {
+    //     "key": "ctrl+up",
+    //     "command": "vimAtHome.firstSymbolAbove"
+    // },
+    // {
+    //     "key": "ctrl+down",
+    //     "command": "vimAtHome.firstSymbolBelow"
+    // },
+    {
+        "key": "ctrl+k ctrl+alt+left",
+        "command": "vimAtHome.goToPrevEdit",
+        "when": "editorTextFocus"   
+    },
+    {
+        "key": "ctrl+k ctrl+alt+right",
+        "command": "vimAtHome.goToNextEdit",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+alt+l",
+        "command": "workbench.action.compareEditor.nextChange",
+        "when": "textCompareEditorVisible"
+    },
+    {
+        "key": "ctrl+alt+j",
+        "command": "workbench.action.compareEditor.previousChange",
+        "when": "textCompareEditorVisible"
     },
     
 ]
