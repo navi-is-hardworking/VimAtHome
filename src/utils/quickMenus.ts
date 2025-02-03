@@ -402,6 +402,15 @@ export const ViewCommands: QuickCommand[] = [
             );
         },
     },
+    {
+        quickKey: char("z"),
+        label: "zen mode",
+        execute: async () => {
+            await vscode.commands.executeCommand(
+                "workbench.action.toggleZenMode"
+            );
+        },
+    },
 ];
 
 export const SpaceCommands: QuickCommand[] = [

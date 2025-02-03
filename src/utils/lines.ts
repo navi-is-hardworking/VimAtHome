@@ -278,7 +278,6 @@ export function iterPosition(
     }).skip(options.currentInclusive ? 0 : 1);
 }
 
-
 function getNearestLineOfChangeOfIndentation(
     document: vscode.TextDocument,
     currentLine: vscode.TextLine,
@@ -368,4 +367,7 @@ export function getLineToFoldedMap(
 export function isLineInFoldedRange(lineNumber: number, foldedMap: boolean[]): boolean {
     return foldedMap[lineNumber] || false;
 }
+
+
+
 

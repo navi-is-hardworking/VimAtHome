@@ -469,17 +469,7 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.goToLastSubjectInScope",
         execute: async (manager) => {
-            if (manager.mode.getSubjectName() === "LINE") {
-                await manager.nextIndentUp(Direction.forwards);
-            }
-            else if (manager.mode.getSubjectName() === "CHAR") {
-                await manager.mockRepeatSkip(Direction.forwards);
-            }
-            else {
-                await manager.SetSelectionAnchor();
-                await manager.executeSubjectCommand("lastObjectInScope");
-                setVirtualColumnNumber(10000);
-            }
+            await manager.lastSubjectInScope();
         },
     },
     {
@@ -1074,12 +1064,29 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.firstSymbolAbove",
         execute: async (manager) => {
-            await manager.goToNearestSymbolAbove();
+            await manager.goToNearestSymbol("forwards");
         },
     },
-
-
-
+    {
+        id: "vimAtHome.firstSymbolBelow",
+        execute: async (manager) => {
+            await manager.goToNearestSymbol("backwards");
+        },
+    },
+    {
+        id: "vimAtHome.goToPrevEdit",
+        execute: async (manager) => {
+            await manager.goToEdit("backwards");
+        },
+    },
+    {
+        id: "vimAtHome.goToNextEdit",
+        execute: async (manager) => {
+            await manager.goToEdit("forwards");
+        },
+    },
+    
+    
 ];
 
 

@@ -19,7 +19,7 @@ import * as ncp from 'copy-paste'
 import { promisify } from "util";
 import { SelectionHistoryManager } from "./handlers/SelectionHistoryManager";
 import {Terminal} from "./utils/terminal"
-import { createHistogram } from "perf_hooks";
+import { EditHistoryManager } from './handlers/EditHistoryManager';
 
 let outputChannel = vscode.window.createOutputChannel("Vah.Manager");
 
@@ -32,6 +32,7 @@ export default class VimAtHomeManager {
     public statusBar: vscode.StatusBarItem;
     public editor: vscode.TextEditor = undefined!;
     public extendAnchor: SelectionAnchor = new SelectionAnchor();
+    public editHistoryManager: EditHistoryManager = EditHistoryManager.getInstance();
 
     constructor(public config: Config) {
         this.statusBar = vscode.window.createStatusBarItem(
@@ -42,6 +43,7 @@ export default class VimAtHomeManager {
 
         this.mode = new NullMode(this);
         this.statusBar.show();
+        this.editHistoryManager = new EditHistoryManager();
     }
 
     async changeEditor(editor: vscode.TextEditor | undefined) {
@@ -86,7 +88,7 @@ export default class VimAtHomeManager {
     async changeMode(newMode: EditorModeChangeRequest) {
         if (newMode.kind === "INSERT") 
         {
-            this.extendAnchor.SelectToAnchor(this.editor);
+            this.extendAnchor.SelectToAnchorIfExtending(this.editor);
             this.extendAnchor.EndExtendMode();
         }
         
@@ -225,7 +227,7 @@ export default class VimAtHomeManager {
     }
 
     async openSpaceMenu() {
-        this.extendAnchor.SelectToAnchor(this.editor);
+        this.extendAnchor.SelectToAnchorIfExtending(this.editor);
         const choice = await quickCommandPicker(quickMenus.SpaceCommands);
 
         if (choice) {
@@ -234,7 +236,7 @@ export default class VimAtHomeManager {
     }
 
     async openSubjectMenu() {
-        this.extendAnchor.SelectToAnchor(this.editor);
+        this.extendAnchor.SelectToAnchorIfExtending(this.editor);
         const choice = await quickCommandPicker(quickMenus.SubjectChangeCommands);
         if (choice) {
             await choice.execute();
@@ -242,7 +244,7 @@ export default class VimAtHomeManager {
     }
 
     async openGoToMenu() {
-        this.extendAnchor.SelectToAnchor(this.editor);
+        this.extendAnchor.SelectToAnchorIfExtending(this.editor);
         const choice = await quickCommandPicker(quickMenus.GoToCommands, {
             label: "Go to line...",
             detail: "Enter a line number",
@@ -266,7 +268,7 @@ export default class VimAtHomeManager {
     }
 
     async openModifyMenu() {
-        this.extendAnchor.SelectToAnchor(this.editor);
+        this.extendAnchor.SelectToAnchorIfExtending(this.editor);
 
         const choice = await quickCommandPicker(quickMenus.ModifyCommands);
         if (choice) {
@@ -277,7 +279,7 @@ export default class VimAtHomeManager {
     }
 
     async openViewMenu() {
-        this.extendAnchor.SelectToAnchor(this.editor);
+        this.extendAnchor.SelectToAnchorIfExtending(this.editor);
         
         const choice = await quickCommandPicker(quickMenus.ViewCommands);
 
@@ -400,7 +402,7 @@ export default class VimAtHomeManager {
     }
 
     async pullSubject(subjectName: SubjectName) {
-        this.extendAnchor.SelectToAnchor(this.editor);
+        this.extendAnchor.SelectToAnchorIfExtending(this.editor);
         const newMode = await this.mode.pullSubject(subjectName);
         if (newMode === undefined) return;
         this.clearSelections();
@@ -454,7 +456,7 @@ export default class VimAtHomeManager {
     }
 
     async deleteLineAbove() {
-        this.extendAnchor.SelectToAnchor(this.editor);
+        this.extendAnchor.SelectToAnchorIfExtending(this.editor);
         
         const { editor } = this;
         const document = editor.document;
@@ -485,13 +487,12 @@ export default class VimAtHomeManager {
     }
 
     async deleteLines() {
-        this.extendAnchor.SelectToAnchor(this.editor);
+        this.extendAnchor.SelectToAnchorIfExtending(this.editor);
         vscode.commands.executeCommand( "editor.action.deleteLines" );
     }
     
     async deleteLineBelow() {
-        this.extendAnchor.SelectToAnchor(this.editor);
-        
+        this.extendAnchor.SelectToAnchorIfExtending(this.editor);
         const { editor } = this;
         const document = editor.document;
         
@@ -643,6 +644,7 @@ export default class VimAtHomeManager {
         await this.updateEditorPosition(currentLine);
     }
     
+    // if in extend mode, should cut instead of copy
     async hopVertical(direction: common.Direction) {
         if (this.mode.getSubjectName() === "LINE") {
             await this.sameIntentBlockAfterIndentChange(direction);
@@ -790,7 +792,7 @@ export default class VimAtHomeManager {
     }
 
     async deleteNext(direction: common.Direction): Promise<void> {
-        this.extendAnchor.SelectToAnchor(this.editor);
+        this.extendAnchor.SelectToAnchorIfExtending(this.editor);
         
         const { editor } = this;
     
@@ -946,12 +948,12 @@ export default class VimAtHomeManager {
     }
 
     async copyLine() {
-        this.extendAnchor.SelectToAnchor(this.editor);
+        this.extendAnchor.SelectToAnchorIfExtending(this.editor);
         cacheCommands.copyLine(this.editor.document.lineAt(this.editor.selection.active).text);
     }
     
     async copyBracket() {
-        this.extendAnchor.SelectToAnchor(this.editor);
+        this.extendAnchor.SelectToAnchorIfExtending(this.editor);
         cacheCommands.copyBracket(this.editor.document.lineAt(this.editor.selection.active).text);
     }
 
@@ -985,7 +987,7 @@ export default class VimAtHomeManager {
     }
 
     async pasteSubject() {
-        this.extendAnchor.SelectToAnchor(this.editor);
+        this.extendAnchor.SelectToAnchorIfExtending(this.editor);
         
         const clipText = await vscode.env.clipboard.readText();
         const currentSelections = this.editor.selections.length;
@@ -1257,7 +1259,7 @@ export default class VimAtHomeManager {
     }
 
     async newLineBelow(): Promise<void> {
-        this.extendAnchor.SelectToAnchor(this.editor);
+        this.extendAnchor.SelectToAnchorIfExtending(this.editor);
         
         const document = this.editor.document; // 
         const selection = this.editor.selection;
@@ -1281,7 +1283,7 @@ export default class VimAtHomeManager {
     }
     
     async newLineAbove(): Promise<void> {
-        this.extendAnchor.SelectToAnchor(this.editor);
+        this.extendAnchor.SelectToAnchorIfExtending(this.editor);
         
         const document = this.editor.document;
         const selection = this.editor.selection;
@@ -1398,7 +1400,7 @@ export default class VimAtHomeManager {
     }
     
     async findNextExact() {
-        this.extendAnchor.SelectToAnchor(this.editor);
+        this.extendAnchor.SelectToAnchorIfExtending(this.editor);
         
         const currentText = this.editor.document.getText(this.editor.selection);
         if (!currentText) return;
@@ -1423,7 +1425,7 @@ export default class VimAtHomeManager {
     }
 
     async findPrevExact() {
-        this.extendAnchor.SelectToAnchor(this.editor);
+        this.extendAnchor.SelectToAnchorIfExtending(this.editor);
         
         const currentText = this.editor.document.getText(this.editor.selection);
         if (!currentText) return;
@@ -1489,7 +1491,7 @@ export default class VimAtHomeManager {
     
     async ToggleExtendMode() {
         if (this.extendAnchor.IsExtendModeOn()) {
-            this.extendAnchor.SelectToAnchor(this.editor);
+            this.extendAnchor.SelectToAnchorIfExtending(this.editor);
             return;
         }
         else {
@@ -1498,17 +1500,17 @@ export default class VimAtHomeManager {
     }
     
     async JumpToExtendMode() {
-        this.extendAnchor.SelectToAnchor(this.editor);
+        this.extendAnchor.SelectToAnchorIfExtending(this.editor);
         await vscode.commands.executeCommand("editor.action.indentLines");
     }
     
     async selectToAnchor() {
-        this.extendAnchor.SelectToAnchor(this.editor);
+        this.extendAnchor.SelectToAnchorIfExtending(this.editor);
     }
     
     async showSelectionToAnchor() {
         this.extendAnchor.StartExtendMode();
-        this.extendAnchor.SelectToAnchor(this.editor);
+        this.extendAnchor.SelectToAnchorIfExtending(this.editor);
         this.extendAnchor.StartExtendMode();
     }
     
@@ -1548,9 +1550,10 @@ export default class VimAtHomeManager {
             }
         
             editor.selections = selections;
+            await this.changeMode( {kind: "INSERT"} );
         }
         else {
-            this.extendAnchor.SelectToAnchor(this.editor);
+            this.extendAnchor.SelectToAnchorIfExtending(this.editor);
             await vscode.commands.executeCommand("editor.action.addSelectionToPreviousFindMatch");
         }
     }
@@ -1573,9 +1576,10 @@ export default class VimAtHomeManager {
             }
             
             editor.selections = selections;
+            await this.changeMode( {kind: "INSERT"} );
         }
         else {
-            this.extendAnchor.SelectToAnchor(this.editor);
+            this.extendAnchor.SelectToAnchorIfExtending(this.editor);
             await vscode.commands.executeCommand("editor.action.addSelectionToNextFindMatch");
         }
     }
@@ -1632,7 +1636,35 @@ export default class VimAtHomeManager {
 
     }
     
-    async goToNearestSymbolAbove(): Promise<void> {
+    moveToNearestFunctionSymbol(symbols: vscode.DocumentSymbol[], position: vscode.Position, direction: common.Direction): vscode.DocumentSymbol | undefined {
+        let closestSymbol: vscode.DocumentSymbol | undefined;
+        
+        let start = direction === "forwards" ? 0 : symbols.length - 1;
+        const inc = direction === "forwards" ? 1 : -1;
+        for (var i = start; i >= 0 && i < symbols.length; i+=inc) {
+            let symbol = symbols[i];
+            if (symbol.range.start.line < position.line && 
+                (symbol.kind === vscode.SymbolKind.Function || 
+                symbol.kind === vscode.SymbolKind.Method || 
+                symbol.kind === vscode.SymbolKind.Constructor)) {
+                
+                if (!closestSymbol || symbol.range.start.line > closestSymbol.range.start.line) {
+                    closestSymbol = symbol;
+                }
+            }
+
+            if (symbol.children?.length) {
+                const childSymbol = this.moveToNearestFunctionSymbol(symbol.children, position, direction);
+                if (childSymbol && (!closestSymbol || childSymbol.range.start.line > closestSymbol.range.start.line)) {
+                    closestSymbol = childSymbol;
+                }
+            }
+        }
+        
+        return closestSymbol;
+    }
+    
+    async goToNearestSymbol(direction: common.Direction): Promise<void> {
         const document = this.editor.document;
         const currentPosition = this.editor.selection.active;
         
@@ -1641,37 +1673,23 @@ export default class VimAtHomeManager {
             document.uri
         );
 
-        if (!symbols?.length) return;
-
-    function moveToNearestFunctionSymbol(symbols: vscode.DocumentSymbol[], position: vscode.Position): vscode.DocumentSymbol | undefined {
-            let closestSymbol: vscode.DocumentSymbol | undefined;
-            
-            for (const symbol of symbols) {
-                if (symbol.range.start.line < position.line && 
-                    (symbol.kind === vscode.SymbolKind.Function || 
-                    symbol.kind === vscode.SymbolKind.Method || 
-                    symbol.kind === vscode.SymbolKind.Constructor)) {
-                    
-                    if (!closestSymbol || symbol.range.start.line > closestSymbol.range.start.line) {
-                        closestSymbol = symbol;
-                    }
-                }
-
-                if (symbol.children?.length) {
-                    const childSymbol = moveToNearestFunctionSymbol(symbol.children, position);
-                    if (childSymbol && (!closestSymbol || childSymbol.range.start.line > closestSymbol.range.start.line)) {
-                        closestSymbol = childSymbol;
-                    }
-                }
-            }
-            
-            return closestSymbol;
+        if (!symbols?.length) {
+            let inc = direction === "forwards" ? 25 : -25;
+            this.editor.selection = new vscode.Selection(
+                this.editor.selection.active.with(this.editor.selection.active.line+inc), 
+                this.editor.selection.anchor.with(this.editor.selection.anchor.line+inc)
+            );
+            return; 
         }
-
-        const nearestSymbol = moveToNearestFunctionSymbol(symbols, currentPosition);
         
+        // outputChannel.appendLine(JSON.stringify(symbols));
+        
+        const nearestSymbol = this.moveToNearestFunctionSymbol(symbols, currentPosition, direction);
+        outputChannel.appendLine(JSON.stringify(nearestSymbol));
         if (nearestSymbol) {
-            const newPosition = nearestSymbol.selectionRange.start;
+            const newPosition = direction === "forwards" ? nearestSymbol.selectionRange.start : nearestSymbol.selectionRange.end;
+            
+            outputChannel.appendLine(`new position: ${JSON.stringify(newPosition)}`);
             this.editor.selection = new vscode.Selection(newPosition, newPosition);
         }
     }
@@ -1684,12 +1702,12 @@ export default class VimAtHomeManager {
     async firstSubjectInScope() {
         switch (this.mode.getSubjectName()) {
             case ("BLOCK"):
-                await this.goToNearestSymbolAbove();
+                await this.goToNearestSymbol("forwards");
                 await this.mode.fixSelection();
                 break;
             case ("BRACKETS"):
             case ("BRACKETS_INCLUSIVE"):
-                await this.goToNearestSymbolAbove();
+                await this.goToNearestSymbol("backwards");
                 await this.goToEndOfLine();
                 await this.mode.fixSelection();
                 break;
@@ -1705,6 +1723,53 @@ export default class VimAtHomeManager {
                 common.setVirtualColumnNumber(0);
                 break;
         }
+    }
+    
+    async lastSubjectInScope() {
+        switch (this.mode.getSubjectName()) {
+            case ("BLOCK"):
+                let startLine = lineUtils.getNextLineOfChangeOfIndentation(
+                    "lessThan",
+                    "backwards",
+                    this.editor.document,
+                    this.editor.document.lineAt(this.editor.selection.active.line)
+                );
+                let endLine = lineUtils.getNextLineOfChangeOfIndentation(
+                    "lessThan",
+                    "forwards",
+                    this.editor.document,
+                    this.editor.document.lineAt(this.editor.selection.active.line)
+                );
+                if (startLine && endLine) {
+                    this.editor.selection = new vscode.Selection(
+                        new vscode.Position(startLine.lineNumber + 1, 0),
+                        new vscode.Position(endLine.lineNumber - 1, 1000)
+                    )
+                }
+                break;
+                
+            case ("LINE"): 
+                await this.nextIndentUp("forwards");
+                break;
+            case ("CHAR"): 
+                await this.mockRepeatSkip("forwards");
+                break;
+            default:
+                await this.SetSelectionAnchor();
+                await this.executeSubjectCommand("lastObjectInScope");
+                common.setVirtualColumnNumber(10000);
+                break;
+        }
+    }
+    
+    async goToEdit(direction: common.Direction) { this
+        if (direction === "forwards") {
+            await this.editHistoryManager.goToNextEdit(this.editor);
+        }
+        else {
+            await this.editHistoryManager.goToPreviousEdit(this.editor);
+        }
+        
     }
 
 }

@@ -142,7 +142,7 @@ export default class SelectionAnchor {
         }
     }
 
-    SelectToAnchor(editor: vscode.TextEditor, force: boolean = false) {
+    SelectToAnchorIfExtending(editor: vscode.TextEditor, force: boolean = false) {
         if ((!this.IsExtendModeOn() && !force) || this.cachedSelection === undefined) return;
         
         const newSelection = this.GetSelectionRangeFromAnchor(editor.selection);
