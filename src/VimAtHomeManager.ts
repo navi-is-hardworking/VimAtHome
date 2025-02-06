@@ -19,7 +19,9 @@ import * as ncp from 'copy-paste'
 import { promisify } from "util";
 import { SelectionHistoryManager } from "./handlers/SelectionHistoryManager";
 import {Terminal} from "./utils/terminal"
+import * as EditorUtils from "./utils/editor"
 import { EditHistoryManager } from './handlers/EditHistoryManager';
+
 
 let outputChannel = vscode.window.createOutputChannel("Vah.Manager");
 
@@ -132,9 +134,10 @@ export default class VimAtHomeManager {
     async onDidChangeTextEditorSelection(
         event: vscode.TextEditorSelectionChangeEvent
     ) {
-        if (this.mode.name === "COMMAND")
+        if (this.mode.name === "COMMAND") {
             selectionHistory.recordSelection(this.editor, this.mode.getSubjectName());
-
+        }
+        
         this.clearSelections();
         this.setDecorations();
         this.extendAnchor.updatePhantomSelection(this.editor);
@@ -617,7 +620,8 @@ export default class VimAtHomeManager {
     
     async moveVerticalN(direction: common.Direction) {
         const currentLine = await this.getNthVerticalLine(direction, getVerticalSkipCount());
-        await this.updateEditorPosition(currentLine);
+        await EditorUtils.updateEditorPosition(this.editor, currentLine);
+        await this.mode.fixSelection();
     }
     
     async getNextSignificantBlockLocation(direction: common.Direction) {
@@ -641,7 +645,8 @@ export default class VimAtHomeManager {
     
     async nextSignificantBlock(direction: common.Direction) {
         const currentLine = await this.getNextSignificantBlockLocation(direction);
-        await this.updateEditorPosition(currentLine);
+        await EditorUtils.updateEditorPosition(this.editor, currentLine);
+        await this.mode.fixSelection();
     }
     
     // if in extend mode, should cut instead of copy
@@ -658,7 +663,8 @@ export default class VimAtHomeManager {
             } else if (direction === common.Direction.backwards) {
                 newLine = nextN < nextBlockLine ? nextN : nextBlockLine;
             }
-            await this.updateEditorPosition(newLine);
+            await EditorUtils.updateEditorPosition(this.editor, newLine);
+            await this.mode.fixSelection();
         }
         
     }
@@ -683,8 +689,10 @@ export default class VimAtHomeManager {
             }
         }
 
-        if (targetLine)
-            await this.updateEditorPosition(targetLine.lineNumber);
+        if (targetLine) {
+            await EditorUtils.updateEditorPosition(this.editor, targetLine.lineNumber);
+            await this.mode.fixSelection();
+        }
     }
 
     async sameIntentBlockAfterIndentChange(direction: common.Direction) {
@@ -708,8 +716,7 @@ export default class VimAtHomeManager {
                 if (line.text.trim().length > 0 && line.firstNonWhitespaceCharacterIndex !== targetIndentation) break;
                 lastSignificantLine = line;
             }
-            await this.updateEditorPosition(lastSignificantLine.lineNumber);
-            return;
+            await EditorUtils.updateEditorPosition(this.editor, lastSignificantLine.lineNumber);
         } else {
             let lineIterator = lineUtils.iterLines(document, {
                 startingPosition: currentPosition,
@@ -723,10 +730,13 @@ export default class VimAtHomeManager {
                     break;
                 }
             }
-            if (targetLine)
-                await this.updateEditorPosition(targetLine.lineNumber);
-            return;
+            if (targetLine) {
+                await EditorUtils.updateEditorPosition(this.editor, targetLine.lineNumber);
+            }
         }
+        
+        await this.mode.fixSelection();
+        return;
     }
 
     async nextIndentBlock(direction: common.Direction) {
@@ -760,14 +770,7 @@ export default class VimAtHomeManager {
             lastSignificantLine = line;
         }
 
-        await this.updateEditorPosition(lastSignificantLine.lineNumber);
-    }
-
-    private async updateEditorPosition(lineNumber: number) {
-        const virtualColumn = common.getVirtualColumn();
-        const newPosition = new vscode.Position(lineNumber, virtualColumn);
-        this.editor.selection = new vscode.Selection(newPosition, newPosition);
-        // await this.changeMode({ kind: "COMMAND", subjectName: "WORD" });
+        await EditorUtils.updateEditorPosition(this.editor, lastSignificantLine.lineNumber);
         await this.mode.fixSelection();
     }
 
@@ -869,7 +872,8 @@ export default class VimAtHomeManager {
             lastSignificantLine = line;
         }
 
-        await this.updateEditorPosition(lastSignificantLine.lineNumber);
+        await EditorUtils.updateEditorPosition(this.editor, lastSignificantLine.lineNumber);
+        await this.mode.fixSelection();
     }
 
     async foldAllAtLevel() {
@@ -1251,7 +1255,7 @@ export default class VimAtHomeManager {
 
     async goNextSelection() {
         const result = selectionHistory.goToNextSelection(this.editor);
-        if (result !== undefined) {
+        if (result !== undefined && result.subjectName) {
             await this.changeMode({ kind: "COMMAND", subjectName: result.subjectName });
             this.editor.selection = result.selection;
             this.editor.revealRange(result.selection, vscode.TextEditorRevealType.Default);
@@ -1449,17 +1453,6 @@ export default class VimAtHomeManager {
     
     async nextSubjectUp() {
         if (this.editor.selection.active.line - 1 < 0) return;
-        
-        if (IsWordWrapEnabled()) {
-            const curLineLength = this.editor.document.lineAt(this.editor.selection.active.line).text.length;
-            const lineAboveLength = this.editor.document.lineAt(this.editor.selection.active.line - 1).text.length;
-            
-            if (curLineLength > GetWordWrapColumn() || lineAboveLength > GetWordWrapColumn()) {
-                await vscode.commands.executeCommand("cursorUp");
-                return;
-            }
-        }
-        
         await this.executeSubjectCommand("nextObjectUp");
     }
     
@@ -1682,9 +1675,7 @@ export default class VimAtHomeManager {
             return; 
         }
         
-        // outputChannel.appendLine(JSON.stringify(symbols));
-        
-        const nearestSymbol = this.moveToNearestFunctionSymbol(symbols, currentPosition);
+        const nearestSymbol = this.moveToNearestFunctionSymbol(symbols, currentPosition); 
         outputChannel.appendLine(JSON.stringify(nearestSymbol));
         if (nearestSymbol) {
             const newPosition = direction === "forwards" ? nearestSymbol.range.start : nearestSymbol.range.end;
@@ -1723,7 +1714,6 @@ export default class VimAtHomeManager {
             default:
                 await this.SetSelectionAnchor();
                 await this.executeSubjectCommand("firstObjectInScope");
-                common.setVirtualColumnNumber(0);
                 break;
         }
     }
@@ -1750,27 +1740,23 @@ export default class VimAtHomeManager {
                     )
                 }
                 break;
-                
-            case ("LINE"): 
-                await this.nextIndentUp("forwards");
-                break;
             case ("CHAR"): 
                 await this.mockRepeatSkip("forwards");
                 break;
             default:
                 await this.SetSelectionAnchor();
                 await this.executeSubjectCommand("lastObjectInScope");
-                common.setVirtualColumnNumber(10000);
                 break;
         }
     }
     
     async goToEdit(direction: common.Direction) { this
         if (direction === "forwards") {
-            await this.editHistoryManager.goToNextEdit(this.editor);
+            await this.editHistoryManager.goToPreviousEdit(this.editor); 
         }
         else {
-            await this.editHistoryManager.goToPreviousEdit(this.editor);
+            // await this.editHistoryManager.goToLastEdit(this.editor); 
+            await this.editHistoryManager.goToNextEdit(this.editor);
         }
         
     }

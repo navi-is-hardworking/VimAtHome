@@ -7,7 +7,6 @@ import { setWordDefinition, nextWordDefinition, prevWordDefinition, getWordDefin
 import * as path from 'path';
 import { HighlightManager } from './handlers/HighlightManager';
 import * as cacheCommands from "./CacheCommands";
-import { setVirtualColumnNumber } from "./common";
 import { addSubjectCommand } from "./utils/quickMenus"
 import { WaypointManager } from './handlers/WaypointManager';
 

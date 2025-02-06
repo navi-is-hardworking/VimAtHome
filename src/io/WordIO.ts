@@ -284,9 +284,6 @@ function iterScope(
 
             if (wordRange) {
                 if (options.currentInclusive || !first) {
-                    if (!options.isVertical) {
-                        common.setVirtualColumn(wordRange);
-                    }
                     yield wordRange;
                 }
                 
@@ -333,5 +330,17 @@ export default class WordIO extends SubjectIOBase {
 
     swapHorizontally = swapHorizontally;
     swapVertically = swapVertically;
-    iterScope = iterScope;
+    
+    iterScope(
+        document: vscode.TextDocument,
+        options: IterationOptions
+    ): Seq<TextObject> {
+        if (options.direction === "forwards") {
+            common.setVirtualColumnNumber(10000);
+        }
+        else {
+            common.setVirtualColumnNumber(0);
+        }
+        return iterScope(document, options);
+    }
 }

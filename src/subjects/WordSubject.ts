@@ -13,4 +13,6 @@ export default class WordSubject extends SubjectBase {
     public readonly name = "WORD";
     public readonly displayName = "word";
     public readonly jumpPhaseType = "dual-phase";
+    
+    
 }

@@ -2,6 +2,10 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 
+/*
+TODO: rewrite to just store last edit location in file. this is terrible implementation
+*/
+
 interface EditPosition {
     line: number;
     character: number;
@@ -19,14 +23,14 @@ interface SerializedEditHistory {
 
 export class EditHistoryManager {
     
-    private fileHistories: Map<string, FileEditHistory> = new Map();
+    private fileHistories: Map<string, FileEditHistory> = new Map(); 
     private maxPositionsPerFile: number = 10;
     private debounceTimeout: NodeJS.Timeout | undefined;
     private lastEditTime = 0;
     private readonly debounceDelay = 300;
-    private historyChanged = false;
+    private historyChanged = false; 
     private static instance: EditHistoryManager;
-
+    
     public static getInstance(): EditHistoryManager {
     
         if (!EditHistoryManager.instance) {
@@ -67,7 +71,6 @@ export class EditHistoryManager {
     private recordEdits(
         document: vscode.TextDocument,
         changes: readonly vscode.TextDocumentContentChangeEvent[]
-        
     ) {
         const filePath = document.uri.fsPath;
 
@@ -114,6 +117,7 @@ export class EditHistoryManager {
             return;
         }
 
+        
         if (fileHistory.currentIndex <= 0) {
             console.log('Already at the earliest edit location for this file.');
         }
@@ -121,9 +125,10 @@ export class EditHistoryManager {
             fileHistory.currentIndex--;
             console.log(`changing to index ${fileHistory.currentIndex}`);
         }
-
+        
         const position = fileHistory.positions[fileHistory.currentIndex];
         const newPosition = new vscode.Position(position.line, position.character);
+        
 
         editor.selection = new vscode.Selection(newPosition, newPosition);
         editor.revealRange(
@@ -179,7 +184,6 @@ export class EditHistoryManager {
 
         try {
             const historyFilePath = path.join(workspaceFolderPath, '.vscode', 'EditHistory.json');
-            console.log(`saving edit history to ${historyFilePath}`);
             fs.mkdirSync(path.dirname(historyFilePath), { recursive: true });
             fs.writeFileSync(historyFilePath, JSON.stringify(serialized, null, 2), 'utf8');
             console.log(`Edit history saved to ${historyFilePath}`);

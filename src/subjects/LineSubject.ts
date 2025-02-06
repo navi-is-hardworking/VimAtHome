@@ -3,6 +3,7 @@ import LineIO from "../io/LineIO";
 import * as selections from "../utils/selectionsAndRanges";
 import SubjectBase from "./SubjectBase";
 import { getLineColor } from "../config";
+import * as EditorUtils from "../utils/editor"
 
 export default class LineSubject extends SubjectBase {
     protected subjectIO = new LineIO();
@@ -79,6 +80,16 @@ export default class LineSubject extends SubjectBase {
         await vscode.commands.executeCommand(
             "editor.action.moveLinesDownAction"
         );
+        this.fixSelection();
+    }
+    
+    async firstObjectInScope() {
+        await EditorUtils.nextIndentUp(this.context.editor, "backwards");
+        this.fixSelection();
+    }
+    
+    async lastObjectInScope() {
+        await EditorUtils.nextIndentUp(this.context.editor, "forwards");
         this.fixSelection();
     }
 }

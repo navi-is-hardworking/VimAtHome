@@ -1,6 +1,12 @@
 import * as vscode from "vscode";
 import { SubjectName } from "../subjects/SubjectName";
 
+/*
+TODO: rewrite with circular list this is terrible implementation
+
+okay the issue is going back forward causes selections to be written
+*/
+
 class SelectionHistoryEntry {
     constructor(
         public readonly selection: vscode.Selection,
@@ -18,28 +24,22 @@ class SelectionHistoryEntry {
                (this.selection.active.isEqual(other.selection.anchor) && 
                 this.selection.anchor.isEqual(other.selection.active));
     }
-
-    getKey(): string {
-        const points = [
-            [this.selection.anchor.line, this.selection.anchor.character],
-            [this.selection.active.line, this.selection.active.character]
-        ].sort((a, b) => a[0] === b[0] ? a[1] - b[1] : a[0] - b[0]);
-        
-        return `${points[0][0]},${points[0][1]}-${points[1][0]},${points[1][1]}`;
-    }
 }
 
 class FileSelectionHistory {
+    private maxHistorySize: number = 10;
     private history: SelectionHistoryEntry[] = [];
     private currentIndex: number = -1;
-    private maxHistorySize: number = 25;
+    private navigationIndex: number = -1;
     private lastNavigationTime: number = 0;
-    private seen = new Set<string>();
-
-    constructor(private fileUri: string) {}
-
-    private isDuplicate(entry: SelectionHistoryEntry): boolean {
-        return this.seen.has(entry.getKey());
+    
+    constructor(private fileUri: string) {
+        this.history = new Array(this.maxHistorySize);
+        const emptySelection = new vscode.Selection(new vscode.Position(0, 0), new vscode.Position(0, 0));
+        const emptyHistoryEntry = new SelectionHistoryEntry(emptySelection, Date.now(), undefined) 
+        for (var i = 0; i < this.history.length; i++) {
+            this.history[i] = emptyHistoryEntry;
+        }
     }
 
     public recordSelection(selection: vscode.Selection, subjectName?: SubjectName) {
@@ -48,40 +48,27 @@ class FileSelectionHistory {
         }
 
         const newEntry = new SelectionHistoryEntry(selection, Date.now(), subjectName);
-        const key = newEntry.getKey();
-
-        if (this.isDuplicate(newEntry)) {
-            return;
-        }
-
-        if (this.currentIndex < this.history.length - 1) {
-            for (let i = this.currentIndex + 1; i < this.history.length; i++) {
-                this.seen.delete(this.history[i].getKey());
-            }
-            this.history = this.history.slice(0, this.currentIndex + 1);
-        }
-
-        this.history.push(newEntry);
-        this.seen.add(key);
-        this.currentIndex = this.history.length - 1;
-
-        while (this.history.length > this.maxHistorySize) {
-            const removed = this.history.shift();
-            if (removed) {
-                this.seen.delete(removed.getKey());
-            }
-            this.currentIndex--;
-        }
+        
+        this.currentIndex = (this.currentIndex + 1) % this.maxHistorySize;
+        this.history[this.currentIndex] = newEntry;
+        this.navigationIndex = this.currentIndex;
     }
 
     public goToPreviousSelection(): { selection: vscode.Selection, subjectName?: SubjectName } | undefined {
-        if (this.history.length === 0 || this.currentIndex <= 0) {
+        this.lastNavigationTime = Date.now();
+        
+        if (this.currentIndex === -1 || !this.history[this.navigationIndex].subjectName) return;
+        let newNavigationIndex = (this.navigationIndex - 1) % this.maxHistorySize;
+        if (newNavigationIndex < 0) {
+            newNavigationIndex = this.maxHistorySize - 1;
+        }
+        if (newNavigationIndex == this.currentIndex || !this.history[this.navigationIndex].subjectName || !this.history[newNavigationIndex].subjectName) {
             return undefined;
         }
-
-        this.currentIndex--;
-        this.lastNavigationTime = Date.now();
-        const entry = this.history[this.currentIndex];
+        
+        this.navigationIndex = newNavigationIndex;
+        const entry = this.history[this.navigationIndex];
+        
         return {
             selection: entry.selection,
             subjectName: entry.subjectName
@@ -89,13 +76,22 @@ class FileSelectionHistory {
     }
 
     public goToNextSelection(): { selection: vscode.Selection, subjectName?: SubjectName } | undefined {
-        if (this.history.length === 0 || this.currentIndex >= this.history.length - 1) {
-            return undefined;
-        }
-
-        this.currentIndex++;
         this.lastNavigationTime = Date.now();
-        const entry = this.history[this.currentIndex];
+        
+        if (this.currentIndex === this.navigationIndex) {
+            if (!this.history[this.currentIndex].subjectName) return undefined;
+            return {
+                selection: this.history[this.currentIndex].selection,
+                subjectName: this.history[this.currentIndex].subjectName
+            };
+        }
+        
+        if (!this.history[this.currentIndex].subjectName) return undefined;
+        
+        this.navigationIndex = (this.navigationIndex + 1) % this.maxHistorySize;
+        const entry = this.history[this.navigationIndex];
+        
+        if (!entry.subjectName) return undefined;
         return {
             selection: entry.selection,
             subjectName: entry.subjectName
@@ -105,7 +101,6 @@ class FileSelectionHistory {
     public clear() {
         this.history = [];
         this.currentIndex = -1;
-        this.seen.clear();
     }
 
     public isEmpty(): boolean {

@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { char, QuickCommand } from "./quickMenus";
 import * as common from "../common";
-let outputchannel = vscode.window.createOutputChannel("vimAtHome.editor");
+import * as lineUtils from "../utils/lines";
 
 export function quickCommandPicker(
     commands: QuickCommand[]
@@ -210,4 +210,35 @@ export function debounce<T extends (...args: any[]) => any>(
             func(...args);
         }, wait);
     };
+}
+
+export async function updateEditorPosition(editor: vscode.TextEditor, lineNumber: number) {
+    const virtualColumn = common.getVirtualColumn();
+    const newPosition = new vscode.Position(lineNumber, virtualColumn);
+    editor.selection = new vscode.Selection(newPosition, newPosition);
+}
+
+export async function nextIndentUp(editor: vscode.TextEditor, direction: common.Direction) {
+    const document = editor.document;
+    const currentPosition = editor.selection.active;
+    const currentLine = document.lineAt(currentPosition.line);
+    const currentIndentation = currentLine.firstNonWhitespaceCharacterIndex;
+
+    let targetLine: vscode.TextLine | undefined;
+    let lineIterator = lineUtils.iterLines(document, {
+        startingPosition: currentPosition,
+        direction: direction,
+        currentInclusive: false,
+    });
+
+    for (const line of lineIterator) {
+        if (line.text.trim().length >= 1 && line.firstNonWhitespaceCharacterIndex > currentIndentation) {
+            targetLine = line;
+            break;
+        }
+    }
+
+    if (targetLine) {
+        await updateEditorPosition(editor, targetLine.lineNumber);
+    }
 }
