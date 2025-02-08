@@ -717,7 +717,7 @@ I would recommend using the original but you are welcome to use this if you wish
                 // "vimAtHome.repeatLastSkipOverLine"
             ]   
         },
-        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+;",
@@ -1769,10 +1769,9 @@ I would recommend using the original but you are welcome to use this if you wish
             "commands": [
                 // "editor.action.goToSelectionAnchor",
                 "vimAtHome.repeatLastSkipBackwards",
-                "vimAtHome.changeToInsertModePrepend"
             ]
         },
-        "when": "editorTextFocus && vimAtHome.mode != 'COMMAND' && vimAtHome.mode != 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+right",

@@ -26,18 +26,18 @@ export function quickCommandPicker(
 
         const freeEntryItems = freeEntryOptions
             ? [
-                  {
-                      label: "",
-                      kind: vscode.QuickPickItemKind.Separator,
-                      displayOnly: true,
-                  },
-                  {
-                      label: freeEntryOptions.label,
-                      alwaysShow: true,
-                      detail: freeEntryOptions.detail,
-                      displayOnly: true,
-                  },
-              ]
+                {
+                    label: "",
+                    kind: vscode.QuickPickItemKind.Separator,
+                    displayOnly: true,
+                },
+                {
+                    label: freeEntryOptions.label,
+                    alwaysShow: true,
+                    detail: freeEntryOptions.detail,
+                    displayOnly: true,
+                },
+            ]
             : [];
 
         quickPick.items = commands
@@ -140,9 +140,9 @@ export function scrollEditor(direction: "up" | "down", lines: number) {
         direction === "up"
             ? Math.max(existingRange.start.line - lines, 0)
             : Math.min(
-                  existingRange.end.line + lines,
-                  editor.document.lineCount - 1
-              );
+                existingRange.end.line + lines,
+                editor.document.lineCount - 1
+            );
 
     const newRange = new vscode.Range(lineToReveal, 0, lineToReveal, 0);
 
@@ -247,11 +247,11 @@ export function moveToNearestFunctionSymbol(symbols: vscode.DocumentSymbol[], po
     let closestSymbol: vscode.DocumentSymbol | undefined;
     for (const symbol of symbols) {
         // direciton we want bounto be either <= for up or < + 1
-        if (symbol.range.start.line <= position.line && 
-            (symbol.kind === vscode.SymbolKind.Function || 
-            symbol.kind === vscode.SymbolKind.Method || 
-            symbol.kind === vscode.SymbolKind.Constructor)) {
-            
+        if (symbol.range.start.line <= position.line &&
+            (symbol.kind === vscode.SymbolKind.Function ||
+                symbol.kind === vscode.SymbolKind.Method ||
+                symbol.kind === vscode.SymbolKind.Constructor)) {
+
             if (!closestSymbol || symbol.range.start.line > closestSymbol.range.start.line) {
                 closestSymbol = symbol;
             }
@@ -264,14 +264,14 @@ export function moveToNearestFunctionSymbol(symbols: vscode.DocumentSymbol[], po
             }
         }
     }
-    
+
     return closestSymbol
 }
 
 export async function goToNearestSymbol(editor: vscode.TextEditor, direction: common.Direction): Promise<void> {
     const document = editor.document;
     const currentPosition = editor.selection.active;
-    
+
     const symbols = await vscode.commands.executeCommand<vscode.DocumentSymbol[]>(
         'vscode.executeDocumentSymbolProvider',
         document.uri
@@ -280,13 +280,13 @@ export async function goToNearestSymbol(editor: vscode.TextEditor, direction: co
     if (!symbols?.length) {
         let inc = direction === "forwards" ? 25 : -25;
         editor.selection = new vscode.Selection(
-            editor.selection.active.with(editor.selection.active.line+inc), 
-            editor.selection.anchor.with(editor.selection.anchor.line+inc)
+            editor.selection.active.with(editor.selection.active.line + inc),
+            editor.selection.anchor.with(editor.selection.anchor.line + inc)
         );
-        return; 
+        return;
     }
-    
-    const nearestSymbol = moveToNearestFunctionSymbol(symbols, currentPosition); 
+
+    const nearestSymbol = moveToNearestFunctionSymbol(symbols, currentPosition);
     if (nearestSymbol) {
         const newPosition = direction === "forwards" ? nearestSymbol.range.start : nearestSymbol.range.end;
         editor.selection = new vscode.Selection(newPosition, newPosition);
@@ -297,5 +297,37 @@ export async function goToEndOfLine(editor: vscode.TextEditor) {
     let lineNumber = editor.selection.active.line;
     editor.selection = new vscode.Selection(new vscode.Position(lineNumber, 1000), new vscode.Position(lineNumber, 1000));
 }
+
+
+/*
+TODO:
+1. find lowest indent of new text
+2 find indent of all other lines in that text relative to
+*/
+export async function replaceSelection(editor: vscode.TextEditor, newText: string) {
+    const newSelections: vscode.Selection[] = [];
+    
+    await editor.edit(editBuilder => {
+        const texts = editor.selections.length === 1 ? [newText] :
+            editor.selections.length === newText.split(/\r?\n/).length ? newText.split(/\r?\n/) :
+            Array(editor.selections.length).fill(newText);
+
+        editor.selections.forEach((selection, i) => {
+            const text = texts[i];
+            editBuilder.replace(selection, text);
+            
+            const startPos = selection.start;
+            const lines = text.split(/\r?\n/);
+            const endPos = new vscode.Position(
+                startPos.line + lines.length - 1,
+                lines.length > 1 ? lines[lines.length - 1].length : startPos.character + text.length
+            );
+            newSelections.push(new vscode.Selection(startPos, endPos));
+        });
+    });
+
+    editor.selections = newSelections;
+}
+
 
 

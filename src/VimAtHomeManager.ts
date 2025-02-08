@@ -995,24 +995,7 @@ export default class VimAtHomeManager {
         this.extendAnchor.SelectToAnchorIfExtending(this.editor);
         
         const clipText = await vscode.env.clipboard.readText();
-        const currentSelections = this.editor.selections.length;
-        
-        this.editor.edit(editBuilder => {
-            if (currentSelections === 1) {
-                editBuilder.replace(this.editor.selections[0], clipText);
-            } else {
-                const texts = clipText.split(/\r?\n/);
-                if (texts.length === currentSelections) {
-                    for (let i = 0; i < currentSelections; i++) {
-                        editBuilder.replace(this.editor.selections[i], texts[i]);
-                    }
-                } else {
-                    for (const selection of this.editor.selections) {
-                        editBuilder.replace(selection, clipText);
-                    }
-                }
-            }
-        });
+        EditorUtils.replaceSelection(this.editor, clipText);
     }
 
     async changeToBracketSubject() {
