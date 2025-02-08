@@ -1353,10 +1353,6 @@ I would recommend using the original but you are welcome to use this if you wish
         "when": "editorTextFocus"
     },
     {
-        "key": "ctrl+k ctrl+alt+right",
-        "command": "workbench.action.navigateForwardInEditLocations",
-    },
-    {
         "key": "ctrl+j a",
         "command": "vimAtHome.changeToCharSubject",
     },
@@ -2447,6 +2443,11 @@ I would recommend using the original but you are welcome to use this if you wish
         "when": "suggestWidgetVisible && textInputFocus"
     },
     {
+        "key": "right",
+        "command": "acceptSelectedSuggestion",
+        "when": "suggestWidgetVisible && textInputFocus"
+    },
+    {
         "key": "ctrl+backspace",
         "command": "runCommands",
         "args": {
@@ -2984,10 +2985,14 @@ I would recommend using the original but you are welcome to use this if you wish
         },
         "when": "editorTextFocus"
     },
-    // {
-    //     "key": "ctrl+k ctrl+alt+left",
-    //     "command": "workbench.action.navigateBackInEditLocations"
-    // },
+    {
+        "key": "ctrl+k ctrl+alt+left",
+        "command": "workbench.action.navigateBackInEditLocations"
+    },
+    {
+        "key": "ctrl+k ctrl+alt+right",
+        "command": "workbench.action.navigateForwardInEditLocations",
+    },
     // {
     //     "key": "ctrl+up",
     //     "command": "vimAtHome.firstSymbolAbove"
@@ -2996,16 +3001,16 @@ I would recommend using the original but you are welcome to use this if you wish
     //     "key": "ctrl+down",
     //     "command": "vimAtHome.firstSymbolBelow"
     // },
-    {
-        "key": "ctrl+k ctrl+alt+left",
-        "command": "vimAtHome.goToPrevEdit",
-        "when": "editorTextFocus"   
-    },
-    {
-        "key": "ctrl+k ctrl+alt+right",
-        "command": "vimAtHome.goToNextEdit",
-        "when": "editorTextFocus"
-    },
+    // {
+    //     "key": "ctrl+k ctrl+alt+left",
+    //     "command": "vimAtHome.goToPrevEdit",
+    //     "when": "editorTextFocus"   
+    // },
+    // {
+    //     "key": "ctrl+k ctrl+alt+right",
+    //     "command": "vimAtHome.goToNextEdit",
+    //     "when": "editorTextFocus"
+    // },
     {
         "key": "ctrl+alt+l",
         "command": "workbench.action.compareEditor.nextChange",
@@ -3018,5 +3023,6 @@ I would recommend using the original but you are welcome to use this if you wish
     },
     
 ]
+
 
 ```
