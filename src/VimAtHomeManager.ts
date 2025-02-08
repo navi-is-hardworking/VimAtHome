@@ -107,6 +107,7 @@ export default class VimAtHomeManager {
         if (this.mode.getSubjectName() === "WORD" && getWordDefinitionIndex() === 0) {
             this.extendAnchor.EndExtendMode();
         }
+        common.setVirtualColumn(this.editor.selection);
         setWordDefinition(0);
         
         this.clearSelections();
@@ -995,7 +996,7 @@ export default class VimAtHomeManager {
         
         const clipText = await vscode.env.clipboard.readText();
         const currentSelections = this.editor.selections.length;
-
+        
         this.editor.edit(editBuilder => {
             if (currentSelections === 1) {
                 editBuilder.replace(this.editor.selections[0], clipText);
@@ -1245,7 +1246,6 @@ export default class VimAtHomeManager {
     
     async goPrevSelection() {
         const result = selectionHistory.goToPreviousSelection(this.editor);
-        
         if (result !== undefined) {
             await this.changeMode({ kind: "COMMAND", subjectName: result.subjectName });
             this.editor.selection = result.selection;
@@ -1552,7 +1552,6 @@ export default class VimAtHomeManager {
     }
     
     async metaSelectEnd() {
-        
         if (this.mode.getSubjectName() == "BLOCK") {
             const editor = this.editor;
             const document = editor.document;
@@ -1593,7 +1592,6 @@ export default class VimAtHomeManager {
         const firstLineIndentation = firstLine[0];
 
         let resultLines: string[] = [];
-        
         resultLines.push(firstLineIndentation + '{'); // }
         
         for (let i = startLine; i <= endLine; i++) {
@@ -1626,128 +1624,6 @@ export default class VimAtHomeManager {
         editor.edit(editBuilder => {
             editBuilder.replace(selectionRange, finalText);
         });
-
-    }
-    
-    // if symbols are sorted maybe we can do binary search for proper position
-    // can we return current/prev/next symbols?l
-    moveToNearestFunctionSymbol(symbols: vscode.DocumentSymbol[], position: vscode.Position): vscode.DocumentSymbol | undefined {
-        let closestSymbol: vscode.DocumentSymbol | undefined;
-        for (const symbol of symbols) {
-            
-            // direciton we want bounto be either <= for up or < + 1
-            if (symbol.range.start.line <= position.line && 
-                (symbol.kind === vscode.SymbolKind.Function || 
-                symbol.kind === vscode.SymbolKind.Method || 
-                symbol.kind === vscode.SymbolKind.Constructor)) {
-                
-                if (!closestSymbol || symbol.range.start.line > closestSymbol.range.start.line) {
-                    closestSymbol = symbol;
-                }
-            }
-
-            if (symbol.children?.length) {
-                const childSymbol = this.moveToNearestFunctionSymbol(symbol.children, position);
-                if (childSymbol && (!closestSymbol || childSymbol.range.start.line > closestSymbol.range.start.line)) {
-                    closestSymbol = childSymbol;
-                }
-            }
-        }
-        
-        return closestSymbol
-    }
-    
-    async goToNearestSymbol(direction: common.Direction): Promise<void> {
-        const document = this.editor.document;
-        const currentPosition = this.editor.selection.active;
-        
-        const symbols = await vscode.commands.executeCommand<vscode.DocumentSymbol[]>(
-            'vscode.executeDocumentSymbolProvider',
-            document.uri
-        );
-
-        if (!symbols?.length) {
-            let inc = direction === "forwards" ? 25 : -25;
-            this.editor.selection = new vscode.Selection(
-                this.editor.selection.active.with(this.editor.selection.active.line+inc), 
-                this.editor.selection.anchor.with(this.editor.selection.anchor.line+inc)
-            );
-            return; 
-        }
-        
-        const nearestSymbol = this.moveToNearestFunctionSymbol(symbols, currentPosition); 
-        outputChannel.appendLine(JSON.stringify(nearestSymbol));
-        if (nearestSymbol) {
-            const newPosition = direction === "forwards" ? nearestSymbol.range.start : nearestSymbol.range.end;
-            
-            outputChannel.appendLine(`range: ${JSON.stringify(nearestSymbol.selectionRange)}`);
-            outputChannel.appendLine(`start: ${JSON.stringify(nearestSymbol.selectionRange.start)}`);
-            outputChannel.appendLine(`end: ${JSON.stringify(nearestSymbol.selectionRange.end)}`);
-            outputChannel.appendLine(`new position: ${JSON.stringify(newPosition)}`);
-            this.editor.selection = new vscode.Selection(newPosition, newPosition);
-        }
-    }
-
-    async goToEndOfLine() {
-        let lineNumber = this.editor.selection.active.line;
-        this.editor.selection = new vscode.Selection(new vscode.Position(lineNumber, 1000), new vscode.Position(lineNumber, 1000));
-    }
-
-    async firstSubjectInScope() {
-        switch (this.mode.getSubjectName()) {
-            case ("BLOCK"):
-                await this.goToNearestSymbol("forwards");
-                await this.mode.fixSelection();
-                break;
-            case ("BRACKETS"):
-            case ("BRACKETS_INCLUSIVE"):
-                await this.goToNearestSymbol("backwards");
-                await this.goToEndOfLine();
-                await this.mode.fixSelection();
-                break;
-            case ("LINE"): 
-                await this.nextIndentUp("backwards");
-                break;
-            case ("CHAR"): 
-                await this.mockRepeatSkip("backwards");
-                break;
-            default:
-                await this.SetSelectionAnchor();
-                await this.executeSubjectCommand("firstObjectInScope");
-                break;
-        }
-    }
-    
-    async lastSubjectInScope() {
-        switch (this.mode.getSubjectName()) {
-            case ("BLOCK"):
-                let startLine = lineUtils.getNextLineOfChangeOfIndentation(
-                    "lessThan",
-                    "backwards",
-                    this.editor.document,
-                    this.editor.document.lineAt(this.editor.selection.active.line)
-                );
-                let endLine = lineUtils.getNextLineOfChangeOfIndentation(
-                    "lessThan",
-                    "forwards",
-                    this.editor.document,
-                    this.editor.document.lineAt(this.editor.selection.active.line)
-                );
-                if (startLine && endLine) {
-                    this.editor.selection = new vscode.Selection(
-                        new vscode.Position(startLine.lineNumber + 1, 0),
-                        new vscode.Position(endLine.lineNumber - 1, 1000)
-                    )
-                }
-                break;
-            case ("CHAR"): 
-                await this.mockRepeatSkip("forwards");
-                break;
-            default:
-                await this.SetSelectionAnchor();
-                await this.executeSubjectCommand("lastObjectInScope");
-                break;
-        }
     }
     
     async goToEdit(direction: common.Direction) { this
@@ -1760,6 +1636,11 @@ export default class VimAtHomeManager {
         }
         
     }
+    
+    async goToNearestSymbol(direction: common.Direction) {
+        await EditorUtils.goToNearestSymbol(this.editor, direction);
+    }
+
 
 }
 

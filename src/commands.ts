@@ -462,13 +462,13 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.goToFirstSubjectInScope",
         execute: async (manager) => {
-            await manager.firstSubjectInScope();
+            await manager.executeSubjectCommand("firstObjectInScope");
         },
     },
     {
         id: "vimAtHome.goToLastSubjectInScope",
         execute: async (manager) => {
-            await manager.lastSubjectInScope();
+            await manager.executeSubjectCommand("lastObjectInScope");
         },
     },
     {

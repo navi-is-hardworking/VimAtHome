@@ -95,7 +95,8 @@ function iterBlockStarts(
                     ) {
                         const point = new vscode.Position(
                             candidateLine.lineNumber,
-                            candidateLine.firstNonWhitespaceCharacterIndex
+                            // candidateLine.firstNonWhitespaceCharacterIndex
+                            0
                         );
 
                         yield point;

@@ -242,3 +242,60 @@ export async function nextIndentUp(editor: vscode.TextEditor, direction: common.
         await updateEditorPosition(editor, targetLine.lineNumber);
     }
 }
+
+export function moveToNearestFunctionSymbol(symbols: vscode.DocumentSymbol[], position: vscode.Position): vscode.DocumentSymbol | undefined {
+    let closestSymbol: vscode.DocumentSymbol | undefined;
+    for (const symbol of symbols) {
+        // direciton we want bounto be either <= for up or < + 1
+        if (symbol.range.start.line <= position.line && 
+            (symbol.kind === vscode.SymbolKind.Function || 
+            symbol.kind === vscode.SymbolKind.Method || 
+            symbol.kind === vscode.SymbolKind.Constructor)) {
+            
+            if (!closestSymbol || symbol.range.start.line > closestSymbol.range.start.line) {
+                closestSymbol = symbol;
+            }
+        }
+
+        if (symbol.children?.length) {
+            const childSymbol = moveToNearestFunctionSymbol(symbol.children, position);
+            if (childSymbol && (!closestSymbol || childSymbol.range.start.line > closestSymbol.range.start.line)) {
+                closestSymbol = childSymbol;
+            }
+        }
+    }
+    
+    return closestSymbol
+}
+
+export async function goToNearestSymbol(editor: vscode.TextEditor, direction: common.Direction): Promise<void> {
+    const document = editor.document;
+    const currentPosition = editor.selection.active;
+    
+    const symbols = await vscode.commands.executeCommand<vscode.DocumentSymbol[]>(
+        'vscode.executeDocumentSymbolProvider',
+        document.uri
+    );
+
+    if (!symbols?.length) {
+        let inc = direction === "forwards" ? 25 : -25;
+        editor.selection = new vscode.Selection(
+            editor.selection.active.with(editor.selection.active.line+inc), 
+            editor.selection.anchor.with(editor.selection.anchor.line+inc)
+        );
+        return; 
+    }
+    
+    const nearestSymbol = moveToNearestFunctionSymbol(symbols, currentPosition); 
+    if (nearestSymbol) {
+        const newPosition = direction === "forwards" ? nearestSymbol.range.start : nearestSymbol.range.end;
+        editor.selection = new vscode.Selection(newPosition, newPosition);
+    }
+}
+
+export async function goToEndOfLine(editor: vscode.TextEditor) {
+    let lineNumber = editor.selection.active.line;
+    editor.selection = new vscode.Selection(new vscode.Position(lineNumber, 1000), new vscode.Position(lineNumber, 1000));
+}
+
+
