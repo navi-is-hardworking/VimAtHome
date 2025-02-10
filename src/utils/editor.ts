@@ -302,10 +302,10 @@ export async function goToEndOfLine(editor: vscode.TextEditor) {
 /*
 TODO:
 1. find lowest indent of new text
-2 find indent of all other lines in that text relative to
+2. find indent of all other lines in that text relative to
 */
 export async function replaceSelection(editor: vscode.TextEditor, newText: string) {
-    const newSelections: vscode.Selection[] = [];
+    // const newSelections: vscode.Selection[] = [];
     
     await editor.edit(editBuilder => {
         const texts = editor.selections.length === 1 ? [newText] :
@@ -322,12 +322,32 @@ export async function replaceSelection(editor: vscode.TextEditor, newText: strin
                 startPos.line + lines.length - 1,
                 lines.length > 1 ? lines[lines.length - 1].length : startPos.character + text.length
             );
-            newSelections.push(new vscode.Selection(startPos, endPos));
+            // newSelections.push(new vscode.Selection(startPos, endPos));
         });
     });
 
-    editor.selections = newSelections;
+    // editor.selections = newSelections;
 }
+
+export async function findNextWhitespace(editor: vscode.TextEditor, direction: common.Direction) {
+    let startLine = editor.selection.anchor.line;
+    let startChar = direction === "forwards" ? editor.selection.anchor.character : editor.selection.active.character;
+    
+    const line = editor.document.lineAt(startLine).text;
+    let newPos = startChar;
+
+    if (direction === "forwards") {
+        const nextSpace = line.indexOf(' ', startChar);
+        newPos = nextSpace > -1 ? nextSpace - 1 : line.length - 1;
+    } else {
+        const prevSpace = line.lastIndexOf(' ', startChar - 1);
+        newPos = prevSpace > -1 ? prevSpace + 1 : 0;
+    }
+
+    const newSelection = new vscode.Selection(startLine, newPos, startLine, newPos);
+    editor.selection = newSelection;
+}
+
 
 
 

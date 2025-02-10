@@ -21,7 +21,7 @@ export class InlineInput {
             window.onDidChangeTextEditorSelection(this._onCancel),
         );
 
-        vscode.commands.executeCommand('setContext', 'vimAtHome.waitingForChar', true);
+        vscode.commands.executeCommand('setContext', 'vimAtHome.mode', "INSERT");
         this.statusBarItem = window.createStatusBarItem(
             StatusBarAlignment.Right,
             1000
@@ -41,7 +41,7 @@ export class InlineInput {
     public destroy = (): void => {
         this.statusBarItem.dispose();
         subscriptions.forEach(subscription => subscription.dispose());
-        vscode.commands.executeCommand('setContext', 'vimAtHome.waitingForChar', false);
+        vscode.commands.executeCommand('setContext', 'vimAtHome.mode', "COMMAND");
     };
 
     public deleteLastCharacter = (): string => {

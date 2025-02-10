@@ -368,7 +368,7 @@ export const ViewCommands: QuickCommand[] = [
     },
     {
         quickKey: char("k"),
-        label: "Open terminal in editor tab",
+        label: "Kill terminal in editor tab",
         execute: async () => {
             await vscode.commands.executeCommand(
                 "workbench.action.closeActiveEditor"
@@ -549,15 +549,29 @@ export const SpaceCommands: QuickCommand[] = [
 ];
 
 
-export const CacheCommands: QuickCommand[] = [
+export const MoveCommands: QuickCommand[] = [
     {
-        quickKey: char("0"),
-        label: "Unfold all",
+        quickKey: char("j"),
+        label: "Pull Bracket",
         execute: async () => {
-            await vscode.commands.executeCommand("editor.unfoldAll");
+            await vscode.commands.executeCommand("vimAtHome.pullBracket");
         },
     },
-]
+    {
+        quickKey: char("k"),
+        label: "Pull Line",
+        execute: async () => {
+            await vscode.commands.executeCommand("vimAtHome.pullLine");
+        },
+    },
+    {
+        quickKey: char("l"),
+        label: "Pull Block",
+        execute: async () => {
+            await vscode.commands.executeCommand("vimAtHome.pullBlock");
+        },
+    }
+];
 
 export let SubjectChangeCommands: QuickCommand[] = [];
 

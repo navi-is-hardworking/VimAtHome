@@ -20,7 +20,7 @@ import { promisify } from "util";
 import { SelectionHistoryManager } from "./handlers/SelectionHistoryManager";
 import {Terminal} from "./utils/terminal"
 import * as EditorUtils from "./utils/editor"
-import { EditHistoryManager } from './handlers/EditHistoryManager';
+// import { EditHistoryManager } from './handlers/EditHistoryManager';
 
 
 let outputChannel = vscode.window.createOutputChannel("Vah.Manager");
@@ -34,7 +34,7 @@ export default class VimAtHomeManager {
     public statusBar: vscode.StatusBarItem;
     public editor: vscode.TextEditor = undefined!;
     public extendAnchor: SelectionAnchor = new SelectionAnchor();
-    public editHistoryManager: EditHistoryManager = EditHistoryManager.getInstance();
+    // // // public editHistoryManager: EditHistoryManager = EditHistoryManager.getInstance();
 
     constructor(public config: Config) {
         this.statusBar = vscode.window.createStatusBarItem(
@@ -45,7 +45,7 @@ export default class VimAtHomeManager {
 
         this.mode = new NullMode(this);
         this.statusBar.show();
-        this.editHistoryManager = new EditHistoryManager();
+        // // this.editHistoryManager = new EditHistoryManager();
     }
 
     async changeEditor(editor: vscode.TextEditor | undefined) {
@@ -135,6 +135,10 @@ export default class VimAtHomeManager {
     async onDidChangeTextEditorSelection(
         event: vscode.TextEditorSelectionChangeEvent
     ) {
+        if (common.IsTextChanging()) {
+            return;
+        }
+        
         if (this.mode.name === "COMMAND") {
             selectionHistory.recordSelection(this.editor, this.mode.getSubjectName());
         }
@@ -176,7 +180,7 @@ export default class VimAtHomeManager {
             return;
         }
         
-        this.mode.fixSelection();
+        // this.mode.fixSelection();
         selectionHistory.recordSelection(this.editor);
         this.setUI();
     }
@@ -316,28 +320,16 @@ export default class VimAtHomeManager {
 
     async skip(direction: common.Direction) {
         this.extendAnchor.SetSelectionAnchor(this.editor);
-        await vscode.commands.executeCommand( "setContext", "vimAtHome.awaitingInput", true );
-        try {
-            await this.mode.skip(direction);
-            if (common.getLastSkip()?.subject !== this.mode.getSubjectName()) {
-                await this.changeMode({ subjectName: common.getLastSkip()?.subject, kind: "COMMAND" });
-            }
-            this.setUI();
+        await this.mode.skip(direction);
+        if (common.getLastSkip()?.subject !== this.mode.getSubjectName()) {
+            await this.changeMode({ subjectName: common.getLastSkip()?.subject, kind: "COMMAND" });
         }
-        finally {
-            await vscode.commands.executeCommand( "setContext", "vimAtHome.awaitingInput", false );
-        }
+        this.setUI();
     }
     
     async skipOver(direction: common.Direction) {
-        await vscode.commands.executeCommand( "setContext", "vimAtHome.awaitingInput", true );
-        try {
-            await this.mode.skipOver(direction);
-            this.setUI();
-        }
-        finally {
-            await vscode.commands.executeCommand( "setContext", "vimAtHome.awaitingInput", false );
-        }
+        await this.mode.skipOver(direction);
+        this.setUI();
     }
     
     async repeatLastSkip(direction: common.Direction) {
@@ -368,13 +360,7 @@ export default class VimAtHomeManager {
 
     async jump() {
         this.extendAnchor.SetSelectionAnchor(this.editor);
-        await vscode.commands.executeCommand( "setContext", "vimAtHome.awaitingInput", true );
-        try {
-            await this.mode.jump();
-        }
-        finally {
-            await vscode.commands.executeCommand( "setContext", "vimAtHome.awaitingInput", false );
-        }
+        await this.mode.jump();
     }
     
     async jumpToSubject(subjectName: SubjectName) {
@@ -385,24 +371,17 @@ export default class VimAtHomeManager {
             this.extendAnchor.SetSelectionAnchor(this.editor);
         }
         
-        await vscode.commands.executeCommand( "setContext", "vimAtHome.awaitingInput", true );
-        try {
-            
-            if (this.mode.getSubjectName() === subjectName) {
-                await this.mode.jump();
-                return;
-            }
-            const newMode = await this.mode.jumpToSubject(subjectName);
-            if (newMode === undefined) return;
-            this.clearSelections();
-            this.mode = newMode;
-            this.setUI();
-            this.mode.fixSelection();
-            this.setDecorations();
+        if (this.mode.getSubjectName() === subjectName) {
+            await this.mode.jump();
+            return;
         }
-        finally {
-            await vscode.commands.executeCommand( "setContext", "vimAtHome.awaitingInput", false );
-        }
+        const newMode = await this.mode.jumpToSubject(subjectName);
+        if (newMode === undefined) return;
+        this.clearSelections();
+        this.mode = newMode;
+        this.setUI();
+        this.mode.fixSelection();
+        this.setDecorations();
     }
 
     async pullSubject(subjectName: SubjectName) {
@@ -842,6 +821,11 @@ export default class VimAtHomeManager {
         this.extendAnchor.DeleteToAnchor(this.editor);
     }
     
+    async cutToAnchor(): Promise<void> {
+        let cutText = await this.extendAnchor.CutToAnchor(this.editor);
+        this.copyText(cutText);
+    }
+    
     async downIndent(direction: common.Direction) {
         const document = this.editor.document;
         const currentPosition = this.editor.selection.active;
@@ -948,7 +932,7 @@ export default class VimAtHomeManager {
         if (joinedText.length <= 1) { // if selected text is only one character then no point in copying one character, so its probably in char mode, just select to anchor.
             this.yoinkAnchor();
         } else {
-            this.copySelection(joinedText);
+            this.copyText(joinedText);
         }
     }
 
@@ -962,7 +946,7 @@ export default class VimAtHomeManager {
         cacheCommands.copyBracket(this.editor.document.lineAt(this.editor.selection.active).text);
     }
 
-    async copySelection(text: string) {
+    async copyText(text: string) {
         if (text !== null && text.length > 0) {
             cacheCommands.storeClipboard(text);
             await copyAsync(text);
@@ -1066,7 +1050,7 @@ export default class VimAtHomeManager {
         const tempRange = this.extendAnchor.GetSelectionRangeFromAnchor(this.editor.selection);
         if (tempRange) {
             const text = this.editor.document.getText(tempRange);
-            this.copySelection(text);
+            this.copyText(text);
         }
     }
 
@@ -1343,7 +1327,7 @@ export default class VimAtHomeManager {
             const currentFileDiagnostics = vscode.languages.getDiagnostics(activeEditor.document.uri);
             const errorDiagnostics = currentFileDiagnostics.filter(d => d.severity === vscode.DiagnosticSeverity.Error);
             const messages = errorDiagnostics.map(d => d.message).join('\n');
-            this.copySelection(messages);
+            this.copyText(messages);
         }
     }
     
@@ -1609,15 +1593,16 @@ export default class VimAtHomeManager {
         });
     }
     
-    async goToEdit(direction: common.Direction) { this
+    async goToEdit(direction: common.Direction) { 
+        common.SetTextChanging(true);
         if (direction === "forwards") {
-            await this.editHistoryManager.goToPreviousEdit(this.editor); 
+            // await this.editHistoryManager.goToPreviousEdit(this.editor); 
         }
         else {
             // await this.editHistoryManager.goToLastEdit(this.editor); 
-            await this.editHistoryManager.goToNextEdit(this.editor);
+            // await this.editHistoryManager.goToNextEdit(this.editor);
         }
-        
+        common.SetTextChanging(false);
     }
     
     async goToNearestSymbol(direction: common.Direction) {

@@ -12,6 +12,9 @@ export let column: number = 0;
 export let blockCache: vscode.Range[] = [];
 export let LazyPassSubjectName: SubjectName | undefined = undefined;
 
+// to avoid triggering managers OnDidSelectionChange which sets decorations and slows things down
+export let isTextChanging: boolean = false;
+
 export type SubTextRange = {
     text: string;
     range: { start: number; end: number };
@@ -27,7 +30,6 @@ export const Direction = {
 export function OppositeDirection(direction: Direction) {
     return direction === Direction.forwards ? Direction.backwards : Direction.forwards;
 }
-
 
 export type Direction = typeof Direction[keyof typeof Direction];
 
@@ -136,4 +138,12 @@ export function setLazyPassSubjectName(subject: SubjectName): void {
 
 export function getLazyPassSubjectName(): SubjectName | undefined {
     return LazyPassSubjectName;
+}
+
+export function IsTextChanging(): boolean {
+    return isTextChanging;
+}
+
+export function SetTextChanging(value: boolean) {
+    isTextChanging = value;
 }

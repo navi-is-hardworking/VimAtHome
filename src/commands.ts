@@ -790,6 +790,12 @@ export let registeredCommands: ExtensionCommand[] = [
         },
     },
     {
+        id: "vimAtHome.cutToAnchor", 
+        execute: async (manager) => {
+            await manager.cutToAnchor();
+        },
+    },
+    {
         id: "vimAtHome.yoinkToAnchor", 
         execute: async (manager) => {
             await manager.yoinkAnchor();
@@ -1043,13 +1049,13 @@ export let registeredCommands: ExtensionCommand[] = [
         },
     },
     {
-        id: "vimAtHome.metaSelectStart",
+        id: "vimAtHome.addPrevMatch",
         execute: async (manager) => {
             await manager.metaSelectStart();
         },
     },
     {
-        id: "vimAtHome.metaSelectEnd",
+        id: "vimAtHome.addNextMatch",
         execute: async (manager) => {
             await manager.metaSelectEnd();
         },

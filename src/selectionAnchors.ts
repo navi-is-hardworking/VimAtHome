@@ -141,6 +141,24 @@ export default class SelectionAnchor {
             });
         }
     }
+    
+    // returns the cut selection, needs to be manually added to clipboard
+    async CutToAnchor(editor: vscode.TextEditor): Promise<string> {
+        if (this.cachedSelection === undefined) return "";
+        const anchoredRange = this.GetSelectionRangeFromAnchor(editor.selection);
+        let result = "";
+        if (anchoredRange instanceof vscode.Range) {
+            result = editor.document.getText(anchoredRange);
+            let newSelection = new vscode.Selection(anchoredRange.end, anchoredRange.start);
+            
+            
+            await editor.edit(editBuilder => {
+                editBuilder.delete(newSelection);
+            });
+        }
+        
+        return result;
+    }
 
     SelectToAnchorIfExtending(editor: vscode.TextEditor, force: boolean = false) {
         if ((!this.IsExtendModeOn() && !force) || this.cachedSelection === undefined) return;

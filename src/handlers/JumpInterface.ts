@@ -132,6 +132,7 @@ export default class JumpInterface implements vscode.Disposable {
     
                 this.inlineInput = new InlineInput({
                     textEditor: this.context.editor,
+                    
                     onInput: handleInput,
                     onCancel: cleanup
                 });
