@@ -350,4 +350,48 @@ export async function findNextWhitespace(editor: vscode.TextEditor, direction: c
 
 
 
+export async function collapseToFirstSelection(editor: vscode.TextEditor) {
+    //collapse to the first selection?
+    let highestLine = editor.selections[0].active.line;
+    let highestChar = editor.selections[0].active.character;
+    let chosenSelection = editor.selections[0];
+    
+    editor.selections.forEach(element => {
+        const eleLine = Math.min(element.active.line, element.anchor.line);
+        const eleChar = Math.min(element.active.character, element.anchor.character);
+        
+        if (eleLine < highestLine || eleLine == highestLine && eleChar < highestChar) {
+            chosenSelection = element;
+            highestLine = eleLine;
+            highestChar = eleChar;
+        }
+    });
+    
+    editor.selections = [chosenSelection];
+    return;
+}
+
+export async function collapseToLastSelection(editor: vscode.TextEditor) {
+    //collapse to the first selection?
+    let highestLine = editor.selections[0].active.line;
+    let highestChar = editor.selections[0].active.character;
+    let chosenSelection = editor.selections[0];
+    
+    editor.selections.forEach(element => {
+        const eleLine = Math.max(element.active.line, element.anchor.line);
+        const eleChar = Math.max(element.active.character, element.anchor.character);
+        
+        if (eleLine > highestLine || eleLine == highestLine && eleChar > highestChar) {
+            chosenSelection = element;
+            highestLine = eleLine;
+            highestChar = eleChar;
+        }
+    });
+    
+    editor.selections = [chosenSelection];
+    return;
+}
+
+
+
 

@@ -8,3 +8,18 @@ issues with folding:
 maybe new quick menu: open commands
 goto finder/git/etc
 toggle copilot
+
+snapshot location for viewing
+remove moving at end/beginning of line moving to next line above/below
+
+calculator
+
+add highlight to anchors again
+history
+pull from insert mode
+when deleting in extend, it keeps a residual selection
+
+move del shift to pull
+
+Fast.. Add selection to custom finder. add to goto menu
+fast.. find next in custom finder maybe replace find next match if it exists?

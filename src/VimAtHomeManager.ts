@@ -20,6 +20,8 @@ import { promisify } from "util";
 import { SelectionHistoryManager } from "./handlers/SelectionHistoryManager";
 import {Terminal} from "./utils/terminal"
 import * as EditorUtils from "./utils/editor"
+import {Calculator} from "./utils/calculator"
+import { highlightManager } from "./commands";
 // import { EditHistoryManager } from './handlers/EditHistoryManager';
 
 
@@ -34,6 +36,7 @@ export default class VimAtHomeManager {
     public statusBar: vscode.StatusBarItem;
     public editor: vscode.TextEditor = undefined!;
     public extendAnchor: SelectionAnchor = new SelectionAnchor();
+    public calc: Calculator = new Calculator(); 
     // // // public editHistoryManager: EditHistoryManager = EditHistoryManager.getInstance();
 
     constructor(public config: Config) {
@@ -291,6 +294,14 @@ export default class VimAtHomeManager {
         
         const choice = await quickCommandPicker(quickMenus.ViewCommands);
 
+        if (choice) {
+            await choice.execute();
+        }
+    }
+    
+    async openPullMenu() {
+        this.extendAnchor.SelectToAnchorIfExtending(this.editor);
+        const choice = await quickCommandPicker(quickMenus.PullCommands);
         if (choice) {
             await choice.execute();
         }
@@ -563,12 +574,23 @@ export default class VimAtHomeManager {
     }
     
     async collapseToLeft() {
+        
+        if (this.editor.selections.length > 1) {
+            EditorUtils.collapseToFirstSelection(this.editor);
+            return;
+        }
+        
         let changeRequest = await this.mode.collapseToLeft();
         if (changeRequest)
             this.changeMode(changeRequest)
     }
     
     async collapseToRight() {
+        if (this.editor.selections.length > 1) {
+            EditorUtils.collapseToLastSelection(this.editor);
+            return;
+        }
+
         let changeRequest = await this.mode.collapseToRight();
         if (changeRequest)
             this.changeMode(changeRequest)
@@ -822,8 +844,8 @@ export default class VimAtHomeManager {
     }
     
     async cutToAnchor(): Promise<void> {
-        let cutText = await this.extendAnchor.CutToAnchor(this.editor);
-        this.copyText(cutText);
+        this.yoinkAnchor();
+        this.deleteToAnchor();
     }
     
     async downIndent(direction: common.Direction) {
@@ -1607,6 +1629,21 @@ export default class VimAtHomeManager {
     
     async goToNearestSymbol(direction: common.Direction) {
         await EditorUtils.goToNearestSymbol(this.editor, direction);
+    }
+    
+    async calculate() {
+        const text = this.editor.document.getText(this.editor.selection)
+        const result = this.calc.calculate(text);
+        this.copyText(result);
+        
+        // EditorUtils.replaceSelection(this.editor, result);
+    }
+    
+    async AddSelectionToHighlights() {
+        this.extendAnchor.SelectToAnchorIfExtending(this.editor);
+        let text = this.editor.document.getText(this.editor.selection);
+        highlightManager.addSelectionAsHighlight(text);
+        vscode.commands.executeCommand("vimAtHome.changeToCustomWord1");
     }
 
 

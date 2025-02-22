@@ -35,6 +35,16 @@ export class HighlightManager {
             } 
         }
     }
+    
+    public async addSelectionAsHighlight(word: string) {
+        if (word) {
+            const index = this.getNextAvailableIndex();
+            if (index !== -1) {
+                this.highlightedWords.set(index, word);
+                this.updateHighlights();
+            } 
+        }
+    }
 
     public async manageHighlights() {
         const quickPick = vscode.window.createQuickPick();

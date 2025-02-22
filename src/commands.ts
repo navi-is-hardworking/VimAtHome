@@ -335,6 +335,7 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.changeToInsertModeAppend",
         execute: async (manager) => {
+            // TODO: select to anchor first
             collapseSelections(manager.editor, "end");
             manager.EndExtendMode();
             return manager.changeMode({ kind: "INSERT" });
@@ -371,6 +372,7 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.changeToInsertModePrepend",
         execute: async (manager) => {
+            // TODO: select to anchor first
             collapseSelections(manager.editor, "start");
             manager.EndExtendMode();
             manager.changeMode({ kind: "INSERT" });
@@ -457,6 +459,12 @@ export let registeredCommands: ExtensionCommand[] = [
         id: "vimAtHome.openSubjectMenu",
         execute: async (manager) => {
             await manager.openSubjectMenu();
+        },
+    },
+    {
+        id: "vimAtHome.openPullMenu",
+        execute: async (manager) => {
+            await manager.openPullMenu();
         },
     },
     {
@@ -1088,6 +1096,19 @@ export let registeredCommands: ExtensionCommand[] = [
         id: "vimAtHome.goToNextEdit",
         execute: async (manager) => {
             await manager.goToEdit("forwards");
+        },
+    },
+    
+    {
+        id: "vimAtHome.calc",
+        execute: async (manager) => {
+            await manager.calculate();
+        },
+    },
+    {
+        id: "vimAtHome.addSelectionToHighlights",
+        execute: async (manager) => {
+            await manager.AddSelectionToHighlights();
         },
     },
     

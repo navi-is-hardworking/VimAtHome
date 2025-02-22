@@ -383,7 +383,6 @@ export default class CommandMode extends modes.EditorMode {
         const jumpInterface = new JumpInterface(this.context);
         let jumpType = tempSubject.jumpPhaseType;
 
-        outputchannel.appendLine(`subject nme ${tempSubject.name}`);
         if (tempSubject.name === "WORD") {
             let wordDefinitionIndex = getWordDefinitionIndex();
             if (wordDefinitionIndex <= 1) {
@@ -393,7 +392,6 @@ export default class CommandMode extends modes.EditorMode {
             }
         }
 
-        common.setLazyPassSubjectName(subjectName);
         const jumpPosition = await jumpInterface.jump({
             kind: jumpType,
             locations: seq(jumpLocations)},);

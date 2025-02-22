@@ -139,6 +139,15 @@ export const ModifyCommands: QuickCommand[] = [
             );
         },
     },
+    {
+        quickKey: char("x"),
+        label: "Calculate and replace",
+        async execute() {
+            await vscode.commands.executeCommand(
+                "vimAtHome.calc"
+            );
+        },
+    },
 
 ];
 
@@ -367,6 +376,15 @@ export const ViewCommands: QuickCommand[] = [
         },
     },
     {
+        quickKey: char("m"),
+        label: "move editor left",
+        execute: async () => {
+            await vscode.commands.executeCommand(
+                "workbench.action.moveEditorLeftInGroup"
+            );
+        },
+    },
+    {
         quickKey: char("k"),
         label: "Kill terminal in editor tab",
         execute: async () => {
@@ -549,26 +567,47 @@ export const SpaceCommands: QuickCommand[] = [
 ];
 
 
-export const MoveCommands: QuickCommand[] = [
+export const PullCommands: QuickCommand[] = [
     {
         quickKey: char("j"),
-        label: "Pull Bracket",
+        label: "Pull Custom 5",
         execute: async () => {
-            await vscode.commands.executeCommand("vimAtHome.pullBracket");
+            await vscode.commands.executeCommand("vimAtHome.pullCustomWord5");
         },
     },
     {
         quickKey: char("k"),
-        label: "Pull Line",
+        label: "Pull Custom 6",
         execute: async () => {
-            await vscode.commands.executeCommand("vimAtHome.pullLine");
+            await vscode.commands.executeCommand("vimAtHome.pullCustomWord6");
         },
     },
     {
         quickKey: char("l"),
+        label: "Pull Custom 7",
+        execute: async () => {
+            await vscode.commands.executeCommand("vimAtHome.pullCustomWord7");
+        },
+    },
+    {
+        quickKey: char("m"),
+        label: "Pull Bracket",
+        execute: async () => {
+            await vscode.commands.executeCommand("vimAtHome.pullBracketSubject");
+        },
+    },
+    {
+        quickKey: char(","),
+        label: "Pull Line",
+        execute: async () => {
+            await vscode.commands.executeCommand("vimAtHome.pullLineSubject");
+        },
+    },
+    {
+        quickKey: char("."),
         label: "Pull Block",
         execute: async () => {
-            await vscode.commands.executeCommand("vimAtHome.pullBlock");
+            await vscode.commands.executeCommand("vimAtHome.pullBlockSubject");
         },
     }
 ];

@@ -4,7 +4,7 @@ import * as vscode from "vscode";
 
 export default class SelectionAnchor {
     private cachedSelection: vscode.Selection | undefined;
-    private phantomDecoration: vscode.TextEditorDecorationType;
+    private phantomDecoration: vscode.TextEditorDecorationType; // the highlight, Indicates where final selection will be without actually
     private extendModeEnabled: boolean = false;
     
     constructor() {
@@ -140,24 +140,10 @@ export default class SelectionAnchor {
                 editBuilder.delete(newSelection);
             });
         }
-    }
-    
-    // returns the cut selection, needs to be manually added to clipboard
-    async CutToAnchor(editor: vscode.TextEditor): Promise<string> {
-        if (this.cachedSelection === undefined) return "";
-        const anchoredRange = this.GetSelectionRangeFromAnchor(editor.selection);
-        let result = "";
-        if (anchoredRange instanceof vscode.Range) {
-            result = editor.document.getText(anchoredRange);
-            let newSelection = new vscode.Selection(anchoredRange.end, anchoredRange.start);
-            
-            
-            await editor.edit(editBuilder => {
-                editBuilder.delete(newSelection);
-            });
-        }
-        
-        return result;
+        editor.selection = new vscode.Selection(
+            new vscode.Position(editor.selection.active.line, editor.selection.active.character), 
+            new vscode.Position(editor.selection.active.line, editor.selection.active.character)
+        );
     }
 
     SelectToAnchorIfExtending(editor: vscode.TextEditor, force: boolean = false) {
