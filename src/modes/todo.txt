@@ -4,7 +4,6 @@ issues with folding:
 -jump
 -most subjects auto open fold really annoying
 
-
 maybe new quick menu: open commands
 goto finder/git/etc
 toggle copilot
@@ -23,3 +22,13 @@ move del shift to pull
 
 Fast.. Add selection to custom finder. add to goto menu
 fast.. find next in custom finder maybe replace find next match if it exists?
+
+//////
+
+track all instances of last command used.
+add a repeat last command key
+
+//////
+
+shift+o should be jump to block
+need move to next non empty non-word line below/above would be nice, i can replace the move to next match maybe

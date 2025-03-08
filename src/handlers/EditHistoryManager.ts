@@ -1,231 +1,136 @@
-// import * as vscode from 'vscode';
-// import * as path from 'path';
-// import * as fs from 'fs';
+import * as vscode from 'vscode';
+import * as fs from 'fs';
+import * as path from 'path';
 
-// /*
-// TODO: rewrite to just store last edit location in file. this is terrible implementation
-// */
+// Just single last edit cursor location but persistant within workspace
+export class EditHistoryManager {
+    private static instance: EditHistoryManager;
+    private editHistory: Map<string, vscode.Position>;
+    private historyFile: string | undefined;
+    private disposables: vscode.Disposable[] = [];
 
-// interface EditPosition {
-//     line: number;
-//     character: number;
-//     timestamp: number;
-// }
+    public static getInstance(): EditHistoryManager {
+        if (!EditHistoryManager.instance) {
+            EditHistoryManager.instance = new EditHistoryManager();
+        }
+        return EditHistoryManager.instance;
+    }
 
-// interface FileEditHistory {
-//     positions: EditPosition[];
-//     currentIndex: number;
-// }
+    private constructor() {
+        this.editHistory = new Map<string, vscode.Position>();
+        this.setupWorkspace();
+        this.registerEventListeners();
+    }
 
-// interface SerializedEditHistory {
-//     [filePath: string]: EditPosition[];
-// }
-
-// export class EditHistoryManager {
-    
-//     private fileHistories: Map<string, FileEditHistory> = new Map(); 
-//     private maxPositionsPerFile: number = 10;
-//     private debounceTimeout: NodeJS.Timeout | undefined;
-//     private lastEditTime = 0;
-//     private readonly debounceDelay = 300;
-//     private historyChanged = false; 
-//     private static instance: EditHistoryManager;
-    
-//     public static getInstance(): EditHistoryManager {
-    
-//         if (!EditHistoryManager.instance) {
-//             EditHistoryManager.instance = new EditHistoryManager();
-//         }
-//         return EditHistoryManager.instance;
-//     }
-
-//     constructor() {
-//         this.loadHistory();
-
-//         vscode.workspace.onDidChangeTextDocument(event => {
-//             this.handleDocumentChange(event);
-//         });
-
-//         setInterval(() => {
-//             if (this.historyChanged) {
-//                 this.historyChanged = false;
-//                 this.saveHistory();
-//             }
-//         }, 30000);
-//     }
-
-//     private handleDocumentChange(event: vscode.TextDocumentChangeEvent) {
-//         const now = Date.now();
-//         if (now - this.lastEditTime < this.debounceDelay && this.debounceTimeout) {
-//             clearTimeout(this.debounceTimeout);
-//         }
-
-//         this.debounceTimeout = setTimeout(() => {
-//             this.recordEdits(event.document, event.contentChanges); 
-//             console.log(`file history: ${JSON.stringify(this.fileHistories)}, ${this.fileHistories.size}`);
-//         }, this.debounceDelay);
-
-//         this.lastEditTime = now;
-//     }
-
-//     private recordEdits(
-//         document: vscode.TextDocument,
-//         changes: readonly vscode.TextDocumentContentChangeEvent[]
-//     ) {
-//         const filePath = document.uri.fsPath;
-
-//         if (!this.fileHistories.has(filePath)) {
-//             this.fileHistories.set(filePath, { positions: [], currentIndex: -1 });
-//         }
-        
-//         const fh = this.fileHistories.get(filePath)!;
-//         this.historyChanged = true;
-        
-//         changes.forEach(change => {
-//             const startPos = change.range.start;
-//             console.log(`Recording edit on line ${startPos.line} (file: ${filePath}).`);
+    private setupWorkspace(): void {
+        if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
+            const workspaceFolder = vscode.workspace.workspaceFolders[0].uri.fsPath;
+            const vscodeFolder = path.join(workspaceFolder, '.vscode');
             
-//             // TODO: Need to remove old lines and replace with new
-//             fh.positions = fh.positions.filter(
-//                 (pos) => pos.line !== startPos.line
-//             );
+            if (!fs.existsSync(vscodeFolder)) {
+                fs.mkdirSync(vscodeFolder, { recursive: true });
+            }
             
-//             const newPosition: EditPosition = {
-//                 line: startPos.line,
-//                 character: startPos.character,
-//                 timestamp: Date.now()
-//             };
+            this.historyFile = path.join(vscodeFolder, 'edit-history.json');
+            this.loadEditHistory();
+        }
+    }
 
-//             fh.positions.push(newPosition);
-//             console.log(`Pushign ${JSON.stringify(newPosition)}`);
-//             fh.currentIndex = fh.positions.length - 1;
+    private registerEventListeners(): void {
+        this.disposables.push(
+            vscode.workspace.onDidChangeTextDocument(event => {
+                if (event.contentChanges.length > 0 && vscode.window.activeTextEditor) {
+                    const editor = vscode.window.activeTextEditor;
+                    
+                    if (editor.document.uri.toString() === event.document.uri.toString()) {
+                        setTimeout(() => {
+                            const filePath = event.document.uri.fsPath;
+                            const position = editor.selection.active;
+                            this.editHistory.set(filePath, position);
+                            this.saveEditHistory();
+                        }, 10);
+                    }
+                }
+            })
+        );
 
-//             if (fh.positions.length > this.maxPositionsPerFile) {
-//                 fh.positions = fh.positions.slice(-this.maxPositionsPerFile);
-//                 fh.currentIndex = fh.positions.length - 1;
-//             }
-//         });
-//     }
+        this.disposables.push(
+            vscode.workspace.onDidChangeWorkspaceFolders(() => {
+                this.setupWorkspace();
+            })
+        );
+    }
 
-//     public async goToPreviousEdit(editor: vscode.TextEditor): Promise<void> {
-//         const filePath = editor.document.uri.fsPath;
-//         const fileHistory = this.fileHistories.get(filePath);
-//         console.log(`gotoprev: filehisto- ${JSON.stringify(fileHistory)}, ${fileHistory?.positions.length}`);
-//         if (!fileHistory) {
-//             console.log(`No history found for file: ${filePath}.`);
-//             return;
-//         }
+    public moveToLastEditLocation(): void {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) {
+            vscode.window.showInformationMessage('No active editor found.');
+            return;
+        }
 
-        
-//         if (fileHistory.currentIndex <= 0) {
-//             console.log('Already at the earliest edit location for this file.');
-//         }
-//         else {
-//             fileHistory.currentIndex--;
-//             console.log(`changing to index ${fileHistory.currentIndex}`);
-//         }
-        
-//         const position = fileHistory.positions[fileHistory.currentIndex];
-//         const newPosition = new vscode.Position(position.line, position.character);
-        
+        const filePath = editor.document.uri.fsPath;
+        const lastPosition = this.editHistory.get(filePath);
 
-//         editor.selection = new vscode.Selection(newPosition, newPosition);
-//         editor.revealRange(
-//             new vscode.Range(newPosition, newPosition),
-//             vscode.TextEditorRevealType.InCenter
-//         );
-
-//         console.log(`Moved to previous edit: line ${position.line}, index ${fileHistory.currentIndex}`);
-//     }
-
-//     public async goToNextEdit(editor: vscode.TextEditor): Promise<void> {
-//         const filePath = editor.document.uri.fsPath;
-//         const fileHistory = this.fileHistories.get(filePath);
-        
-//         if (!fileHistory) {
-//             console.log(`No history found for file: ${filePath}.`);
-//             return;
-//         }
-        
-//         if (fileHistory.currentIndex >= fileHistory.positions.length - 1) {
-//             console.log('Already at the latest edit location for this file.');
-//         }
-//         else {
-//             fileHistory.currentIndex++;
-//             console.log(`changing to index ${fileHistory.currentIndex}`);
-//         }
-        
-//         const position = fileHistory.positions[fileHistory.currentIndex];
-//         const newPosition = new vscode.Position(position.line, position.character);
-        
-//         editor.selection = new vscode.Selection(newPosition, newPosition);
-//         editor.revealRange(
-//             new vscode.Range(newPosition, newPosition),
-//             vscode.TextEditorRevealType.InCenter
-//         );
-
-//         console.log(`Moved to next edit: line ${position.line}, index ${fileHistory.currentIndex}`);
-//     }
-
-//     private async saveHistory() {
-//         const workspaceFolderPath = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-//         console.log(`saving edit history to ${workspaceFolderPath}`);
-        
-//         if (!workspaceFolderPath) {
-//             console.log('No workspace folder open, skipping save.');
-//             return;
-//         }
-
-//         const serialized: SerializedEditHistory = {};
-//         this.fileHistories.forEach((history, pathKey) => {
-//             serialized[pathKey] = history.positions;
-//         });
-
-//         try {
-//             const historyFilePath = path.join(workspaceFolderPath, '.vscode', 'EditHistory.json');
-//             fs.mkdirSync(path.dirname(historyFilePath), { recursive: true });
-//             fs.writeFileSync(historyFilePath, JSON.stringify(serialized, null, 2), 'utf8');
-//             console.log(`Edit history saved to ${historyFilePath}`);
-//         } catch (err) {
-//             console.error('Failed to save EditHistory.json:', err);
+        if (lastPosition) {
+            editor.selection = new vscode.Selection(lastPosition, lastPosition);
             
-//         }
-//     }
+            editor.revealRange(
+                new vscode.Range(lastPosition, lastPosition),
+                vscode.TextEditorRevealType.InCenter
+            );
+        } else {
+            vscode.window.showInformationMessage('No edit history found for this file.');
+        }
+    }
 
-//     private async loadHistory() {
-//         const workspaceFolderPath = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-//         if (!workspaceFolderPath) {
-//             console.log('No workspace folder open, skipping load.');
-//             return;
-//         }
+    private loadEditHistory(): void {
+        if (!this.historyFile || !fs.existsSync(this.historyFile)) {
+            return;
+        }
 
-//         const historyFilePath = path.join(workspaceFolderPath, '.vscode', 'EditHistory.json');
-//         if (!fs.existsSync(historyFilePath)) {
-//             console.log('No EditHistory.json to load.');
-//             return;
-//         }
-
-//         try {
-//             const fileContents = fs.readFileSync(historyFilePath, 'utf8');
-//             const saved = JSON.parse(fileContents) as SerializedEditHistory;
-
-//             for (const [filePath, positions] of Object.entries(saved)) {
-//                 this.fileHistories.set(filePath, {
-//                     positions,
-//                     currentIndex: positions.length - 1
-//                 });
-//             }
-//             console.log(`Loaded edit history from ${historyFilePath}`);
+        try {
+            const data = fs.readFileSync(this.historyFile, 'utf8');
+            const historyData = JSON.parse(data);
             
-//         } catch (err) {
-//             console.error('Failed to load EditHistory.json:', err);
-//         }
-//     }
+            this.editHistory.clear();
+            
+            for (const [filePath, position] of Object.entries(historyData)) {
+                const pos = position as { line: number, character: number };
+                this.editHistory.set(filePath, new vscode.Position(pos.line, pos.character));
+            }
+        } catch (error) {
+            console.error('Failed to load edit history:', error);
+        }
+    }
+
+    private saveEditHistory(): void {
+        if (!this.historyFile) {
+            return;
+        }
+
+        try {
+            const historyData: Record<string, { line: number, character: number }> = {};
+            
+            this.editHistory.forEach((position, filePath) => {
+                historyData[filePath] = {
+                    line: position.line,
+                    character: position.character
+                };
+            });
+            
+            fs.writeFileSync(this.historyFile, JSON.stringify(historyData, null, 2), 'utf8');
+        } catch (error) {
+            console.error('Failed to save edit history:', error);
+        }
+    }
     
-//     public dispose() {
-//         if (this.debounceTimeout) {
-//             clearTimeout(this.debounceTimeout);
-//         }
-//         this.saveHistory();
-//     }
-// }
+    public clearHistory(): void {
+        this.editHistory.clear();
+        this.saveEditHistory();
+    }
+
+    public dispose(): void {
+        this.disposables.forEach(d => d.dispose());
+        this.disposables = [];
+    }
+}

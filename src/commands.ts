@@ -283,7 +283,7 @@ export let registeredCommands: ExtensionCommand[] = [
         },
     },
     {
-        id: "vimAtHome.changeToInsertMode",
+        id: "vimAtHome.changeToInsertMode", 
         execute: async (manager: VimAtHomeManager) => {
             await manager.changeMode({ kind: "INSERT" });
         },
@@ -1087,17 +1087,23 @@ export let registeredCommands: ExtensionCommand[] = [
         },
     },
     {
-        id: "vimAtHome.goToPrevEdit",
+        id: "vimAtHome.goToLastEdit",
         execute: async (manager) => {
-            await manager.goToEdit("backwards");
+            await manager.GoToLastEdit();
         },
     },
-    {
-        id: "vimAtHome.goToNextEdit",
-        execute: async (manager) => {
-            await manager.goToEdit("forwards");
-        },
-    },
+    // {
+    //     id: "vimAtHome.goToPrevEdit",
+    //     execute: async (manager) => {
+    //         await manager.goToEdit("backwards");
+    //     },
+    // },
+    // {
+    //     id: "vimAtHome.goToNextEdit",
+    //     execute: async (manager) => {
+    //         await manager.goToEdit("forwards");
+    //     },
+    // },
     
     {
         id: "vimAtHome.calc",
@@ -1109,6 +1115,12 @@ export let registeredCommands: ExtensionCommand[] = [
         id: "vimAtHome.addSelectionToHighlights",
         execute: async (manager) => {
             await manager.AddSelectionToHighlights();
+        },
+    },
+    {
+        id: "vimAtHome.convertToKandR",
+        execute: async (manager) => {
+            await manager.ConvertToKandR();
         },
     },
     

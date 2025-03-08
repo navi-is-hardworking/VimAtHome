@@ -70,26 +70,24 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                // "vimAtHome.scrollEditorDown",
-                // "editor.action.fontZoomReset",
-                // "workbench.action.zoomReset",
+                "closeFindWidget",
+                "vimAtHome.scrollToCursor",
+            ]
+        },
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "f16",
+        "command": "runCommands",
+        "args": {
+            "commands": [
                 "closeFindWidget",
                 "workbench.action.focusFirstEditorGroup",
                 "vimAtHome.scrollToCursor",
             ]
         },
-        // "when": "editorTextFocus"
+        "when": "!editorTextFocus"
     },
-    // {
-    //     "key": "f16",
-    //     "command": "runCommands",
-    //     "args": {
-    //         "commands": [
-    //             "workbench.action.focusFirstEditorGroup",
-    //         ]
-    //     },
-    //     "when": "!editorTextFocus"
-    // },
     {
         "key": "shift+f19",
         "command": "runCommands",
@@ -1267,20 +1265,24 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "workbench.action.openEditorAtIndex9"
     },
     {
-        "key": "ctrl+k ctrl+shift+f1",
+        "key": "ctrl+shift+f1",
         "command": "vimAtHome.openGoToMenu"
     },
     {
-        "key": "ctrl+k ctrl+shift+f2",
+        "key": "ctrl+shift+f2",
         "command": "vimAtHome.openSpaceMenu"
     },
     {
-        "key": "ctrl+k shift+ctrl+f3",
+        "key": "shift+ctrl+f9",
         "command": "vimAtHome.openViewMenu"
     },
     {
-        "key": "ctrl+k ctrl+shift+f4",
+        "key": "ctrl+shift+f4",
         "command": "vimAtHome.openModifyMenu"
+    },
+    {
+        "key": "ctrl+shift+f8",
+        "command": "vimAtHome.openPullMenu"
     },
     {
         "key": "ctrl+a",
@@ -1774,6 +1776,17 @@ I would recommend using the original but you are welcome to use this if you wish
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && vimAtHome.mode == 'EXTEND'"
     },
     {
+        "key": "shift+enter",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                // "editor.action.goToSelectionAnchor",
+                "vimAtHome.goPrevSelection",
+            ]
+        },
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && vimAtHome.subject == 'BRACKETS'"
+    },
+    {
         "key": "ctrl+right",
         "command": "runCommands",
         "args": {
@@ -2123,6 +2136,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
+                // "vimAtHome.jumpToLineSubject",
                 "vimAtHome.jumpToLineSubject",
             ]
         },
@@ -2384,6 +2398,25 @@ I would recommend using the original but you are welcome to use this if you wish
             ]
         },
         "when": "inQuickOpen"
+    },
+    {
+        
+        "key": "ctrl+down",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                {
+                    "command": "cursorMove",
+                    "args": {
+                        "to": "down",
+                        "by": "line",
+                        "value": 25
+                    }
+                },
+                // "vimAtHome.scrollToCursor",
+            ]
+        },
+       "when": "editorTextFocus"
     },
     {
         "key": "pageUp",
@@ -2748,7 +2781,7 @@ I would recommend using the original but you are welcome to use this if you wish
                         "value": 25
                     }
                 },
-                "vimAtHome.scrollToCursor",
+                // "vimAtHome.scrollToCursor",
             ]
         },
         "when": "editorTextFocus"
@@ -2766,7 +2799,7 @@ I would recommend using the original but you are welcome to use this if you wish
                         "value": 25
                     }
                 },
-                "vimAtHome.scrollToCursor",
+                // "vimAtHome.scrollToCursor",
             ]
         },
        "when": "editorTextFocus"
@@ -2820,6 +2853,11 @@ I would recommend using the original but you are welcome to use this if you wish
     {
         "key": "ctrl+shift+delete",
         "command": "vimAtHome.runTerminalCommand",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+x",
+        "command": "vimAtHome.cutToAnchor",
         "when": "editorTextFocus"
     },
     {
@@ -2882,6 +2920,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "vimAtHome.clearWaypoints",
         "when": "editorTextFocus"
     },
+    
     {
         "key": "ctrl+f3",
         "command": "vimAtHome.findNextExact",
@@ -2958,21 +2997,21 @@ I would recommend using the original but you are welcome to use this if you wish
     },
     {
         "key": "ctrl+shift+d",
-        "command": "vimAtHome.metaSelectStart"
+        "command": "vimAtHome.addPrevMatch"
     },
     {
         "key": "ctrl+d",
-        "command": "vimAtHome.metaSelectEnd"
+        "command": "vimAtHome.addNextMatch"
     },
     {
         "key": "f",
         "command": "vimAtHome.skip",
-        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && !vimAtHome.awaitingInput"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
     {
         "key": "shift+f",
         "command": "vimAtHome.skipBackwards",
-        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && !vimAtHome.awaitingInput"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
     {
         "key": "f18",
@@ -2987,10 +3026,15 @@ I would recommend using the original but you are welcome to use this if you wish
     {
         "key": "ctrl+k ctrl+alt+left",
         "command": "workbench.action.navigateBackInEditLocations"
+        
     },
     {
         "key": "ctrl+k ctrl+alt+right",
         "command": "workbench.action.navigateForwardInEditLocations",
+    },
+    {
+        "key": "ctrl+e",
+        "command": "vimAtHome.goToLastEdit",
     },
     // {
     //     "key": "ctrl+up",
@@ -3001,15 +3045,25 @@ I would recommend using the original but you are welcome to use this if you wish
     //     "command": "vimAtHome.firstSymbolBelow"
     // },
     // {
-    //     "key": "ctrl+k ctrl+alt+left",
-    //     "command": "vimAtHome.goToPrevEdit",
+    //     "key": "ctrl+k ctrl+alt+left",   
+    //     "command": "vimAtHome.goToNextEdit", 
     //     "when": "editorTextFocus"   
     // },
     // {
     //     "key": "ctrl+k ctrl+alt+right",
-    //     "command": "vimAtHome.goToNextEdit",
+    //     "command": "vimAtHome.goToPrevEdit", 
     //     "when": "editorTextFocus"
     // },
+    // {
+    //     "key": "f17",
+    //     "command": "vimAtHome.openPullMenu", 
+    //     "when": "editorTextFocus"
+    // },
+    {
+        "key": "ctrl+alt+shift+g",
+        "command": "workbench.action.compareEditor.nextChange",
+        "when": "textCompareEditorVisible"
+    },
     {
         "key": "ctrl+alt+l",
         "command": "workbench.action.compareEditor.nextChange",
@@ -3020,8 +3074,27 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "workbench.action.compareEditor.previousChange",
         "when": "textCompareEditorVisible"
     },
+    {
+        "key": "ctrl+alt+shift+g",
+        "command": "vimAtHome.addSelectionToHighlights",
+    },
+    {
+        "key": "ctrl+shift+p",
+        "command": "workbench.action.showAllEditorsByMostRecentlyUsed",
+    },
+    {
+        "key": "escape",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "closeFindWidget", 
+                "workbench.action.closeQuickOpen",
+                "vimAtHome.changeToWordSubject"
+            ]
+        },
+        "when": "findWidgetVisible || inQuickOpen"
+    }
     
 ]
-
 
 ```

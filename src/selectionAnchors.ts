@@ -1,11 +1,14 @@
 import { config } from "process";
 import { getExtendColor } from "./config";
 import * as vscode from "vscode";
+import * as ranges from "./utils/selectionsAndRanges";
 
 export default class SelectionAnchor {
     private cachedSelection: vscode.Selection | undefined;
-    private phantomDecoration: vscode.TextEditorDecorationType; // the highlight, Indicates where final selection will be without actually
+    private phantomDecoration: vscode.TextEditorDecorationType;
     private extendModeEnabled: boolean = false;
+    private anchorDecorationType: vscode.TextEditorDecorationType;
+    private editorChangeDisposable: vscode.Disposable | undefined;
     
     constructor() {
         this.disposePhantomDecoration();
@@ -13,8 +16,25 @@ export default class SelectionAnchor {
             backgroundColor: getExtendColor(),
             border: '1px solid #4444FF40'
         });
+        
+        this.anchorDecorationType = vscode.window.createTextEditorDecorationType({
+            textDecoration: 'underline dotted green',
+        });
+        
+        this.editorChangeDisposable = vscode.window.onDidChangeActiveTextEditor(editor => {
+            if (editor && this.cachedSelection) {
+                this.restoreDecorations(editor);
+            }
+        });
     }
 
+    dispose() {
+        this.disposePhantomDecoration();
+        this.disposeAnchorDecoration();
+        if (this.editorChangeDisposable) {
+            this.editorChangeDisposable.dispose();
+        }
+    }
 
     ResetPhantomDecoration() {
         this.disposePhantomDecoration();
@@ -22,6 +42,21 @@ export default class SelectionAnchor {
             backgroundColor: getExtendColor(),
             border: '1px solid #4444FF40'
         });
+        
+        const editor = vscode.window.activeTextEditor;
+        if (editor && this.cachedSelection) {
+            this.restoreDecorations(editor);
+        }
+    }
+    
+    private restoreDecorations(editor: vscode.TextEditor) {
+        if (!this.cachedSelection) return;
+        
+        editor.setDecorations(this.anchorDecorationType, [ranges.selectionToRange(this.cachedSelection)]);
+        
+        if (this.extendModeEnabled) {
+            this.updatePhantomSelection(editor);
+        }
     }
     
     EndExtendMode() {
@@ -48,6 +83,12 @@ export default class SelectionAnchor {
         }
     }
 
+    disposeAnchorDecoration() {
+        if (this.anchorDecorationType) {
+            this.anchorDecorationType.dispose();
+        }
+    }
+
     updatePhantomSelection(editor: vscode.TextEditor) {
         if (!this.extendModeEnabled || !this.cachedSelection || !this.phantomDecoration) return;
 
@@ -66,7 +107,11 @@ export default class SelectionAnchor {
         
         const selection = editor.selection; 
         if (!selection) return;
+        
+        editor.setDecorations(this.anchorDecorationType, []);
+        
         this.cachedSelection = selection;
+        editor.setDecorations(this.anchorDecorationType, [ranges.selectionToRange(editor.selection)]);
     }
 
     SetLineSelectionAnchor(editor: vscode.TextEditor) {
@@ -74,6 +119,8 @@ export default class SelectionAnchor {
         
         const selection = editor.selection;
         if (!selection) return;
+        
+        editor.setDecorations(this.anchorDecorationType, []);
         
         const startLine = selection.start.line;
         const endLine = selection.end.line;
@@ -84,6 +131,7 @@ export default class SelectionAnchor {
         );
         
         this.cachedSelection = newSelection;
+        editor.setDecorations(this.anchorDecorationType, [ranges.selectionToRange(newSelection)]);
         this.updatePhantomSelection(editor);
     }
 
@@ -144,6 +192,7 @@ export default class SelectionAnchor {
             new vscode.Position(editor.selection.active.line, editor.selection.active.character), 
             new vscode.Position(editor.selection.active.line, editor.selection.active.character)
         );
+        this.EndExtendMode();
     }
 
     SelectToAnchorIfExtending(editor: vscode.TextEditor, force: boolean = false) {
@@ -182,22 +231,15 @@ export default class SelectionAnchor {
     }
     
     ClearSelectionAnchor() {
-        if (this.phantomDecoration) {
-            this.cachedSelection = undefined;
-            vscode.window.activeTextEditor?.setDecorations(this.phantomDecoration, []);
+        this.cachedSelection = undefined;
+        const activeEditor = vscode.window.activeTextEditor;
+        if (activeEditor) {
+            activeEditor.setDecorations(this.phantomDecoration, []);
+            activeEditor.setDecorations(this.anchorDecorationType, []);
         }
     }
     
     GetSelectionAnchor(): vscode.Selection | undefined {
         return this.cachedSelection;
     }
-    
-    // ClearSelectionAnchor() {
-    //     if (this.phantomDecoration) {
-    //         this.cachedSelection = undefined;
-    //         vscode.window.activeTextEditor?.setDecorations(this.phantomDecoration, []);
-    //     }
-    // }
-
-
 }

@@ -149,6 +149,14 @@ export function positionToRange(point: vscode.Position): vscode.Range {
     return new vscode.Range(point, point);
 }
 
+export function selectionToRange(selection: vscode.Selection): vscode.Range {
+    const range = new vscode.Range(
+        selection.start,
+        selection.end
+    );
+    return range;
+}
+
 export function rangeToSelection(range: vscode.Range): vscode.Selection {
     return new vscode.Selection(range.start, range.end);
 }

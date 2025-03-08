@@ -22,7 +22,7 @@ import {Terminal} from "./utils/terminal"
 import * as EditorUtils from "./utils/editor"
 import {Calculator} from "./utils/calculator"
 import { highlightManager } from "./commands";
-// import { EditHistoryManager } from './handlers/EditHistoryManager';
+import { EditHistoryManager } from './handlers/EditHistoryManager';
 
 
 let outputChannel = vscode.window.createOutputChannel("Vah.Manager");
@@ -37,7 +37,7 @@ export default class VimAtHomeManager {
     public editor: vscode.TextEditor = undefined!;
     public extendAnchor: SelectionAnchor = new SelectionAnchor();
     public calc: Calculator = new Calculator(); 
-    // // // public editHistoryManager: EditHistoryManager = EditHistoryManager.getInstance();
+    public editHistoryManager: EditHistoryManager = EditHistoryManager.getInstance();
 
     constructor(public config: Config) {
         this.statusBar = vscode.window.createStatusBarItem(
@@ -48,7 +48,6 @@ export default class VimAtHomeManager {
 
         this.mode = new NullMode(this);
         this.statusBar.show();
-        // // this.editHistoryManager = new EditHistoryManager();
     }
 
     async changeEditor(editor: vscode.TextEditor | undefined) {
@@ -91,8 +90,7 @@ export default class VimAtHomeManager {
     }
 
     async changeMode(newMode: EditorModeChangeRequest) {
-        if (newMode.kind === "INSERT") 
-        {
+        if (newMode.kind === "INSERT") {
             this.extendAnchor.SelectToAnchorIfExtending(this.editor);
             this.extendAnchor.EndExtendMode();
         }
@@ -107,9 +105,9 @@ export default class VimAtHomeManager {
     }
     
     async changeToWordMode(newMode: EditorModeChangeRequest) {
-        if (this.mode.getSubjectName() === "WORD" && getWordDefinitionIndex() === 0) {
-            this.extendAnchor.EndExtendMode();
-        }
+        // if (this.mode.getSubjectName() === "WORD" && getWordDefinitionIndex() === 0) {
+        //     this.extendAnchor.EndExtendMode();
+        // }
         common.setVirtualColumn(this.editor.selection);
         setWordDefinition(0);
         
@@ -247,7 +245,7 @@ export default class VimAtHomeManager {
     }
 
     async openSubjectMenu() {
-        this.extendAnchor.SelectToAnchorIfExtending(this.editor);
+        // this.extendAnchor.SelectToAnchorIfExtending(this.editor);
         const choice = await quickCommandPicker(quickMenus.SubjectChangeCommands);
         if (choice) {
             await choice.execute();
@@ -274,13 +272,12 @@ export default class VimAtHomeManager {
         } else if (choice) {
             choice.execute();
         }
-
+        
         this.mode.fixSelection();
     }
 
     async openModifyMenu() {
         this.extendAnchor.SelectToAnchorIfExtending(this.editor);
-
         const choice = await quickCommandPicker(quickMenus.ModifyCommands);
         if (choice) {
             await choice.execute();
@@ -291,9 +288,7 @@ export default class VimAtHomeManager {
 
     async openViewMenu() {
         this.extendAnchor.SelectToAnchorIfExtending(this.editor);
-        
         const choice = await quickCommandPicker(quickMenus.ViewCommands);
-
         if (choice) {
             await choice.execute();
         }
@@ -840,7 +835,7 @@ export default class VimAtHomeManager {
     }
     
     async deleteToAnchor(): Promise<void> {
-        this.extendAnchor.DeleteToAnchor(this.editor);
+        await this.extendAnchor.DeleteToAnchor(this.editor);
     }
     
     async cutToAnchor(): Promise<void> {
@@ -1074,6 +1069,7 @@ export default class VimAtHomeManager {
             const text = this.editor.document.getText(tempRange);
             this.copyText(text);
         }
+        this.extendAnchor.EndExtendMode();
     }
 
     async changeToWord() {
@@ -1491,9 +1487,14 @@ export default class VimAtHomeManager {
     }
     
     async showSelectionToAnchor() {
-        this.extendAnchor.StartExtendMode();
-        this.extendAnchor.SelectToAnchorIfExtending(this.editor);
-        this.extendAnchor.StartExtendMode();
+        if (this.extendAnchor.IsExtendModeOn()) {
+            this.anchorSwap();
+        }
+        else {
+            this.extendAnchor.StartExtendMode();
+        }
+        // this.extendAnchor.SelectToAnchorIfExtending(this.editor);
+        // this.extendAnchor.StartExtendMode();
     }
     
     async AddSubjectDown() {
@@ -1615,18 +1616,6 @@ export default class VimAtHomeManager {
         });
     }
     
-    async goToEdit(direction: common.Direction) { 
-        common.SetTextChanging(true);
-        if (direction === "forwards") {
-            // await this.editHistoryManager.goToPreviousEdit(this.editor); 
-        }
-        else {
-            // await this.editHistoryManager.goToLastEdit(this.editor); 
-            // await this.editHistoryManager.goToNextEdit(this.editor);
-        }
-        common.SetTextChanging(false);
-    }
-    
     async goToNearestSymbol(direction: common.Direction) {
         await EditorUtils.goToNearestSymbol(this.editor, direction);
     }
@@ -1640,10 +1629,39 @@ export default class VimAtHomeManager {
     }
     
     async AddSelectionToHighlights() {
-        this.extendAnchor.SelectToAnchorIfExtending(this.editor);
+        this.extendAnchor.SelectToAnchorIfExtending(this.editor); 
         let text = this.editor.document.getText(this.editor.selection);
         highlightManager.addSelectionAsHighlight(text);
         vscode.commands.executeCommand("vimAtHome.changeToCustomWord1");
+    }
+    
+    async GoToLastEdit() {
+        // outputChannel.appendLine('go to last edit location.');
+        // vscode.window.showInformationMessage('go to last edit location.');
+        vscode.commands.executeCommand("vimAtHome.changeToInsertMode");
+        this.editHistoryManager.moveToLastEditLocation();
+    }
+
+    async ConvertToKandR() {
+        const document = this.editor.document;
+        const fullText = document.getText();
+        
+        const allmanStyleRegex = /([^\n{]*?)(\r?\n)(\s*)(\{)(\s*\r?\n)/g;
+        
+        const newText = fullText.replace(allmanStyleRegex, (match, prevLine, newline1, indent, openBrace, newline2) => {
+            return `${prevLine} ${openBrace}${newline2}`;
+        });
+        
+        if (newText !== fullText) {
+            const fullRange = new vscode.Range(
+                new vscode.Position(0, 0),
+                new vscode.Position(document.lineCount - 1, document.lineAt(document.lineCount - 1).text.length)
+            );
+            
+            await this.editor.edit((editBuilder: vscode.TextEditorEdit) => {
+                editBuilder.replace(fullRange, newText);
+            });
+        }
     }
 
 

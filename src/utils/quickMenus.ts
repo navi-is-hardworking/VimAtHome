@@ -24,13 +24,22 @@ export const ModifyCommands: QuickCommand[] = [
     },
     {
         quickKey: char("k"),
-        label: "Transform to kebab case",
+        label: "Convert to k and r",
         async execute() {
             await vscode.commands.executeCommand(
-                "editor.action.transformToKebabcase"
+                "vimAtHome.convertToKandR"
             );
         },
     },
+    // {
+    //     quickKey: char("k"),
+    //     label: "Transform to kebab case",
+    //     async execute() {
+    //         await vscode.commands.executeCommand(
+    //             "editor.action.transformToKebabcase"
+    //         );
+    //     },
+    // },
     {
         quickKey: char("l"),
         label: "Transform to lower case",

@@ -8,8 +8,7 @@ export class HighlightManager {
 
     constructor() {
         this.highlightDecorationType = vscode.window.createTextEditorDecorationType({
-            backgroundColor: "ffff00",
-            border: '1px solid yellow',
+            textDecoration: 'underline yellow',
         });
 
         this.disposables.push(
