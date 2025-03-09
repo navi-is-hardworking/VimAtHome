@@ -337,8 +337,8 @@ export let registeredCommands: ExtensionCommand[] = [
         execute: async (manager) => {
             // TODO: select to anchor first
             collapseSelections(manager.editor, "end");
-            manager.EndExtendMode();
-            return manager.changeMode({ kind: "INSERT" });
+            await manager.EndExtendMode();
+            await manager.changeMode({ kind: "INSERT" });
         },
     },
     {
@@ -1118,9 +1118,27 @@ export let registeredCommands: ExtensionCommand[] = [
         },
     },
     {
+        id: "vimAtHome.addClipboardToHighlights",
+        execute: async (manager) => {
+            await manager.AddClipboardToHighlights();
+        },
+    },
+    {
         id: "vimAtHome.convertToKandR",
         execute: async (manager) => {
             await manager.ConvertToKandR();
+        },
+    },
+    {
+        id: "vimAtHome.nextEmptyBelow",
+        execute: async (manager) => {
+            await manager.NextEmptyLine("forwards");
+        },
+    },
+    {
+        id: "vimAtHome.nextEmptyAbove",
+        execute: async (manager) => {
+            await manager.NextEmptyLine("backwards");
         },
     },
     

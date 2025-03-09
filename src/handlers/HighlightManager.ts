@@ -100,7 +100,8 @@ export class HighlightManager {
             const ranges: vscode.Range[] = [];
 
             this.highlightedWords.forEach((word, index) => {
-                const regex = new RegExp(this.escapeRegExp(word), 'gi');
+                // Changed from 'gi' to 'g' to make it case sensitive
+                const regex = new RegExp(this.escapeRegExp(word), 'g');
                 let match;
                 while ((match = regex.exec(text))) {
                     const startPos = editor.document.positionAt(match.index);
@@ -133,7 +134,7 @@ export class HighlightManager {
         this.highlightedWords.forEach(word => regString += (word + "|"))
         if (regString.length > 0) 
             regString = regString.substring(0, regString.length - 1);
-        return new RegExp(regString, 'i');
+        // Also removed the 'i' flag here to make this method case sensitive too
+        return new RegExp(regString);
     }
-
 }

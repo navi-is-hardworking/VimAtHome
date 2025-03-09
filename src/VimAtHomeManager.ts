@@ -1632,7 +1632,13 @@ export default class VimAtHomeManager {
         this.extendAnchor.SelectToAnchorIfExtending(this.editor); 
         let text = this.editor.document.getText(this.editor.selection);
         highlightManager.addSelectionAsHighlight(text);
-        vscode.commands.executeCommand("vimAtHome.changeToCustomWord1");
+        await vscode.commands.executeCommand("vimAtHome.changeToCustomWord1");
+    }
+    
+    async AddClipboardToHighlights() {
+        const text = await vscode.env.clipboard.readText();
+        highlightManager.addSelectionAsHighlight(text);
+        await vscode.commands.executeCommand("vimAtHome.changeToCustomWord1");
     }
     
     async GoToLastEdit() {
@@ -1661,6 +1667,24 @@ export default class VimAtHomeManager {
             await this.editor.edit((editBuilder: vscode.TextEditorEdit) => {
                 editBuilder.replace(fullRange, newText);
             });
+        }
+    }
+    
+    async NextEmptyLine(direction: common.Direction) {
+        var startingPos = direction == "forwards" ? this.editor.selection.anchor : this.editor.selection.active;
+        
+        for (var line of lineUtils.iterLines(this.editor.document, {
+            startingPosition: startingPos,
+            direction: direction,
+            currentInclusive: false,
+        })) {
+            if (line.isEmptyOrWhitespace) {
+                this.editor.selection = new vscode.Selection(
+                    new vscode.Position(line.lineNumber, 999), 
+                    new vscode.Position(line.lineNumber, 999)
+                );
+                break;
+            }
         }
     }
 
