@@ -295,6 +295,7 @@ export default class VimAtHomeManager {
     }
     
     async openPullMenu() {
+        var mode = this.mode;
         this.extendAnchor.SelectToAnchorIfExtending(this.editor);
         const choice = await quickCommandPicker(quickMenus.PullCommands);
         if (choice) {
@@ -392,13 +393,17 @@ export default class VimAtHomeManager {
 
     async pullSubject(subjectName: SubjectName) {
         this.extendAnchor.SelectToAnchorIfExtending(this.editor);
+        const wasInInsertMode = this.mode instanceof InsertMode;
         const newMode = await this.mode.pullSubject(subjectName);
-        if (newMode === undefined) return;
-        this.clearSelections();
+        if (newMode === undefined) {
+            if (wasInInsertMode) {
+                await this.changeMode({ kind: "INSERT" });
+            }
+            return;
+        }
+        
         this.mode = newMode;
         this.setUI();
-        this.mode.fixSelection();
-        this.setDecorations();
     }
 
     // KJDFLSAHGIONURVCWEXMBPTYZ
@@ -1672,16 +1677,29 @@ export default class VimAtHomeManager {
     
     async NextEmptyLine(direction: common.Direction) {
         var startingPos = direction == "forwards" ? this.editor.selection.anchor : this.editor.selection.active;
+        var lastIndentation = "";
         
         for (var line of lineUtils.iterLines(this.editor.document, {
             startingPosition: startingPos,
             direction: direction,
             currentInclusive: false,
         })) {
-            if (line.isEmptyOrWhitespace) {
+            if (!line.isEmptyOrWhitespace) {
+                const currentLine = this.editor.document.lineAt(line.lineNumber);
+                const indentCharCount = currentLine.firstNonWhitespaceCharacterIndex;
+                lastIndentation = ' '.repeat(indentCharCount);
+            } 
+            else if (line.isEmptyOrWhitespace) {
+                const currentLine = this.editor.document.lineAt(line.lineNumber);
+                if (currentLine.text.length === 0) {
+                    await this.editor.edit(editBuilder => {
+                        editBuilder.insert(new vscode.Position(line.lineNumber, 0), lastIndentation);
+                    });
+                }
+                const cursorPosition = lastIndentation.length;
                 this.editor.selection = new vscode.Selection(
-                    new vscode.Position(line.lineNumber, 999), 
-                    new vscode.Position(line.lineNumber, 999)
+                    new vscode.Position(line.lineNumber, cursorPosition), 
+                    new vscode.Position(line.lineNumber, cursorPosition)
                 );
                 break;
             }

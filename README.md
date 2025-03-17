@@ -3093,7 +3093,49 @@ I would recommend using the original but you are welcome to use this if you wish
             ]
         },
         "when": "findWidgetVisible || inQuickOpen"
+    },
+    {
+        "key": "ctrl+shift+f3",
+        "command": "vimAtHome.addClipboardToHighlights",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
+    },
+    {
+        "key": "ctrl+f3",
+        "command": "vimAtHome.addSelectionToHighlights",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
+    },
+    {
+        "key": "b",
+        "command": "vimAtHome.jumpToBlockSubject",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
+    },
+    {
+        "key": "r",
+        "command": "vimAtHome.jumpToBracketSubject",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
+    },
+    {
+        "key": "shift+[",
+        "command": "vimAtHome.nextEmptyAbove",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
+    },
+    {
+        "key": "shift+]",
+        "command": "vimAtHome.nextEmptyBelow",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
+    },
+    {
+        "key": "ctrl+;",
+        "command": "vimAtHome.jumpToWordSubject",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "shift+enter",
+        "command": "editor.action.inlineSuggest.trigger",
+        "when": "editorTextFocus && vimAtHome.mode != 'COMMAND'" 
     }
+    
+    
     
 ]
 

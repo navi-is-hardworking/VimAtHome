@@ -32,3 +32,13 @@ add a repeat last command key
 
 shift+o should be jump to block
 need move to next non empty non-word line below/above would be nice, i can replace the move to next match maybe
+
+/////
+
+when pullng ,
+gets stuck in layer 0
+can't move because layer 0 but still in command mode, so pull needs to either exit command mode or make sure keyboard is in move mode
+best to just restore the previous mode
+
+/////
+when move to empty space, check above and below indentation and modify current line to match

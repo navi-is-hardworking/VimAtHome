@@ -406,7 +406,7 @@ export default class CommandMode extends modes.EditorMode {
 
             if (pulledRange) {
                 this.context.editor.selection = new vscode.Selection(pulledRange.start, pulledRange.end);
-                await this.fixSelection();
+                // await this.fixSelection();
             }
         }
         return undefined;
