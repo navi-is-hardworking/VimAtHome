@@ -45,29 +45,29 @@ export default class VimAtHomeManager {
             vscode.StatusBarAlignment.Left,
             0
         );
-
+        
         this.mode = new NullMode(this);
         this.statusBar.show();
     }
-
+    
     async changeEditor(editor: vscode.TextEditor | undefined) {
         this.clearSelections();
         cacheCommands.StopCarry();
         this.extendAnchor.EndExtendMode();
-
+        
         if (!editor) {
             return;
         }
-
+        
         this.editor = editor;
-
+        
         if (this.mode instanceof NullMode) {
             await this.changeMode({
                 kind: "COMMAND",
                 subjectName: "WORD",
             });
         }
-
+        
         this.setUI();
     }
 
@@ -116,7 +116,7 @@ export default class VimAtHomeManager {
         const half = newMode.kind === "INSERT" ? undefined : newMode.half;
         this.setUI();
         
-
+        
         if (this.editor.selection.active.line !== this.editor.selection.anchor.line 
             || lineUtils.lineIsSignificant(this.editor.document.lineAt(this.editor.selection.active.line))) {
             this.mode.fixSelection(half);
@@ -1677,7 +1677,7 @@ export default class VimAtHomeManager {
     
     async NextEmptyLine(direction: common.Direction) {
         var startingPos = direction == "forwards" ? this.editor.selection.anchor : this.editor.selection.active;
-        var lastIndentation = "";
+        var indentCharCount = this.editor.document.lineAt(startingPos.line).firstNonWhitespaceCharacterIndex;
         
         for (var line of lineUtils.iterLines(this.editor.document, {
             startingPosition: startingPos,
@@ -1686,26 +1686,25 @@ export default class VimAtHomeManager {
         })) {
             if (!line.isEmptyOrWhitespace) {
                 const currentLine = this.editor.document.lineAt(line.lineNumber);
-                const indentCharCount = currentLine.firstNonWhitespaceCharacterIndex;
-                lastIndentation = ' '.repeat(indentCharCount);
+                indentCharCount = currentLine.firstNonWhitespaceCharacterIndex;
             } 
             else if (line.isEmptyOrWhitespace) {
                 const currentLine = this.editor.document.lineAt(line.lineNumber);
                 if (currentLine.text.length === 0) {
                     await this.editor.edit(editBuilder => {
-                        editBuilder.insert(new vscode.Position(line.lineNumber, 0), lastIndentation);
+                        editBuilder.insert(new vscode.Position(line.lineNumber, 0), ' '.repeat(indentCharCount));
                     });
                 }
-                const cursorPosition = lastIndentation.length;
+                
                 this.editor.selection = new vscode.Selection(
-                    new vscode.Position(line.lineNumber, cursorPosition), 
-                    new vscode.Position(line.lineNumber, cursorPosition)
+                    new vscode.Position(line.lineNumber, indentCharCount), 
+                    new vscode.Position(line.lineNumber, indentCharCount)
                 );
                 break;
             }
         }
     }
-
+    
 
 }
 

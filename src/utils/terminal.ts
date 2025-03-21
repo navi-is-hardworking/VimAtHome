@@ -107,6 +107,7 @@ export class Terminal {
         const isWindows = os.platform() === 'win32';
         const command = commandLine.trim();
         
+        
         const wslCommand = isWindows ? `wsl bash -c "cd ${this.working_directory} && ${command}"` : command;
     
         child_process.exec(wslCommand, (error, stdout, stderr) => {

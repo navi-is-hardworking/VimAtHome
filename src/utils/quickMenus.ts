@@ -438,6 +438,15 @@ export const ViewCommands: QuickCommand[] = [
             );
         },
     },
+    {
+        quickKey: char("n"),
+        label: "new file",
+        execute: async () => {
+            await vscode.commands.executeCommand(
+                "workbench.action.files.newUntitledFile"
+            );
+        },
+    },
 ];
 
 export const SpaceCommands: QuickCommand[] = [

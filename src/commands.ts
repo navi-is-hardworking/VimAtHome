@@ -583,7 +583,7 @@ export let registeredCommands: ExtensionCommand[] = [
             await manager.executeModifyCommand("transformToCamelCase");
         },
     },
-
+    
     {
         id: "vimAtHome.pullSubword",
         execute: async (manager: VimAtHomeManager) => {
@@ -626,10 +626,8 @@ export let registeredCommands: ExtensionCommand[] = [
                 const terminal = vscode.window.createTerminal({
                     name: "File Directory Terminal"
                 });
-                
                 terminal.show();
                 terminal.sendText(`cd "${unixDirPath}" && pwd`, true);
-                // abcdefghijklmnopqrstuvwxyz1234567890_()]{}"<>&*/$%^!@#ABCDEFGHIJKLMNOPQRSTUVWXYZ
             }
         },
     },
