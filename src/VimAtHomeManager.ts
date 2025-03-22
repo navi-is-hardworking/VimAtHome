@@ -1636,8 +1636,15 @@ export default class VimAtHomeManager {
     async AddSelectionToHighlights() {
         this.extendAnchor.SelectToAnchorIfExtending(this.editor); 
         let text = this.editor.document.getText(this.editor.selection);
-        highlightManager.addSelectionAsHighlight(text);
-        await vscode.commands.executeCommand("vimAtHome.changeToCustomWord1");
+        let added: boolean = await highlightManager.addSelectionAsHighlight(text);
+        if (added) {
+            await vscode.commands.executeCommand("vimAtHome.changeToCustomWord1");
+        }
+        else {
+            if (highlightManager.countHighlights() === 0) {
+                await vscode.commands.executeCommand("vimAtHome.changeToWordSubject");
+            }
+        }
     }
     
     async AddClipboardToHighlights() {

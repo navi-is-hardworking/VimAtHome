@@ -31,6 +31,15 @@ export const ModifyCommands: QuickCommand[] = [
             );
         },
     },
+    {
+        quickKey: char("h"),
+        label: "Manage highlights",
+        async execute() {
+            await vscode.commands.executeCommand(
+                "vimAtHome.manageHighlights"
+            );
+        },
+    },
     // {
     //     quickKey: char("k"),
     //     label: "Transform to kebab case",

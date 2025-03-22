@@ -50,3 +50,6 @@ for bracketize
     - make sure selected lines are 1 indentation greater than parent line
         - means don't indent if already indented, lower indent if too much, increase indent if too little
     - add bracket to the end of the parent line
+    
+for selection highlight
+- reselecting should remove 

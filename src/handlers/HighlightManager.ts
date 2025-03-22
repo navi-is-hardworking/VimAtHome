@@ -4,6 +4,7 @@ import { setHighlightRegex } from "../config";
 export class HighlightManager {
     private highlightDecorationType: vscode.TextEditorDecorationType;
     private highlightedWords: Map<number, string> = new Map();
+    private highlightedIndexs: Map<string, number> = new Map();
     private disposables: vscode.Disposable[] = [];
 
     constructor() {
@@ -25,26 +26,39 @@ export class HighlightManager {
             prompt: 'Enter text to highlight',
             placeHolder: 'Text to highlight'
         });
-
+        
         if (word) {
             const index = this.getNextAvailableIndex();
             if (index !== -1) {
                 this.highlightedWords.set(index, word);
-                this.updateHighlights();
             } 
         }
     }
     
-    public async addSelectionAsHighlight(word: string) {
+    public async addSelectionAsHighlight(word: string): Promise<boolean>  {
         if (word) {
-            const index = this.getNextAvailableIndex();
-            if (index !== -1) {
-                this.highlightedWords.set(index, word);
+            let existingIndex: number | undefined;
+            for (const [index, existingWord] of this.highlightedWords) {
+                if (existingWord === word) {
+                    existingIndex = index;
+                    break;
+                }
+            }
+            if (existingIndex !== undefined) {
+                this.highlightedWords.delete(existingIndex);
                 this.updateHighlights();
-            } 
+                return false;
+            } else {
+                const index = this.getNextAvailableIndex();
+                if (index !== -1) {
+                    this.highlightedWords.set(index, word);
+                    this.updateHighlights();
+                }
+            }
         }
+        return true;
     }
-
+    
     public async manageHighlights() {
         const quickPick = vscode.window.createQuickPick();
         quickPick.items = [
@@ -55,7 +69,7 @@ export class HighlightManager {
             }))
         ];
         quickPick.placeholder = 'Select an action (0 to clear all, 1-9 to delete specific highlight)';
-
+        
         quickPick.onDidChangeValue(value => {
             const num = parseInt(value);
             if (!isNaN(num) && num >= 0 && num <= 9) {
@@ -127,6 +141,10 @@ export class HighlightManager {
     public clearAllHighlightsDirectly() {
         this.highlightedWords.clear();
         this.updateHighlights();
+    }
+    
+    public countHighlights() {
+        return this.highlightedWords.size;
     }
 
     public getHighlightRegex(): RegExp {
