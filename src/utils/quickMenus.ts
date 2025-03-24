@@ -171,6 +171,13 @@ export const ModifyCommands: QuickCommand[] = [
 
 export const GoToCommands: QuickCommand[] = [
     {
+        quickKey: char("c"),
+        label: "Run Current Jupyter Cell",
+        execute: async () => {
+            await vscode.commands.executeCommand("jupyter.runcurrentcell");
+        },
+    },
+    {
         quickKey: char("u"),
         label: "Top of file",
         execute: async () => {
