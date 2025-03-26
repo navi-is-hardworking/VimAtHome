@@ -11,16 +11,16 @@ export class HighlightManager {
         this.highlightDecorationType = vscode.window.createTextEditorDecorationType({
             textDecoration: 'underline yellow',
         });
-
+        
         this.disposables.push(
             vscode.window.onDidChangeActiveTextEditor(() => this.updateHighlights())
         );
-
+        
         this.disposables.push(
             vscode.workspace.onDidChangeTextDocument(() => this.updateHighlights())
         );
     }
-
+    
     public async addHighlight() {
         const word = await vscode.window.showInputBox({
             prompt: 'Enter text to highlight',
@@ -81,16 +81,16 @@ export class HighlightManager {
                 }
             }
         });
-
+        
         quickPick.onDidHide(() => quickPick.dispose());
         quickPick.show();
     }
-
+    
     private clearAllHighlights() {
         this.highlightedWords.clear();
         this.updateHighlights();
     }
-
+    
     private removeHighlight(index: number) {
         const word = this.highlightedWords.get(index);
         if (word) {
@@ -98,7 +98,7 @@ export class HighlightManager {
             this.updateHighlights();
         }
     }
-
+    
     private getNextAvailableIndex(): number {
         for (let i = 1; i <= 9; i++) {
             if (!this.highlightedWords.has(i)) {
@@ -107,12 +107,12 @@ export class HighlightManager {
         }
         return -1;
     }
-
+    
     public updateHighlights() {
         vscode.window.visibleTextEditors.forEach(editor => {
             const text = editor.document.getText();
             const ranges: vscode.Range[] = [];
-
+            
             this.highlightedWords.forEach((word, index) => {
                 // Changed from 'gi' to 'g' to make it case sensitive
                 const regex = new RegExp(this.escapeRegExp(word), 'g');
@@ -123,7 +123,7 @@ export class HighlightManager {
                     ranges.push(new vscode.Range(startPos, endPos));
                 }
             });
-
+            
             editor.setDecorations(this.highlightDecorationType, ranges);
         });
 

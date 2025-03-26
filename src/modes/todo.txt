@@ -53,3 +53,9 @@ for bracketize
     
 for selection highlight
 - reselecting should remove 
+
+/////
+
+fix jump on line setting last skip to reverse
+combine the skip forwards char commands to make faster
+make quick select configurable through the settings

@@ -183,8 +183,9 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "workbench.action.showCommands",
-                "vimAtHome.changeToInsertModePrepend",
+                // "workbench.action.showCommands",
+                // "vimAtHome.changeToInsertModePrepend",
+                // "vimAtHome.saveEditorLayout",
             ]
         },
     },
@@ -1469,7 +1470,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "vimAtHome.changeToWordSubject",
+                "-.changeToWordSubject",
                 "vimAtHome.skipBackwards",
             ],
         },
@@ -2761,13 +2762,13 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "vimAtHome.pasteBracket",
         "when": "editorTextFocus"
     },
-
+    
     {
         "key": "shift+f23",
         "command": "vimAtHome.pasteBracket",
         "when": "editorTextFocus"
     },
-
+    
     {
         "key": "ctrl+up",
         "command": "runCommands",
@@ -2848,11 +2849,6 @@ I would recommend using the original but you are welcome to use this if you wish
     {
         "key": "ctrl+shift+backspace",
         "command": "vimAtHome.replaceSelectionWithTerminalOutput",
-        "when": "editorTextFocus"
-    },
-    {
-        "key": "ctrl+shift+delete",
-        "command": "vimAtHome.runTerminalCommand",
         "when": "editorTextFocus"
     },
     {
@@ -3080,7 +3076,7 @@ I would recommend using the original but you are welcome to use this if you wish
     },
     {
         "key": "ctrl+shift+p",
-        "command": "workbench.action.showAllEditorsByMostRecentlyUsed",
+        "command": "vimAtHome.openTabLayoutMenu",
     },
     {
         "key": "escape",
@@ -3102,6 +3098,11 @@ I would recommend using the original but you are welcome to use this if you wish
     {
         "key": "ctrl+f3",
         "command": "vimAtHome.addSelectionToHighlights",
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
+    },
+    {
+        "key": "b",
+        "command": "vimAtHome.jumpToBlockSubject",
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
     {
@@ -3133,10 +3134,23 @@ I would recommend using the original but you are welcome to use this if you wish
         "key": "shift+enter",
         "command": "editor.action.inlineSuggest.trigger",
         "when": "editorTextFocus && vimAtHome.mode != 'COMMAND'" 
-    }
-    
-    
-    
+    },
+    // {
+    //     "key": "ctrl+shift+l",
+    //     "command": "jupyter.runcurrentcell",
+    //     "when": "editorTextFocus"
+    // },
+    {
+        "key": "f9",
+        "command": "-editor.debug.action.toggleBreakpoint",
+        "when": "debuggersAvailable && disassemblyViewFocus || debuggersAvailable && editorTextFocus"
+    },
+    {
+        "key": "shift+f9",
+        "command": "-editor.debug.action.toggleInlineBreakpoint",
+        "when": "editorTextFocus"
+    },
+
 ]
 
 ```

@@ -94,11 +94,18 @@ export default class JumpInterface implements vscode.Disposable {
                         this.updateActivity(activityState, remainingLocations);
                     } else {
                         if (this.codedLocations) {
-                            const selectedLocation = this.codedLocations.find(([_, code]) => code === char)?.[0];
+                            const selectedLocation: vscode.Position|undefined = this.codedLocations.find(([_, code]) => code === char)?.[0];
                             if (selectedLocation) {
-                                const direction = selectedLocation.line > currentSelection.active.line 
-                                    ? common.Direction.forwards 
-                                    : common.Direction.backwards;
+                                
+                                let direction: common.Direction = common.Direction.forwards;
+                                if (selectedLocation.line <= currentSelection.active.line) {
+                                    if (selectedLocation.character < currentSelection.active.character) {
+                                        direction = common.Direction.backwards;
+                                    }
+                                    else if (selectedLocation.line < currentSelection.active.line) {
+                                        direction = common.Direction.backwards;
+                                    }
+                                }
                                 
                                 const targetChar = editor.charAt(this.context.editor.document, selectedLocation) as common.Char;
                                 let subjectName = common.getLazyPassSubjectName();

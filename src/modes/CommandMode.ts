@@ -127,7 +127,7 @@ export default class CommandMode extends modes.EditorMode {
             previousMode.subject.equals(this.subject)
         );
     }
-
+    
     with(
         args: Partial<{
             context: common.ExtensionContext;
@@ -139,11 +139,11 @@ export default class CommandMode extends modes.EditorMode {
             args.subject ?? this.subject
         );
     }
-
+    
     async changeTo(
         newMode: modes.EditorModeChangeRequest
     ): Promise<modes.EditorMode> {
-
+    
         
         switch (newMode.kind) {
             case "INSERT": {

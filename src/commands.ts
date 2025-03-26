@@ -9,6 +9,9 @@ import { HighlightManager } from './handlers/HighlightManager';
 import * as cacheCommands from "./CacheCommands";
 import { addSubjectCommand } from "./utils/quickMenus"
 import { WaypointManager } from './handlers/WaypointManager';
+import { TabLayoutManager } from './handlers/TabGroupManager';
+
+const tabLayoutManager = new TabLayoutManager();
 
 export let waypointManager = new WaypointManager();
 export let highlightManager = new HighlightManager();
@@ -441,6 +444,18 @@ export let registeredCommands: ExtensionCommand[] = [
         id: "vimAtHome.skipOverBackwards",
         execute: async (manager) => {
             await manager.skipOver(Direction.backwards);
+        },
+    },
+    {
+        id: "vimAtHome.skipToChar",
+        execute: async (manager) => {
+            await manager.skipToChar(Direction.forwards);
+        },
+    },
+    {
+        id: "vimAtHome.skipToCharReverse",
+        execute: async (manager) => {
+            await manager.skipToChar(Direction.backwards);
         },
     },
     {
@@ -1139,7 +1154,12 @@ export let registeredCommands: ExtensionCommand[] = [
             await manager.NextEmptyLine("backwards");
         },
     },
-    
+    {
+        id: "vimAtHome.openTabLayoutMenu",
+        execute: async () => {
+            await tabLayoutManager.openTabLayoutMenu();
+        },
+    },
     
 ];
 

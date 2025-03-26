@@ -15,6 +15,7 @@ import { getWordDefinition, getVerticalSkipCount, setWordDefinition, getWordDefi
 import * as cacheCommands from "./CacheCommands";
 import SelectionAnchor from "./selectionAnchors";
 import { splitByRegex } from "./utils/selectionsAndRanges";
+import * as selectionsAndRanges from "./utils/selectionsAndRanges";
 import * as ncp from 'copy-paste'
 import { promisify } from "util";
 import { SelectionHistoryManager } from "./handlers/SelectionHistoryManager";
@@ -332,6 +333,11 @@ export default class VimAtHomeManager {
             await this.changeMode({ subjectName: common.getLastSkip()?.subject, kind: "COMMAND" });
         }
         this.setUI();
+    }
+    
+    async skipToChar(direction: common.Direction) {
+        await this.changeMode({kind: "COMMAND", subjectName: "CHAR"});
+        await this.skip(direction);
     }
     
     async skipOver(direction: common.Direction) {

@@ -1,0 +1,49 @@
+[
+  {
+    "name": "manager",
+    "tabs": [
+      {
+        "uri": "vscode-remote://wsl%2Bubuntu/home/navi/Repos/VimAtHome/src/commands.ts",
+        "viewColumn": 1,
+        "isActive": true
+      },
+      {
+        "uri": "vscode-remote://wsl%2Bubuntu/home/navi/Repos/VimAtHome/src/VimAtHomeManager.ts",
+        "viewColumn": 1,
+        "isActive": false
+      },
+      {
+        "uri": "vscode-remote://wsl%2Bubuntu/home/navi/Repos/VimAtHome/src/modes/CommandMode.ts",
+        "viewColumn": 1,
+        "isActive": false
+      }
+    ],
+    "timestamp": 1742925835131
+  },
+  {
+    "name": "test",
+    "tabs": [
+      {
+        "uri": "vscode-remote://wsl%2Bubuntu/home/navi/Repos/VimAtHome/src/commands.ts",
+        "viewColumn": 1,
+        "isActive": false
+      },
+      {
+        "uri": "vscode-remote://wsl%2Bubuntu/home/navi/Repos/VimAtHome/src/modes/CommandMode.ts",
+        "viewColumn": 1,
+        "isActive": false
+      },
+      {
+        "uri": "vscode-remote://wsl%2Bubuntu/home/navi/Repos/VimAtHome/src/handlers/TabGroupManager.ts",
+        "viewColumn": 1,
+        "isActive": false
+      },
+      {
+        "uri": "vscode-remote://wsl%2Bubuntu/home/navi/Repos/VimAtHome/src/VimAtHomeManager.ts",
+        "viewColumn": 1,
+        "isActive": true
+      }
+    ],
+    "timestamp": 1742929324298
+  }
+]
