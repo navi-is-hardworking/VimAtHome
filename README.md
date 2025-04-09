@@ -98,6 +98,16 @@ I would recommend using the original but you are welcome to use this if you wish
         },
     },
     {
+        "key": "ctrl+k ctrl+k",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "workbench.action.toggleMaximizedPanel",
+            ]
+        },
+        "when": "terminalFocus"
+    },
+    {
         "key": "ctrl+shift+up",
         "command": "cursorPageUpSelect",
         "when": "editorTextFocus"
@@ -1375,8 +1385,9 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
+                // "vimAtHome.skipToChar"
+                
                 "vimAtHome.changeToInsertModePrepend",
-                // "editor.action.setSelectionAnchor",
                 "vimAtHome.changeToCharSubject",
                 "vimAtHome.skip"
             ],
@@ -1387,9 +1398,10 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
+                // "vimAtHome.skipToCharReverse"
+                
                 "vimAtHome.changeToInsertModeAppend",
                 "cursorLeft",
-                // "editor.action.setSelectionAnchor",
                 "vimAtHome.changeToCharSubject",
                 "vimAtHome.skipBackwards"
             ],
@@ -2749,7 +2761,7 @@ I would recommend using the original but you are welcome to use this if you wish
     },
     {
         "key": "ctrl+f23 ctrl+v",
-        "command": "vimAtHome.pasteLine",
+        "command": "vimAtHome.pasteFromCache",
         "when": "editorTextFocus"
     },
     {
@@ -2873,7 +2885,7 @@ I would recommend using the original but you are welcome to use this if you wish
     },
     {
         "key": "ctrl+f23 ctrl+v",
-        "command": "vimAtHome.pasteLine",
+        "command": "vimAtHome.pasteFromCache",
         "when": "editorTextFocus"
     },
     {
@@ -3127,7 +3139,7 @@ I would recommend using the original but you are welcome to use this if you wish
     },
     {
         "key": "ctrl+;",
-        "command": "vimAtHome.jumpToWordSubject",
+        "command": "P.jumpToWordSubject",
         "when": "editorTextFocus"
     },
     {
@@ -3151,6 +3163,9 @@ I would recommend using the original but you are welcome to use this if you wish
         "when": "editorTextFocus"
     },
 
+    
+    
+    
 ]
 
 ```

@@ -221,11 +221,11 @@ export default class CommandMode extends modes.EditorMode {
     async executeSubjectCommand(command: SubjectAction): Promise<void> {
         await this.subject[command]();
     }
-
+    
     async fixSelection(half? : "LEFT" | "RIGHT") {
         await this.subject.fixSelection(half);
     }
-
+    
     async skip(direction: common.Direction): Promise<void> {
         await new Promise<void>((resolve) => {
             const handleInput = async (_: string, char: common.Char) => {
@@ -233,7 +233,7 @@ export default class CommandMode extends modes.EditorMode {
                 if (char >= 'A' && char <= 'Z') {
                     finalDirection = common.reverseDirection(direction);
                 }
-
+                
                 if (this.subject.name === "WORD" && !/[a-zA-Z0-9_]/.test(char)) {
                     const newMode = await this.changeTo({ kind: "COMMAND", subjectName: "CHAR" });
                     if (newMode instanceof CommandMode) {
@@ -259,7 +259,7 @@ export default class CommandMode extends modes.EditorMode {
                 
                 resolve();
             };
-
+            
             const inlineInput = new InlineInput({
                 textEditor: this.context.editor,
                 onInput: handleInput,
@@ -268,14 +268,14 @@ export default class CommandMode extends modes.EditorMode {
                     resolve();
                 }
             });
-
+            
             inlineInput.updateStatusBar(
                 `Skip ${direction} to ${this.subject.displayName} by first character`,
                 0
             );
         });
     }
-
+    
     async skipOver(direction: common.Direction): Promise<void> {
         const skipChar = await editor.inputBoxChar(
             `Skip ${direction} over the given character to the next ${this.subject.name}`,
@@ -297,15 +297,15 @@ export default class CommandMode extends modes.EditorMode {
         if (this.subject.name !== lastSkip.subject) {
             await vscode.commands.executeCommand(`vimAtHome.changeTo${lastSkip.subject.charAt(0).toUpperCase() + lastSkip.subject.slice(1).toLowerCase()}Subject`);
         }
-
+        
         let lastDirection = lastSkip.direction;
         if (direction === "backwards") {
             lastDirection = common.reverseDirection(lastDirection);
         }
-
+        
         await this.subject.skip(lastDirection, lastSkip);
     }
-
+    
     
     async jump(): Promise<void> {
         const combinedRange = this.context.editor.visibleRanges.reduce((acc, range) => acc.union(range));
@@ -316,7 +316,7 @@ export default class CommandMode extends modes.EditorMode {
             
         const jumpInterface = new JumpInterface(this.context);
         let jumpType = this.subject.jumpPhaseType;
-
+        
         if (this.subject.name === "WORD") {
             let wordDefinitionIndex = getWordDefinitionIndex();
             if (wordDefinitionIndex == 0) {
@@ -338,7 +338,7 @@ export default class CommandMode extends modes.EditorMode {
             await this.fixSelection();
         }
     }
-
+    
     async jumpToSubject(subjectName: SubjectName) {
         const tempSubject = subjects.createFrom(this.context, subjectName);
         const combinedRange = this.context.editor.visibleRanges.reduce((acc, range) => acc.union(range));
@@ -346,7 +346,7 @@ export default class CommandMode extends modes.EditorMode {
             .iterAll(common.IterationDirection.alternate, combinedRange)
             .map((range) => range.start)
             .toArray();
-
+            
             const jumpInterface = new JumpInterface(this.context);
             let jumpType = tempSubject.jumpPhaseType;
             if (tempSubject.name === "WORD") {
@@ -557,7 +557,6 @@ export default class CommandMode extends modes.EditorMode {
             const topLine = Math.min(selection.start.line, selection.end.line);
             const lineText = document.lineAt(topLine).text;
             const start = lineText.indexOf(lineText.trim()[0]);
-
             editor.selection = new vscode.Selection(topLine, start, topLine, start);
             common.SetTextChanging(false);
             return { kind: "COMMAND", subjectName: "LINE" };

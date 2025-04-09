@@ -137,7 +137,7 @@ export class HighlightManager {
     public dispose() {
         this.disposables.forEach(d => d.dispose());
     }
-
+    
     public clearAllHighlightsDirectly() {
         this.highlightedWords.clear();
         this.updateHighlights();
@@ -148,11 +148,13 @@ export class HighlightManager {
     }
 
     public getHighlightRegex(): RegExp {
-        let regString: string = ""
-        this.highlightedWords.forEach(word => regString += (word + "|"))
-        if (regString.length > 0) 
-            regString = regString.substring(0, regString.length - 1);
-        // Also removed the 'i' flag here to make this method case sensitive too
+        const escapedWords = Array.from(this.highlightedWords.values())
+            .map(word => this.escapeRegExp(word));
+        const regString = escapedWords.join("|");
+        if (regString.length === 0) {
+            return new RegExp("");
+        }
         return new RegExp(regString);
     }
+    
 }

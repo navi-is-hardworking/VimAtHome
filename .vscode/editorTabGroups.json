@@ -1,27 +1,22 @@
 [
   {
-    "name": "manager",
+    "name": "word",
     "tabs": [
       {
-        "uri": "vscode-remote://wsl%2Bubuntu/home/navi/Repos/VimAtHome/src/commands.ts",
+        "uri": "vscode-remote://wsl%2Bubuntu/home/navi/Repos/VimAtHome/src/subjects/WordSubject.ts",
         "viewColumn": 1,
         "isActive": true
       },
       {
-        "uri": "vscode-remote://wsl%2Bubuntu/home/navi/Repos/VimAtHome/src/VimAtHomeManager.ts",
-        "viewColumn": 1,
-        "isActive": false
-      },
-      {
-        "uri": "vscode-remote://wsl%2Bubuntu/home/navi/Repos/VimAtHome/src/modes/CommandMode.ts",
+        "uri": "vscode-remote://wsl%2Bubuntu/home/navi/Repos/VimAtHome/src/io/WordIO.ts",
         "viewColumn": 1,
         "isActive": false
       }
     ],
-    "timestamp": 1742925835131
+    "timestamp": 1743001072587
   },
   {
-    "name": "test",
+    "name": "base",
     "tabs": [
       {
         "uri": "vscode-remote://wsl%2Bubuntu/home/navi/Repos/VimAtHome/src/commands.ts",
@@ -29,21 +24,16 @@
         "isActive": false
       },
       {
-        "uri": "vscode-remote://wsl%2Bubuntu/home/navi/Repos/VimAtHome/src/modes/CommandMode.ts",
-        "viewColumn": 1,
-        "isActive": false
-      },
-      {
-        "uri": "vscode-remote://wsl%2Bubuntu/home/navi/Repos/VimAtHome/src/handlers/TabGroupManager.ts",
-        "viewColumn": 1,
-        "isActive": false
-      },
-      {
         "uri": "vscode-remote://wsl%2Bubuntu/home/navi/Repos/VimAtHome/src/VimAtHomeManager.ts",
+        "viewColumn": 1,
+        "isActive": false
+      },
+      {
+        "uri": "vscode-remote://wsl%2Bubuntu/home/navi/Repos/VimAtHome/src/modes/CommandMode.ts",
         "viewColumn": 1,
         "isActive": true
       }
     ],
-    "timestamp": 1742929324298
+    "timestamp": 1743001098329
   }
 ]

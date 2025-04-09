@@ -322,7 +322,6 @@ export default class VimAtHomeManager {
 
     async undo() {
         await vscode.commands.executeCommand("undo");
-
         this.mode.fixSelection();
     }
 
@@ -346,8 +345,17 @@ export default class VimAtHomeManager {
     }
     
     async repeatLastSkip(direction: common.Direction) {
-        if (common.getLastSkip()?.subject !== this.mode.getSubjectName()) {
-            await this.changeMode({ subjectName: common.getLastSkip()?.subject, kind: "COMMAND" });
+        const currentPosition = this.editor.selection;
+        const currentLine = this.editor.document.getText(currentPosition);
+        
+        const subName = this.mode.getSubjectName();
+        if (subName != undefined) {
+            common.setLastSkip({
+                kind: "SkipTo",
+                subject: subName,
+                direction: direction,
+                char: currentLine.charAt(0) as any
+            });
         }
         
         await this.mode.repeatLastSkip(direction);

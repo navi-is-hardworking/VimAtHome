@@ -57,7 +57,7 @@ export default abstract class SubjectIOBase {
     abstract iterHorizontally(
         document: vscode.TextDocument,
         options: IterationOptions
-    ): Seq<TextObject>;
+    ): Seq<TextObject>; //text object basically contains selection range?
 
     abstract iterVertically(
         document: vscode.TextDocument,

@@ -221,6 +221,7 @@ export class TabLayoutManager {
             
             await vscode.commands.executeCommand('workbench.action.closeAllEditors');
             
+            
             for (const tab of layout.tabs) {
                 try {
                     if (!tab.uri) continue;
@@ -234,6 +235,43 @@ export class TabLayoutManager {
             }
         } catch (error) {
             vscode.window.showErrorMessage(`Error restoring layout: ${error}`);
+        }
+    }
+    
+    async appendLayout(name: string): Promise<void> {
+        try {
+            if (!name || name.trim() === '') {
+                vscode.window.showErrorMessage('Layout name cannot be empty');
+                return;
+            }
+            
+            const layouts = await this.readLayouts();
+            const layout = layouts.find(l => l.name === name);
+            
+            if (!layout) {
+                vscode.window.showErrorMessage(`Tab layout "${name}" not found`);
+                return;
+            }
+            
+            if (!layout.tabs || !Array.isArray(layout.tabs) || layout.tabs.length === 0) {
+                vscode.window.showErrorMessage(`Tab layout "${name}" contains no tabs`);
+                return;
+            }
+            
+            // Simply open the tabs from the layout without closing existing ones
+            for (const tab of layout.tabs) {
+                try {
+                    if (!tab.uri) continue;
+                    
+                    const document = await vscode.workspace.openTextDocument(vscode.Uri.parse(tab.uri));
+                    await vscode.window.showTextDocument(document, { 
+                        viewColumn: tab.viewColumn, 
+                        preview: false 
+                    });
+                } catch (error) { }
+            }
+        } catch (error) {
+            vscode.window.showErrorMessage(`Error appending layout: ${error}`);
         }
     }
     
@@ -282,12 +320,39 @@ export class TabLayoutManager {
         }
     }
     
+    private async showAppendDialog(): Promise<void> {
+        try {
+            const layouts = await this.readLayouts();
+            
+            if (!layouts || layouts.length === 0) {
+                vscode.window.showErrorMessage('No saved layouts to append');
+                return;
+            }
+            
+            const items = layouts.map(layout => ({
+                label: layout.name,
+                description: new Date(layout.timestamp).toLocaleString(),
+                detail: `${layout.tabs ? layout.tabs.length : 0} tab(s)`
+            }));
+            
+            const selected = await vscode.window.showQuickPick(items, {
+                placeHolder: 'Select a layout to append to current tabs'
+            });
+            
+            if (selected) {
+                await this.appendLayout(selected.label);
+            }
+        } catch (error) {
+            vscode.window.showErrorMessage(`Error in append dialog: ${error}`);
+        }
+    }
+
     async openTabLayoutMenu(): Promise<void> {
         try {
             const layouts = await this.readLayouts();
             
             const quickPick = vscode.window.createQuickPick();
-            quickPick.placeholder = 'Select to restore, $ to save, % to delete';
+            quickPick.placeholder = 'Select to restore, $ to save, % to delete, ^ to append';
             
             if (layouts && layouts.length > 0) {
                 const items = layouts.map(layout => ({
@@ -310,6 +375,9 @@ export class TabLayoutManager {
                 } else if (value === '%') {
                     quickPick.hide();
                     this.showDeleteDialog();
+                } else if (value === '^') {
+                    quickPick.hide();
+                    this.showAppendDialog();
                 }
             });
             
@@ -330,9 +398,14 @@ export class TabLayoutManager {
                         if (name) {
                             await this.deleteLayout(name);
                         }
+                    } else if (value.startsWith('^')) {
+                        const name = value.substring(1).trim();
+                        if (name) {
+                            await this.appendLayout(name);
+                        }
                     } else if (selected && selected.label !== 'No saved layouts') {
                         await this.restoreLayout(selected.label);
-                    } else if (value.trim() && value !== '$' && value !== '%') {
+                    } else if (value.trim() && value !== '$' && value !== '%' && value !== '^') {
                         await this.restoreLayout(value.trim());
                     }
                 } catch (error) {
