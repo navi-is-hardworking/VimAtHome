@@ -349,14 +349,8 @@ export default class VimAtHomeManager {
         const currentLine = this.editor.document.getText(currentPosition);
         
         const subName = this.mode.getSubjectName();
-        if (subName != undefined) {
-            common.setLastSkip({
-                kind: "SkipTo",
-                subject: subName,
-                direction: direction,
-                char: currentLine.charAt(0) as any
-            });
-        }
+        if (subName != undefined)
+            common.modifyLastSkip(subName, currentLine.charAt(0) as common.Char);
         
         await this.mode.repeatLastSkip(direction);
         this.setUI();
@@ -1724,6 +1718,39 @@ export default class VimAtHomeManager {
                 break;
             }
         }
+    }
+    
+    async SplitOnSelection(): Promise<void> {
+        const editor = this.editor;
+        const document = editor.document;
+        const selection = editor.selection;
+        
+        const currentLine = document.lineAt(selection.start.line);
+        const lineText = currentLine.text;
+        
+        const indentMatch = lineText.match(/^(\s*)/);
+        const indent = indentMatch ? indentMatch[1] : '';
+        const additionalIndent = indent + '    ';
+        
+        const textBeforeSelection = lineText.substring(0, selection.start.character);
+        const selectedText = document.getText(selection);
+        const textAfterSelection = lineText.substring(selection.end.character);
+        
+        const formattedText = 
+            textBeforeSelection + '\n' +
+            additionalIndent + selectedText + '\n' +
+            indent + textAfterSelection;
+        
+        await editor.edit(editBuilder => {
+            const range = currentLine.range;
+            editBuilder.replace(range, formattedText);
+        });
+        
+        const newPosition = new vscode.Position(
+            selection.start.line + 1, 
+            additionalIndent.length + selectedText.length
+        );
+        editor.selection = new vscode.Selection(newPosition, newPosition);
     }
     
 

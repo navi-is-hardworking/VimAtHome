@@ -72,3 +72,8 @@ see if i can modify taskbar colors
 
 where ever i am, enter should start a forward to first char of that subject that I am on
 shift enter vice versa.
+inline selected ( selected text ) => 
+
+( 
+    selected
+)

@@ -927,6 +927,12 @@ export let registeredCommands: ExtensionCommand[] = [
         },
     },
     {
+        id: "vimAtHome.splitOnSelection",
+        execute: async (manager) => {
+            await manager.SplitOnSelection();
+        },
+    },
+    {
         id: "vimAtHome.carry", 
         execute: async (manager) => {
             await manager.carry();

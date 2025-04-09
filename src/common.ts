@@ -96,6 +96,19 @@ export function setLastSkip(skip: Skip | undefined): void {
     lastSkip = skip;
 }
 
+export function modifyLastSkip(subject: SubjectName, char: Char): void {
+    if (lastSkip === undefined) {
+        lastSkip = {
+            kind: "SkipTo",
+            char: char,
+            subject: subject,
+            direction: "forwards"
+        }
+    }
+    lastSkip.subject = subject;
+    lastSkip.char = char;
+}
+
 export function getLastSkip(): Skip | undefined {
     return lastSkip;
 }

@@ -166,6 +166,15 @@ export const ModifyCommands: QuickCommand[] = [
             );
         },
     },
+    {
+        quickKey: char("d"),
+        label: "split on selection",
+        async execute() {
+            await vscode.commands.executeCommand(
+                "vimAtHome.splitOnSelection"
+            );
+        },
+    },
 
 ];
 
