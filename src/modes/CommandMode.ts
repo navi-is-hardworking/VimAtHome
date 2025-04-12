@@ -294,6 +294,7 @@ export default class CommandMode extends modes.EditorMode {
             return;
         }
         
+        // issue is not accounting for subwords
         if (this.subject.name !== lastSkip.subject) {
             await vscode.commands.executeCommand(`vimAtHome.changeTo${lastSkip.subject.charAt(0).toUpperCase() + lastSkip.subject.slice(1).toLowerCase()}Subject`);
         }
@@ -520,8 +521,7 @@ export default class CommandMode extends modes.EditorMode {
                 common.SetTextChanging(false);
                 return { kind: "COMMAND", subjectName: "LINE" };
             }
-            // collapseSelections(editor, "midpoint");
-            outputchannel.appendLine("new selection after collapseToCenter: " + editor.selection.start.line + ", " + editor.selection.start.character);
+            
             const ret = this.handleWordMode(document, selection);
             const wordDefinition = getWordDefinition();
             const selectedText = document.getText(selection);

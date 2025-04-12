@@ -59,6 +59,7 @@ export const ModifyCommands: QuickCommand[] = [
         },
     },
     {
+        // todo replace with split
         quickKey: char("s"),
         label: "Transform to snake case",
         async execute() {
@@ -167,7 +168,7 @@ export const ModifyCommands: QuickCommand[] = [
         },
     },
     {
-        quickKey: char("d"),
+        quickKey: char("i"),
         label: "split on selection",
         async execute() {
             await vscode.commands.executeCommand(

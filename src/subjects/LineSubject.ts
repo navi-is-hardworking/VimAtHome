@@ -84,12 +84,12 @@ export default class LineSubject extends SubjectBase {
     }
     
     async firstObjectInScope() {
-        await EditorUtils.nextIndentUp(this.context.editor, "backwards");
+        await EditorUtils.goToNearestSymbol(this.context.editor, "backwards");
         this.fixSelection();
     }
     
     async lastObjectInScope() {
-        await EditorUtils.nextIndentUp(this.context.editor, "forwards");
+        await EditorUtils.goToNearestSymbol(this.context.editor, "forwards");
         this.fixSelection();
     }
 }

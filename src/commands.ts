@@ -118,7 +118,10 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.changeToBracketSubject",
         execute: async (manager) => {
-            await manager.changeToBracketSubject();
+            await manager.changeToWordMode({
+                kind: "COMMAND",
+                subjectName: "BRACKETS",
+            });
         },
     },
     {

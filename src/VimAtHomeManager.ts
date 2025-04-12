@@ -345,12 +345,9 @@ export default class VimAtHomeManager {
     }
     
     async repeatLastSkip(direction: common.Direction) {
-        const currentPosition = this.editor.selection;
-        const currentLine = this.editor.document.getText(currentPosition);
-        
-        const subName = this.mode.getSubjectName();
-        if (subName != undefined)
-            common.modifyLastSkip(subName, currentLine.charAt(0) as common.Char);
+        if (common.getLastSkip()?.subject !== this.mode.getSubjectName()) {
+            await this.changeMode({ subjectName: common.getLastSkip()?.subject, kind: "COMMAND" });
+        }
         
         await this.mode.repeatLastSkip(direction);
         this.setUI();
@@ -1006,8 +1003,8 @@ export default class VimAtHomeManager {
     }
 
     async pasteSubject() {
+        // TODO: add replaced text to cache
         this.extendAnchor.SelectToAnchorIfExtending(this.editor);
-        
         const clipText = await vscode.env.clipboard.readText();
         EditorUtils.replaceSelection(this.editor, clipText);
     }
@@ -1475,9 +1472,17 @@ export default class VimAtHomeManager {
     }
     
     async StartExtendMode() {
-        this.extendAnchor.SetSelectionAnchor(this.editor);
-        this.extendAnchor.StartExtendMode();
-        this.extendAnchor.updatePhantomSelection(this.editor);
+        if (this.editor.selections.length > 1) {
+            await this.changeMode({
+                kind: "EXTEND",
+                subjectName: "WORD",
+            });
+        }
+        else {
+            this.extendAnchor.SetSelectionAnchor(this.editor);
+            this.extendAnchor.StartExtendMode();
+            this.extendAnchor.updatePhantomSelection(this.editor);
+        }
     }
     
     async ToggleExtendMode() {
@@ -1737,9 +1742,9 @@ export default class VimAtHomeManager {
         const textAfterSelection = lineText.substring(selection.end.character);
         
         const formattedText = 
-            textBeforeSelection + '\n' +
+            textBeforeSelection.trimEnd() + '\n' +
             additionalIndent + selectedText + '\n' +
-            indent + textAfterSelection;
+            indent + textAfterSelection.trimStart();
         
         await editor.edit(editBuilder => {
             const range = currentLine.range;

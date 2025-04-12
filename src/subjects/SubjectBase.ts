@@ -6,6 +6,7 @@ import { SubjectName } from "./SubjectName";
 import Seq from "../utils/seq";
 import SubjectIOBase from "../io/SubjectIOBase";
 import { Direction, TextObject } from "../common";
+import * as editor from "../utils/editor";
 
 export default abstract class SubjectBase implements SubjectActions {
     constructor(protected context: common.ExtensionContext) {}
@@ -114,6 +115,7 @@ export default abstract class SubjectBase implements SubjectActions {
             );
         });
     }
+    
     async swapWithObjectAbove() {
         await this.context.editor.edit((e) => {
             selections.tryMap(this.context.editor, (selection) =>
@@ -128,33 +130,52 @@ export default abstract class SubjectBase implements SubjectActions {
     }
 
     async swapWithObjectToLeft() {
+        const originalSelections = [...this.context.editor.selections];
+        await this.nextObjectLeft();
+        const leftSelections = [...this.context.editor.selections];
         await this.context.editor.edit((e) => {
-            for (const selection of this.context.editor.selections) {
-                this.subjectIO.swapHorizontally(
-                    this.context.editor.document,
-                    e,
-                    selection,
-                    Direction.backwards
-                );
+            for (let i = 0; i < originalSelections.length; i++) {
+                const currentObject = originalSelections[i];
+                const leftObject = leftSelections[i];
+                if (!currentObject.isEqual(leftObject)) {
+                    editor.swap(
+                        this.context.editor.document, 
+                        e, 
+                        currentObject, 
+                        leftObject
+                    );
+                }
             }
         });
-
-        await this.nextObjectLeft();
+        const newSelections = leftSelections.map((leftSel, index) => {
+            const originalLength = originalSelections[index].end.character - originalSelections[index].start.character;
+            return new vscode.Selection(
+                leftSel.start,
+                new vscode.Position(leftSel.start.line, leftSel.start.character + originalLength)
+            );
+        });
+        
+        this.context.editor.selections = newSelections;
     }
 
     async swapWithObjectToRight() {
+        const originalSelections = [...this.context.editor.selections];
+        await this.nextObjectRight();
+        const rightSelections = [...this.context.editor.selections];
         await this.context.editor.edit((e) => {
-            for (const selection of this.context.editor.selections) {
-                this.subjectIO.swapHorizontally(
-                    this.context.editor.document,
-                    e,
-                    selection,
-                    Direction.forwards
-                );
+            for (let i = 0; i < originalSelections.length; i++) {
+                const currentObject = originalSelections[i];
+                const rightObject = rightSelections[i];
+                if (!currentObject.isEqual(rightObject)) {
+                    editor.swap(
+                        this.context.editor.document, 
+                        e, 
+                        currentObject, 
+                        rightObject
+                    );
+                }
             }
         });
-
-        await this.nextObjectRight();
     }
 
     async deleteObject() {
@@ -219,6 +240,7 @@ export default abstract class SubjectBase implements SubjectActions {
                 .tryLast()
         );
     }
+    
     async lastObjectInScope(): Promise<void> {
         selections.tryMap(this.context.editor, (selection) =>
             this.subjectIO

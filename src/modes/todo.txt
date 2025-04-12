@@ -68,12 +68,15 @@ ctrl up + down should move to start of functions instead for line, moving up ind
 ** make it so go to end of line does not use change to insert first to make it faster
 see if i can modify taskbar colors
 
+fix swapping of words wrong bounds when swapping to left
 /////
 
 where ever i am, enter should start a forward to first char of that subject that I am on
 shift enter vice versa.
 inline selected ( selected text ) => 
 
-( 
-    selected
-)
+
+/////
+
+line first/last object should be move to function below/above
+ctrl+up/down for block should be first/last object in bounding function

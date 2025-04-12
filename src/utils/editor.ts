@@ -243,11 +243,17 @@ export async function nextIndentUp(editor: vscode.TextEditor, direction: common.
     }
 }
 
-export function moveToNearestFunctionSymbol(symbols: vscode.DocumentSymbol[], position: vscode.Position): vscode.DocumentSymbol | undefined {
+// this is more so nearest symbol above
+export function moveToNearestFunctionSymbolAbove(
+        symbols: vscode.DocumentSymbol[],
+        position: vscode.Position,
+        direction: common.Direction
+    ): vscode.DocumentSymbol | undefined {
+    
     let closestSymbol: vscode.DocumentSymbol | undefined;
     for (const symbol of symbols) {
-        // direciton we want bounto be either <= for up or < + 1
-        if (symbol.range.start.line <= position.line &&
+        // this is basically just finding nearest above
+        if (symbol.range.start.line < position.line &&
             (symbol.kind === vscode.SymbolKind.Function ||
                 symbol.kind === vscode.SymbolKind.Method ||
                 symbol.kind === vscode.SymbolKind.Constructor)) {
@@ -258,8 +264,38 @@ export function moveToNearestFunctionSymbol(symbols: vscode.DocumentSymbol[], po
         }
 
         if (symbol.children?.length) {
-            const childSymbol = moveToNearestFunctionSymbol(symbol.children, position);
+            const childSymbol = moveToNearestFunctionSymbolAbove(symbol.children, position, direction);
             if (childSymbol && (!closestSymbol || childSymbol.range.start.line > closestSymbol.range.start.line)) {
+                closestSymbol = childSymbol;
+            }
+        }
+    }
+
+    return closestSymbol
+}
+
+export function moveToNearestFunctionSymbolBelow(
+        symbols: vscode.DocumentSymbol[],
+        position: vscode.Position,
+        direction: common.Direction
+    ): vscode.DocumentSymbol | undefined {
+    
+    let closestSymbol: vscode.DocumentSymbol | undefined;
+    for (const symbol of symbols) {
+        // this is basically just finding nearest above
+        if (symbol.range.end.line > position.line &&
+            (symbol.kind === vscode.SymbolKind.Function ||
+                symbol.kind === vscode.SymbolKind.Method ||
+                symbol.kind === vscode.SymbolKind.Constructor)) {
+
+            if (!closestSymbol || symbol.range.start.line < closestSymbol.range.start.line) {
+                closestSymbol = symbol;
+            }
+        }
+
+        if (symbol.children?.length) {
+            const childSymbol = moveToNearestFunctionSymbolBelow(symbol.children, position, direction);
+            if (childSymbol && (!closestSymbol || childSymbol.range.start.line < closestSymbol.range.start.line)) {
                 closestSymbol = childSymbol;
             }
         }
@@ -271,7 +307,7 @@ export function moveToNearestFunctionSymbol(symbols: vscode.DocumentSymbol[], po
 export async function goToNearestSymbol(editor: vscode.TextEditor, direction: common.Direction): Promise<void> {
     const document = editor.document;
     const currentPosition = editor.selection.active;
-
+    
     const symbols = await vscode.commands.executeCommand<vscode.DocumentSymbol[]>(
         'vscode.executeDocumentSymbolProvider',
         document.uri
@@ -286,9 +322,13 @@ export async function goToNearestSymbol(editor: vscode.TextEditor, direction: co
         return;
     }
 
-    const nearestSymbol = moveToNearestFunctionSymbol(symbols, currentPosition);
+    // if already on symbol then i want to move +-1 up /down ?
+    const nearestSymbol = direction == "backwards" 
+        ? moveToNearestFunctionSymbolAbove(symbols, currentPosition, direction) 
+        : moveToNearestFunctionSymbolBelow(symbols, currentPosition, direction);
+        
     if (nearestSymbol) {
-        const newPosition = direction === "forwards" ? nearestSymbol.range.start : nearestSymbol.range.end;
+        const newPosition = direction === "forwards" ? nearestSymbol.range.end : nearestSymbol.range.start;
         editor.selection = new vscode.Selection(newPosition, newPosition);
     }
 }

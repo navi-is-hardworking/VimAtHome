@@ -4,6 +4,7 @@ import BlockIO from "../io/BlockIO";
 import { getBlockColor } from "../config";
 import * as EditorUtils from "../utils/editor"
 import * as lineUtils from "../utils/lines";
+import { swapVertically } from "../io/WordIO";
 
 export default class BlockSubject extends SubjectBase {
     protected subjectIO = new BlockIO();
@@ -15,11 +16,21 @@ export default class BlockSubject extends SubjectBase {
         light: `#${getBlockColor()}`,
     } as const;
     
+    // first block in scope is not usefull, so this command will just be to select the whole function
     async firstObjectInScope() {
-        await EditorUtils.goToNearestSymbol(this.context.editor, "forwards");
+        await EditorUtils.goToNearestSymbol(this.context.editor, "backwards");
         this.fixSelection();
     }
     
+    async swapWithObjectToLeft(): Promise<void> {
+        await this.swapWithObjectAbove();
+    }
+    
+    async swapWithObjectToRight(): Promise<void> {
+        await this.swapWithObjectBelow();
+    }
+    
+    // last block in scope is not usefull, so this command will just be to select all blocks on indentation level
     async lastObjectInScope() {
         let startLine = lineUtils.getNextLineOfChangeOfIndentation(
             "lessThan",
