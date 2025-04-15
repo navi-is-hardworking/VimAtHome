@@ -1152,6 +1152,12 @@ export let registeredCommands: ExtensionCommand[] = [
         },
     },
     {
+        id: "vimAtHome.findAllHighlights",
+        execute: async (manager) => {
+            await manager.FindAllHighlights();
+        },
+    },
+    {
         id: "vimAtHome.convertToKandR",
         execute: async (manager) => {
             await manager.ConvertToKandR();

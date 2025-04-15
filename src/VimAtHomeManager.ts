@@ -1667,6 +1667,10 @@ export default class VimAtHomeManager {
         await vscode.commands.executeCommand("vimAtHome.changeToCustomWord1");
     }
     
+    async FindAllHighlights() {
+        highlightManager.FindAll(40);
+    }
+    
     async GoToLastEdit() {
         // outputChannel.appendLine('go to last edit location.');
         // vscode.window.showInformationMessage('go to last edit location.');

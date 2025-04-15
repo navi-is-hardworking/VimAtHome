@@ -11,8 +11,8 @@ import { Direction, TextObject } from "../common";
 import Seq, { seq } from "../utils/seq";
 
 
-const openingBrackets = "([{<".split("");
-const closingBrackets = ")]}>".split("");
+const openingBrackets = "([{".split("");
+const closingBrackets = ")]}".split("");
 
 function getLeftBracket(
     document: vscode.TextDocument,
@@ -80,7 +80,6 @@ function getRightBracket(
 
 function getLastPositionIn(document: vscode.TextDocument) {
     const lastLine = document.lineAt(document.lineCount - 1);
-
     return lastLine.range.end;
 }
 
