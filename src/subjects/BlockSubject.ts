@@ -18,6 +18,7 @@ export default class BlockSubject extends SubjectBase {
     
     // first block in scope is not usefull, so this command will just be to select the whole function
     async firstObjectInScope() {
+        // maybe change keep iterating prev until found whitepace above start line?
         await EditorUtils.goToNearestSymbol(this.context.editor, "backwards");
         this.fixSelection();
     }
@@ -47,9 +48,10 @@ export default class BlockSubject extends SubjectBase {
         if (startLine && endLine) {
             this.context.editor.selection = new vscode.Selection(
                 new vscode.Position(startLine.lineNumber + 1, 0),
-                new vscode.Position(endLine.lineNumber - 1, 1000)
+                new vscode.Position(endLine.lineNumber - 1, this.context.editor.document.lineAt(endLine.lineNumber-1).text.length)
             )
         }
-        this.fixSelection();
+        
+        // this.fixSelection();
     }
 }

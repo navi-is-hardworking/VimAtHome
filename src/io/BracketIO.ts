@@ -11,8 +11,8 @@ import { Direction, TextObject } from "../common";
 import Seq, { seq } from "../utils/seq";
 
 
-const openingBrackets = "([{".split("");
-const closingBrackets = ")]}".split("");
+const openingBrackets = "([{<".split("");
+const closingBrackets = ")]}>".split("");
 
 function getLeftBracket(
     document: vscode.TextDocument,

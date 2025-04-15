@@ -113,6 +113,7 @@ function findContainingBlockStart(
 ): vscode.Position {
     return (
         iterBlockStarts(document, {
+            //
             startingPosition: positionInBlock,
             direction: common.Direction.backwards,
             currentInclusive: true,
@@ -155,7 +156,8 @@ function findCorrespondingBlockEnd(
             continue;
         }
 
-        if (lineIsBlockStart(prev, current)) {
+        // if indentaiton is the same, and is a comment then it stops, but sometimes the comment might be commenting a line with higher indentation
+        if (lineIsBlockStart(prev, current)) { // This stops it cause stop line is regex with no a-zA-Z
             break;
         }
 
@@ -169,9 +171,31 @@ function getContainingBlock(
     document: vscode.TextDocument,
     positionInBlock: vscode.Range | vscode.Position
 ): vscode.Range {
-    const blockStart = findContainingBlockStart(document, positionInBlock);
-    const blockEnd = findCorrespondingBlockEnd(document, blockStart);
-
+    const blockStart: vscode.Position = findContainingBlockStart(document, positionInBlock);
+    let blockEnd: vscode.Position = findCorrespondingBlockEnd(document, blockStart);
+    
+    let tempStart = document.lineAt(blockStart.line);
+    if (tempStart.firstNonWhitespaceCharacterIndex !== tempStart.text.length) { // does not start with whitepace
+        const startChar = tempStart.text.charAt(tempStart.firstNonWhitespaceCharacterIndex);
+        if (startChar !== "/" && startChar !== "#") { // if start is not a comment then we don't want end to be comment either
+            var i = blockEnd.line;
+            for (; i > blockStart.line; i--) {
+                const tempLine: vscode.TextLine = document.lineAt(i)
+                if (tempLine.firstNonWhitespaceCharacterIndex == tempLine.text.length) {
+                    continue;
+                }
+                const tempChar = tempLine.text.charAt(tempLine.firstNonWhitespaceCharacterIndex);
+                if (tempChar === "/" || tempChar === "#") {
+                    continue;
+                }
+                else {
+                    break;
+                }
+            }
+            blockEnd = new vscode.Position(i, document.lineAt(i).text.length);
+        }
+    }
+    
     return new vscode.Range(blockStart, blockEnd);
 }
 

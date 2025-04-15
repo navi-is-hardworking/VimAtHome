@@ -532,7 +532,13 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.newLineBelow",
         execute: async (manager) => {
-            await manager.newLineBelow();
+            await manager.newLineBelow(true);
+        },
+    },
+    {
+        id: "vimAtHome.insertNewLineBelow",
+        execute: async (manager) => {
+            await manager.newLineBelow(true);
         },
     },
     {
@@ -713,7 +719,7 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.addToCache",
         execute: async (manager: VimAtHomeManager) => {
-            cacheCommands.addToCache(manager.editor);
+            cacheCommands.addSelectionToCache(manager.editor);
         },
     },
     {
@@ -1161,6 +1167,18 @@ export let registeredCommands: ExtensionCommand[] = [
         id: "vimAtHome.nextEmptyAbove",
         execute: async (manager) => {
             await manager.NextEmptyLine("backwards");
+        },
+    },
+    {
+        id: "vimAtHome.goToStartOfFunction",
+        execute: async (manager) => {
+            await manager.GoToFunctionEdge("backwards");
+        },
+    },
+    {
+        id: "vimAtHome.goToEndOfFunction",
+        execute: async (manager) => {
+            await manager.GoToFunctionEdge("forwards");
         },
     },
     {

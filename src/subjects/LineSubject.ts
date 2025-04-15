@@ -16,6 +16,7 @@ export default class LineSubject extends SubjectBase {
     public readonly jumpPhaseType = "single-phase";
 
     async fixSelection(half?: "LEFT" | "RIGHT") {
+        
         selections.tryMap(this.context.editor, (selection) => {
             const startLine = this.context.editor.document.lineAt(
                 selection.start.line
@@ -44,6 +45,7 @@ export default class LineSubject extends SubjectBase {
                       )
                   );
         });
+        
     }
 
     async nextObjectUp() {

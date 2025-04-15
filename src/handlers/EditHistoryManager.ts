@@ -38,10 +38,10 @@ export class EditHistoryManager {
 
     private registerEventListeners(): void {
         this.disposables.push(
+            
             vscode.workspace.onDidChangeTextDocument(event => {
                 if (event.contentChanges.length > 0 && vscode.window.activeTextEditor) {
                     const editor = vscode.window.activeTextEditor;
-                    
                     if (editor.document.uri.toString() === event.document.uri.toString()) {
                         setTimeout(() => {
                             const filePath = event.document.uri.fsPath;
@@ -52,6 +52,7 @@ export class EditHistoryManager {
                     }
                 }
             })
+            
         );
 
         this.disposables.push(

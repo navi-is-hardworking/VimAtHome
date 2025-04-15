@@ -1257,10 +1257,9 @@ export default class VimAtHomeManager {
         }
     }
 
-    async newLineBelow(): Promise<void> {
+    async newLineBelow(changeToInsert: boolean = false): Promise<void> {
         this.extendAnchor.SelectToAnchorIfExtending(this.editor);
-        
-        const document = this.editor.document; // 
+        const document = this.editor.document;
         const selection = this.editor.selection;
         const currentLine = document.lineAt(selection.anchor.line);
         const indentMatch = currentLine.text.match(/^(\s*)/);
@@ -1277,8 +1276,10 @@ export default class VimAtHomeManager {
             currentIndent.length
         );
         this.editor.selection = new vscode.Selection(newPosition, newPosition);
-
-        await this.changeMode({ kind: "INSERT" });
+        
+        if (changeToInsert) {
+            await this.changeMode({ kind: "INSERT" });
+        }
     }
     
     async newLineAbove(): Promise<void> {
@@ -1676,7 +1677,6 @@ export default class VimAtHomeManager {
     async ConvertToKandR() {
         const document = this.editor.document;
         const fullText = document.getText();
-        
         const allmanStyleRegex = /([^\n{]*?)(\r?\n)(\s*)(\{)(\s*\r?\n)/g;
         
         const newText = fullText.replace(allmanStyleRegex, (match, prevLine, newline1, indent, openBrace, newline2) => {
@@ -1756,6 +1756,10 @@ export default class VimAtHomeManager {
             additionalIndent.length + selectedText.length
         );
         editor.selection = new vscode.Selection(newPosition, newPosition);
+    }
+    
+    async GoToFunctionEdge(direction: common.Direction) {
+        await EditorUtils.goToNearestSymbol(this.editor, direction);
     }
     
 

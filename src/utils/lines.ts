@@ -79,7 +79,33 @@ export function getNextLineOfChangeOfIndentation(
         }
     }
 }
+
 export function getRelativeIndentation(
+    startingLine: vscode.TextLine,
+    targetLine: vscode.TextLine
+): common.RelativeIndentation {
+    if (targetLine.isEmptyOrWhitespace) {
+        return "no-indentation";
+    }
+
+    if (
+        startingLine.firstNonWhitespaceCharacterIndex >
+        targetLine.firstNonWhitespaceCharacterIndex
+    ) {
+        return "less-indentation";
+    }
+
+    if (
+        startingLine.firstNonWhitespaceCharacterIndex <
+        targetLine.firstNonWhitespaceCharacterIndex
+    ) {
+        return "more-indentation";
+    }
+
+    return "same-indentation";
+}
+
+export function getRelativeCommentedIndentation(
     startingLine: vscode.TextLine,
     targetLine: vscode.TextLine
 ): common.RelativeIndentation {
@@ -367,7 +393,3 @@ export function getLineToFoldedMap(
 export function isLineInFoldedRange(lineNumber: number, foldedMap: boolean[]): boolean {
     return foldedMap[lineNumber] || false;
 }
-
-
-
-

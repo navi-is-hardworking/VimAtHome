@@ -24,7 +24,7 @@ export const addTextToCache = (text: string) => {
     historyCache.addToCache(text);
 };
 
-export const addToCache = (editor: vscode.TextEditor) => {
+export const addSelectionToCache = (editor: vscode.TextEditor) => {
     const selection = editor.selection;
     const text = editor.document.getText(selection);
     historyCache.addToCache(text);

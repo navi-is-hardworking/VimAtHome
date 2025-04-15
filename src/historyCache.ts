@@ -194,8 +194,3 @@ export function clearCache(): void {
 // something to store hotspots
 // maybe document divided up into sections?
 
-[
-    {
-        
-    },
-]

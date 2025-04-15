@@ -79,4 +79,42 @@ inline selected ( selected text ) =>
 /////
 
 line first/last object should be move to function below/above
-ctrl+up/down for block should be first/last object in bounding function
+ctrl+up/down should be first/last object in bounding function
+new line should not end insert mode
+
+/////
+
+block mode to not select lines that start with / comment symbols like rl
+line right should take me to middle of range of function symbol
+
+edit history manager should start recording whenever insert mode is entered. remember last location of that insert mode
+
+sorted selection history
+max heap with count of duplicate selections
+
+hashmap to node
+maxheap of counts
+
+map{
+    Item1{"selection1":2,}
+    Item2{"selection2":3,}
+}
+
+heap -> {
+    Item2,
+    Item1
+}
+
+///// edit hisotry manager fixes /////
+
+- only start recording when in insert mode. Being in insert mode, then whenever i make an edit, that location is stored as a line number only
+- When storing locations, if the current location is with range +-1 line of another stored edit, that stored edit is removed (as the current will overwrite it)
+
+? How to deal with lines getting deleted?
+! When line gets deleted/added, shift all edit locations (lines below) to match accordingly
+
+
+///////
+
+///////
+
