@@ -116,5 +116,10 @@ heap -> {
 
 ///////
 
+should changing subject kill the anchor if NOT extending? This could make it so that 
+
 ///////
+
+current brackets now jumps lin line 
+but it can't iterate vertical because i'm forcing it forwards, also it should be able to jump backwards... so it should check full line first
 

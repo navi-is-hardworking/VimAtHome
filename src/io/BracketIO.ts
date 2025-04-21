@@ -16,15 +16,19 @@ const closingBrackets = ")]}".split("");
 
 function getLeftBracket(
     document: vscode.TextDocument,
-    startingPosition: vscode.Position
+    startingPosition: vscode.Position,
+    direction: Direction = Direction.backwards,
+    bounds?: vscode.Range
 ): { char: string; position: vscode.Position } | undefined {
     let unmatchedCloseBrackets = 0;
     let first = true;
 
+    console.log(bounds);
     for (const { char, position } of iterCharacters(document, {
         startingPosition,
-        direction: Direction.backwards,
+        direction: direction,
         currentInclusive: true,
+        bounds: bounds
     })) {
         if (openingBrackets.includes(char)) {
             if (unmatchedCloseBrackets === 0) {
@@ -38,6 +42,8 @@ function getLeftBracket(
 
         if (closingBrackets.includes(char) && !first) {
             unmatchedCloseBrackets++;
+            if (unmatchedCloseBrackets > 0 && direction == Direction.forwards)
+                unmatchedCloseBrackets = 0;
         }
 
         first = false;
@@ -150,7 +156,8 @@ function iterLeft(
             const object = getContainingObjectAt(
                 document,
                 characters.position,
-                inclusive
+                inclusive,
+                Direction.backwards
             );
 
             if (object) {
@@ -163,11 +170,32 @@ function iterLeft(
 function getContainingObjectAt(
     document: vscode.TextDocument,
     position: vscode.Position,
-    inclusive: boolean
+    inclusive: boolean,
+    direction: Direction = Direction.forwards
 ): vscode.Range | undefined {
-    const leftBracket = getLeftBracket(document, position);
-
-    const rightBracket = getRightBracket(document, position);
+    
+    // lets find if we are already in a bracket mode first?
+    // maybe first on line -- find left line first then right line
+    let leftBracket = undefined;
+    if (direction == Direction.forwards) {
+        leftBracket = getLeftBracket(document, position, Direction.backwards, new vscode.Range(position.with(undefined, 0), position.with(undefined, 99999)));
+        if (!leftBracket) {
+            leftBracket = getLeftBracket(document, position, Direction.forwards);
+        }
+    }
+    
+    if (!leftBracket) {
+        leftBracket = getLeftBracket(document, position, Direction.backwards);
+    }
+    
+    let rightBracket = undefined;
+    if (leftBracket && direction == Direction.forwards) {
+        rightBracket = getRightBracket(document, leftBracket.position);
+    }
+    else {
+        rightBracket = getRightBracket(document, position)
+    }
+    
 
     if (
         !leftBracket ||
@@ -311,7 +339,8 @@ function iterVertically(
                 const containingObject = getContainingObjectAt(
                     document,
                     position,
-                    inclusive
+                    inclusive,
+                    options.direction
                 );
 
                 if (containingObject) {
@@ -332,9 +361,10 @@ export default class BracketIO extends SubjectIOBase {
 
     getContainingObjectAt(
         document: vscode.TextDocument,
-        position: vscode.Position
+        position: vscode.Position,
+        direction: Direction = Direction.forwards
     ) {
-        return getContainingObjectAt(document, position, this.inclusive);
+        return getContainingObjectAt(document, position, this.inclusive, direction);
     }
 
     getClosestObjectTo(

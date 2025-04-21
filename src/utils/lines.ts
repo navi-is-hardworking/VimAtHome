@@ -393,3 +393,4 @@ export function getLineToFoldedMap(
 export function isLineInFoldedRange(lineNumber: number, foldedMap: boolean[]): boolean {
     return foldedMap[lineNumber] || false;
 }
+

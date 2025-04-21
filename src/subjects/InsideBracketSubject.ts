@@ -4,6 +4,7 @@ import SubjectBase from "./SubjectBase";
 import BracketIO from "../io/BracketIO";
 import { getBracketColor } from "../config";
 import * as EditorUtils from "../utils/editor"
+import { Direction, TextObject } from "../common";
 
 export default class InsideBracketSubject extends SubjectBase {
     protected subjectIO = new BracketIO(false);
@@ -17,44 +18,34 @@ export default class InsideBracketSubject extends SubjectBase {
     
     async fixSelection(half?: "LEFT" | "RIGHT"): Promise<void> {
         selections.tryMap(this.context.editor, (selection) => {
-            const document = this.context.editor.document;
-            const currentLine = selection.active.line;
-            let closestOnCurrentLine: vscode.Range | undefined = undefined;
-            let closestDistance = Infinity;
-            
-            const lineLength = document.lineAt(currentLine).text.length;
-            for (let character = 0; character < lineLength; character++) {
-                const position = new vscode.Position(currentLine, character);
-                const range = this.subjectIO.getContainingObjectAt(document, position);
-                
-                if (range) {
-                    if (range.start.line === currentLine && range.end.line === currentLine) {
-                        const startDistance = Math.abs(range.start.character - selection.active.character);
-                        const endDistance = Math.abs(range.end.character - selection.active.character);
-                        const distance = Math.min(startDistance, endDistance);
-                        if (distance < closestDistance) {
-                            closestDistance = distance;
-                            closestOnCurrentLine = range;
-                        }
-                    }
-                }
-            }
-            
-            const closestRange = closestOnCurrentLine || this.subjectIO.getClosestObjectTo(document, selection.active);
-            if (closestRange && closestRange.start.isEqual(closestRange.end)) {
-                return new vscode.Selection(closestRange.start, closestRange.start);
-            }
-            
+            const startRange = this.subjectIO.getContainingObjectAt(
+                this.context.editor.document,
+                selection.start,
+            );
+
+            const endRange = this.subjectIO.getContainingObjectAt(
+                this.context.editor.document,
+                selection.end
+            );
+
             const fixedRange =
-                half === "LEFT" && closestRange ? new vscode.Range(closestRange.start, selection.start) :
-                half === "RIGHT" && closestRange ? new vscode.Range(selection.end, closestRange.end) :
-                closestRange;
-                
+                // happening here because it sees a right bracket first
+                half === "LEFT"  && startRange ? new vscode.Range(startRange.start, selection.start) :
+                half === "RIGHT" && endRange ? new vscode.Range(selection.end, endRange.end) :
+                startRange && endRange
+                    ? startRange.union(endRange)
+                    : startRange
+                    ? startRange
+                    : endRange;
+
             if (fixedRange && !fixedRange.isEmpty) {
                 return new vscode.Selection(fixedRange.end, fixedRange.start);
             }
-            
-            return selection;
+
+            return this.subjectIO.getClosestObjectTo(
+                this.context.editor.document,
+                selection.start
+            );
         });
     }
     

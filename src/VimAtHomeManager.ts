@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { Config, GetWordWrapColumn, IsWordWrapEnabled } from "./config";
-import { goToLine, quickCommandPicker } from "./utils/editor";
+import { goToLine, quickCommandPicker, documentHasFunctionSymbols } from "./utils/editor";
 import * as quickMenus from "./utils/quickMenus";
 import { SubjectAction } from "./subjects/SubjectActions";
 import { EditorMode, EditorModeChangeRequest } from "./modes/modes";
@@ -1257,6 +1257,7 @@ export default class VimAtHomeManager {
         }
     }
 
+    // TODO: make it so that it matches the indent of the line above/below
     async newLineBelow(changeToInsert: boolean = false): Promise<void> {
         this.extendAnchor.SelectToAnchorIfExtending(this.editor);
         const document = this.editor.document;
@@ -1668,7 +1669,12 @@ export default class VimAtHomeManager {
     }
     
     async FindAllHighlights() {
-        highlightManager.FindAll(40);
+        if (await documentHasFunctionSymbols(this.editor.document)) {
+            highlightManager.FindAllFunctionBlocks();
+        }
+        else {
+            highlightManager.FindAll(20);
+        }
     }
     
     async GoToLastEdit() {

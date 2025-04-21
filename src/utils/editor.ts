@@ -432,6 +432,36 @@ export async function collapseToLastSelection(editor: vscode.TextEditor) {
     return;
 }
 
+export async function documentHasFunctionSymbols(document: vscode.TextDocument): Promise<boolean> {
+    const symbols = await vscode.commands.executeCommand<vscode.DocumentSymbol[]>(
+        'vscode.executeDocumentSymbolProvider',
+        document.uri
+    );
+    
+    if (!symbols || symbols.length === 0) {
+        return false;
+    }
+    
+    const checkForFunctions = (symbolArray: vscode.DocumentSymbol[]): boolean => {
+        for (const symbol of symbolArray) {
+            if (symbol.kind === vscode.SymbolKind.Function || 
+                symbol.kind === vscode.SymbolKind.Method ||
+                symbol.kind === vscode.SymbolKind.Constructor) {
+                return true;
+            }
+            
+            if (symbol.children && symbol.children.length > 0) {
+                if (checkForFunctions(symbol.children)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+    
+    return checkForFunctions(symbols);
+} 
+
 
 
 

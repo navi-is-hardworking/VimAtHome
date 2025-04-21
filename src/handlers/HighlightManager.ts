@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { setHighlightRegex } from "../config";
 import { runInThisContext } from 'vm';
+import * as EditorUtils from "../utils/editor"
 
 export class HighlightManager {
     private highlightDecorationType: vscode.TextEditorDecorationType;
@@ -166,86 +167,155 @@ export class HighlightManager {
             return;
         }
 
+        const activeEditor = vscode.window.activeTextEditor;
+        const cursorPosition = activeEditor?.selection.active;
+        const activeDocumentUri = activeEditor?.document.uri;
+
         const highlightedTerms = Array.from(this.highlightedWords.values());
-        const allEditors = vscode.window.visibleTextEditors;
-        console.log(`Found ${allEditors.length} editors to search`);
-        
-        if (allEditors.length === 0) {
-            vscode.window.showInformationMessage('No open editors to search in.');
-            return;
-        }
-        
         const allResults: Array<{
-            editor: vscode.TextEditor;
+            document: vscode.TextDocument;
             range: vscode.Range;
             text: string;
+            distanceToCursor: number;
         }> = [];
         
-        for (const editor of allEditors) {
-            const document = editor.document;
-            const text = document.getText();
-            
-            let allOccurrences: Array<{
-                term: string;
-                startPos: vscode.Position;
-                endPos: vscode.Position;
-            }> = [];
-            
-            for (const term of highlightedTerms) {
-                const regex = new RegExp(`\\b${this.escapeRegExp(term)}\\b`, 'g');
-                let match;
-                
-                while ((match = regex.exec(text)) !== null) {
-                    const startPos = document.positionAt(match.index);
-                    const endPos = document.positionAt(match.index + match[0].length);
+        for (const tabGroup of vscode.window.tabGroups.all) {
+            for (const tab of tabGroup.tabs) {
+                if (tab.input instanceof vscode.TabInputText) {
+                    let document = await vscode.workspace.openTextDocument(tab.input.uri);
+                    const text = document.getText();
+                    let allOccurrences: Array<{
+                        term: string;
+                        startPos: vscode.Position;
+                        endPos: vscode.Position;
+                    }> = [];
                     
-                    allOccurrences.push({
-                        term: term,
-                        startPos: startPos,
-                        endPos: endPos
-                    });
-                }
-            }
-            
-            allOccurrences.sort((a, b) => {
-                if (a.startPos.line !== b.startPos.line) {
-                    return a.startPos.line - b.startPos.line;
-                }
-                return a.startPos.character - b.startPos.character;
-            });
-            
-            if (allOccurrences.length === 0) {
-                continue;
-            }
-            
-            for (let startIndex = 0; startIndex < allOccurrences.length; startIndex++) {
-                const start = allOccurrences[startIndex];
-                const seenTerms = new Set<string>([start.term]);
-                for (let endIndex = startIndex + 1; endIndex < allOccurrences.length; endIndex++) {
-                    const end = allOccurrences[endIndex];
-                    seenTerms.add(end.term);
-                    if (seenTerms.size === highlightedTerms.length) {
-                        const range = new vscode.Range(start.startPos, end.endPos);
-                        const text = document.getText(range);
+                    const termPatterns = highlightedTerms.map(term => `\\b${this.escapeRegExp(term)}\\b`);
+                    const combinedRegex = new RegExp(`(${termPatterns.join('|')})`, 'g');
+                    
+                    let match;
+                    while ((match = combinedRegex.exec(text)) !== null) {
+                        const matchedText = match[0];
+                        const startPos = document.positionAt(match.index);
+                        const endPos = document.positionAt(match.index + matchedText.length);
                         
-                        const wordCount = text.split(/\s+/).length;
-                        if (wordCount <= blockSize) {
-                            allResults.push({
-                                editor: editor,
-                                range: range,
-                                text: text
-                            });
+                        for (const term of highlightedTerms) {
+                            if (term === matchedText) {
+                                allOccurrences.push({
+                                    term: term,
+                                    startPos: startPos,
+                                    endPos: endPos
+                                });
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (allOccurrences.length === 0) {
+                        continue;
+                    }
+                    
+                    let windowStart = 0;
+                    let windowEnd = 0;
+                    let termCounts = new Map<string, number>();
+                    let distinctTermCount = 0;
+                    
+                    if (windowStart < allOccurrences.length) {
+                        termCounts.set(allOccurrences[0].term, 1);
+                        distinctTermCount = 1;
+                    }
+                    
+                    while (windowStart < allOccurrences.length) {
+                        const startLine = allOccurrences[windowStart].startPos.line;
+                        const maxEndLine = startLine + blockSize - 1;
+                        
+                        while (windowEnd + 1 < allOccurrences.length && 
+                            distinctTermCount < highlightedTerms.length && 
+                            allOccurrences[windowEnd + 1].startPos.line <= maxEndLine) {
+                            windowEnd++;
+                            const term = allOccurrences[windowEnd].term;
+                            const count = termCounts.get(term) || 0;
+                            
+                            if (count === 0) {
+                                distinctTermCount++;
+                            }
+                            
+                            termCounts.set(term, count + 1);
                         }
                         
-                        break;
+                        while (windowEnd + 1 < allOccurrences.length && 
+                            allOccurrences[windowEnd + 1].startPos.line <= maxEndLine) {
+                            windowEnd++;
+                            const term = allOccurrences[windowEnd].term;
+                            const count = termCounts.get(term) || 0;
+                            termCounts.set(term, count + 1);
+                        }
+                        
+                        if (distinctTermCount === highlightedTerms.length) {
+                            const range = new vscode.Range(
+                                allOccurrences[windowStart].startPos,
+                                allOccurrences[windowEnd].endPos
+                            );
+                            
+                            let distanceToCursor = Number.MAX_SAFE_INTEGER;
+                            if (activeDocumentUri && cursorPosition && 
+                                document.uri.toString() === activeDocumentUri.toString()) {
+                                distanceToCursor = Math.abs(range.start.line - cursorPosition.line);
+                            }
+                            
+                            allResults.push({
+                                document: document,
+                                range: range,
+                                text: document.getText(range),
+                                distanceToCursor: distanceToCursor
+                            });
+                            
+                            const lastWindowEnd = windowEnd;
+                            
+                            while (windowStart <= lastWindowEnd) {
+                                const term = allOccurrences[windowStart].term;
+                                const count = termCounts.get(term) || 0;
+                                termCounts.set(term, count - 1);
+                                
+                                if (count === 1) {
+                                    distinctTermCount--;
+                                }
+                                windowStart++;
+                            }
+                            
+                            if (windowEnd < windowStart) {
+                                windowEnd = windowStart;
+                                
+                                if (windowStart < allOccurrences.length) {
+                                    const term = allOccurrences[windowStart].term;
+                                    termCounts.set(term, 1);
+                                    distinctTermCount = 1;
+                                }
+                            }
+                        } else {
+                            const term = allOccurrences[windowStart].term;
+                            const count = termCounts.get(term) || 0;
+                            termCounts.set(term, count - 1);
+                            if (count === 1) {
+                                distinctTermCount--;
+                            }
+                            
+                            windowStart++;
+                            if (windowStart > windowEnd && windowStart < allOccurrences.length) {
+                                windowEnd = windowStart;
+                                const term = allOccurrences[windowStart].term;
+                                termCounts.set(term, 1);
+                                distinctTermCount = 1;
+                            }
+                        }
                     }
                 }
             }
         }
         
         allResults.sort((a, b) => {
-            if (a.editor.document.fileName !== b.editor.document.fileName) {
-                return a.editor.document.fileName.localeCompare(b.editor.document.fileName);
+            if (a.document.fileName !== b.document.fileName) {
+                return a.document.fileName.localeCompare(b.document.fileName);
             }
             return a.range.start.line - b.range.start.line;
         });
@@ -255,15 +325,25 @@ export class HighlightManager {
             return;
         }
         
+        let closestResultIndex = 0;
+        let minDistance = Number.MAX_SAFE_INTEGER;
+        
+        for (let i = 0; i < allResults.length; i++) {
+            if (allResults[i].distanceToCursor < minDistance) {
+                minDistance = allResults[i].distanceToCursor;
+                closestResultIndex = i;
+            }
+        }
+        
         const quickPick = vscode.window.createQuickPick();
         quickPick.title = `Found ${allResults.length} blocks containing all highlighted terms`;
         quickPick.placeholder = "Navigate with arrow keys to preview (Enter to select)";
         
         const items = allResults.map((result, index) => {
-            const fileName = path.basename(result.editor.document.fileName);
+            const fileName = path.basename(result.document.fileName);
             return {
                 label: `${fileName}:${result.range.start.line + 1}`,
-                description: "", // Keep it clean as requested
+                description: "",
                 resultIndex: index
             };
         });
@@ -285,9 +365,8 @@ export class HighlightManager {
                 for (const editor of vscode.window.visibleTextEditors) {
                     editor.setDecorations(highlightDecoration, []);
                 }
-                
-                vscode.window.showTextDocument(result.editor.document, {
-                    viewColumn: result.editor.viewColumn,
+                vscode.window.showTextDocument(result.document, {
+                    viewColumn: undefined,
                     preserveFocus: true,
                     preview: true
                 }).then(editor => {
@@ -307,8 +386,8 @@ export class HighlightManager {
                     editor.setDecorations(highlightDecoration, []);
                 }
                 
-                vscode.window.showTextDocument(result.editor.document, {
-                    viewColumn: result.editor.viewColumn,
+                vscode.window.showTextDocument(result.document, {
+                    viewColumn: undefined,
                     selection: result.range
                 }).then(editor => {
                     editor.selection = new vscode.Selection(result.range.start, result.range.end);
@@ -327,7 +406,255 @@ export class HighlightManager {
             quickPick.dispose();
         });
         
+        quickPick.activeItems = [quickPick.items[closestResultIndex]];
         quickPick.show();
     }
     
+    public async FindAllFunctionBlocks() {
+        if (this.highlightedWords.size === 0) {
+            vscode.window.showInformationMessage('No highlighted terms to search for.');
+            return;
+        }
+
+        const activeEditor = vscode.window.activeTextEditor;
+        const cursorPosition = activeEditor?.selection.active;
+        const activeDocumentUri = activeEditor?.document.uri;
+
+        const highlightedTerms = Array.from(this.highlightedWords.values());
+        const allResults: Array<{
+            document: vscode.TextDocument;
+            range: vscode.Range;
+            text: string;
+            functionName: string;
+            termOccurrences: Array<vscode.Range>;
+            distanceToCursor: number;
+        }> = [];
+        
+        for (const tabGroup of vscode.window.tabGroups.all) {
+            for (const tab of tabGroup.tabs) {
+                if (tab.input instanceof vscode.TabInputText) {
+                    let document = await vscode.workspace.openTextDocument(tab.input.uri);
+                    const text = document.getText();
+                    
+                    let allOccurrences: Array<{
+                        term: string;
+                        startPos: vscode.Position;
+                        endPos: vscode.Position;
+                    }> = [];
+                    
+                    const termPatterns = highlightedTerms.map(term => `\\b${this.escapeRegExp(term)}\\b`);
+                    const combinedRegex = new RegExp(`(${termPatterns.join('|')})`, 'g');
+                    
+                    let match;
+                    while ((match = combinedRegex.exec(text)) !== null) {
+                        const matchedText = match[0];
+                        const startPos = document.positionAt(match.index);
+                        const endPos = document.positionAt(match.index + matchedText.length);
+                        
+                        for (const term of highlightedTerms) {
+                            if (term === matchedText) {
+                                allOccurrences.push({
+                                    term: term,
+                                    startPos: startPos,
+                                    endPos: endPos
+                                });
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (allOccurrences.length === 0) {
+                        continue;
+                    }
+                    
+                    const symbols = await vscode.commands.executeCommand<vscode.DocumentSymbol[]>(
+                        'vscode.executeDocumentSymbolProvider',
+                        document.uri
+                    );
+                    
+                    if (!symbols?.length) {
+                        continue;
+                    }
+                    
+                    const functionSymbols = this.getAllFunctionSymbols(symbols);
+                    for (const functionSymbol of functionSymbols) {
+                        const functionRange = functionSymbol.range;
+                        const occurrencesInFunction = allOccurrences.filter((occurrence: {
+                            term: string;
+                            startPos: vscode.Position;
+                            endPos: vscode.Position;
+                        }) => 
+                            functionRange.contains(occurrence.startPos) && 
+                            functionRange.contains(occurrence.endPos)
+                        );
+                        
+                        const termsInFunction = new Set<string>();
+                        for (const occurrence of occurrencesInFunction) {
+                            termsInFunction.add(occurrence.term);
+                        }
+                        
+                        let containsAllTerms = true;
+                        for (const term of highlightedTerms) {
+                            if (!termsInFunction.has(term)) {
+                                containsAllTerms = false;
+                                break;
+                            }
+                        }
+                        
+                        if (containsAllTerms) {
+                            const termRanges = occurrencesInFunction.map((occurrence: {
+                                term: string;
+                                startPos: vscode.Position;
+                                endPos: vscode.Position;
+                            }) => new vscode.Range(occurrence.startPos, occurrence.endPos));
+                            
+                            let distanceToCursor = Number.MAX_SAFE_INTEGER;
+                            if (activeDocumentUri && cursorPosition && 
+                                document.uri.toString() === activeDocumentUri.toString()) {
+                                distanceToCursor = Math.abs(functionRange.start.line - cursorPosition.line);
+                            }
+                            
+                            allResults.push({
+                                document: document,
+                                range: functionRange,
+                                text: document.getText(functionRange),
+                                functionName: functionSymbol.name,
+                                termOccurrences: termRanges,
+                                distanceToCursor: distanceToCursor
+                            });
+                        }
+                    }
+                }
+            }
+        }
+        
+        allResults.sort((a, b) => {
+            if (a.document.fileName !== b.document.fileName) {
+                return a.document.fileName.localeCompare(b.document.fileName);
+            }
+            return a.range.start.line - b.range.start.line;
+        });
+        
+        if (allResults.length === 0) {
+            vscode.window.showInformationMessage('No functions found containing all highlighted terms.');
+            return;
+        }
+        
+        let closestResultIndex = 0;
+        let minDistance = Number.MAX_SAFE_INTEGER;
+        
+        for (let i = 0; i < allResults.length; i++) {
+            if (allResults[i].distanceToCursor < minDistance) {
+                minDistance = allResults[i].distanceToCursor;
+                closestResultIndex = i;
+            }
+        }
+        
+        const quickPick = vscode.window.createQuickPick();
+        quickPick.title = `Found ${allResults.length} functions containing all highlighted terms`;
+        quickPick.placeholder = "Navigate with arrow keys to preview (Enter to select)";
+        
+        const items = allResults.map((result, index) => {
+            const fileName = path.basename(result.document.fileName);
+            return {
+                label: `${fileName}: ${result.functionName} (line ${result.range.start.line + 1})`,
+                description: "",
+                resultIndex: index
+            };
+        });
+        
+        quickPick.items = items;
+        
+        const highlightDecoration = vscode.window.createTextEditorDecorationType({
+            backgroundColor: new vscode.ThemeColor('editor.findMatchHighlightBackground'),
+            border: '1px solid',
+            borderColor: new vscode.ThemeColor('editor.findMatchBorder')
+        });
+        
+        const termHighlightDecoration = vscode.window.createTextEditorDecorationType({
+            backgroundColor: new vscode.ThemeColor('editor.findMatchBackground'),
+            border: '1px solid',
+            borderColor: new vscode.ThemeColor('editor.findMatchBorder')
+        });
+        
+        quickPick.onDidChangeActive(selection => {
+            if (selection.length > 0) {
+                const selectedItem = selection[0] as any;
+                const resultIndex = selectedItem.resultIndex;
+                const result = allResults[resultIndex];
+                
+                for (const editor of vscode.window.visibleTextEditors) {
+                    editor.setDecorations(highlightDecoration, []);
+                    editor.setDecorations(termHighlightDecoration, []);
+                }
+                
+                vscode.window.showTextDocument(result.document, {
+                    viewColumn: undefined,
+                    preserveFocus: true,
+                    preview: true
+                }).then(editor => {
+                    editor.revealRange(result.range, vscode.TextEditorRevealType.InCenter);
+                    editor.setDecorations(highlightDecoration, [result.range]);
+                    editor.setDecorations(termHighlightDecoration, result.termOccurrences);
+                });
+            }
+        });
+        
+        quickPick.onDidAccept(() => {
+            const selection = quickPick.activeItems;
+            if (selection.length > 0) {
+                const selectedItem = selection[0] as any;
+                const resultIndex = selectedItem.resultIndex;
+                const result = allResults[resultIndex];
+                
+                for (const editor of vscode.window.visibleTextEditors) {
+                    editor.setDecorations(highlightDecoration, []);
+                    editor.setDecorations(termHighlightDecoration, []);
+                }
+                
+                vscode.window.showTextDocument(result.document, {
+                    viewColumn: undefined,
+                    selection: result.range
+                }).then(editor => {
+                    editor.selection = new vscode.Selection(result.range.start, result.range.end);
+                    editor.setDecorations(termHighlightDecoration, result.termOccurrences);
+                });
+                
+                quickPick.hide();
+            }
+        });
+        
+        quickPick.onDidHide(() => {
+            for (const editor of vscode.window.visibleTextEditors) {
+                editor.setDecorations(highlightDecoration, []);
+                editor.setDecorations(termHighlightDecoration, []);
+            }
+            
+            highlightDecoration.dispose();
+            termHighlightDecoration.dispose();
+            quickPick.dispose();
+        });
+        
+        quickPick.activeItems = [quickPick.items[closestResultIndex]];
+        quickPick.show();
+    }
+
+    private getAllFunctionSymbols(symbols: vscode.DocumentSymbol[]): vscode.DocumentSymbol[] {
+        let functionSymbols: vscode.DocumentSymbol[] = [];
+        
+        for (const symbol of symbols) {
+            if (symbol.kind === vscode.SymbolKind.Function ||
+                symbol.kind === vscode.SymbolKind.Method ||
+                symbol.kind === vscode.SymbolKind.Constructor) {
+                functionSymbols.push(symbol);
+            }
+            
+            if (symbol.children?.length) {
+                functionSymbols = functionSymbols.concat(this.getAllFunctionSymbols(symbol.children));
+            }
+        }
+        
+        return functionSymbols;
+    }
+
 }

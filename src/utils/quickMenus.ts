@@ -176,6 +176,24 @@ export const ModifyCommands: QuickCommand[] = [
             );
         },
     },
+    {
+        quickKey: char("j"),
+        label: "join lines",
+        async execute() {
+            await vscode.commands.executeCommand(
+                "vimAtHome.join"
+            );
+        },
+    },
+    {
+        quickKey: char("s"),
+        label: "find highlight blocks",
+        async execute() {
+            await vscode.commands.executeCommand(
+                "vimAtHome.findAllHighlights"
+            );
+        },
+    },
 
 ];
 
