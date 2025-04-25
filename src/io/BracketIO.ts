@@ -23,7 +23,6 @@ function getLeftBracket(
     let unmatchedCloseBrackets = 0;
     let first = true;
 
-    console.log(bounds);
     for (const { char, position } of iterCharacters(document, {
         startingPosition,
         direction: direction,
@@ -42,8 +41,6 @@ function getLeftBracket(
 
         if (closingBrackets.includes(char) && !first) {
             unmatchedCloseBrackets++;
-            if (unmatchedCloseBrackets > 0 && direction == Direction.forwards)
-                unmatchedCloseBrackets = 0;
         }
 
         first = false;
@@ -174,35 +171,49 @@ function getContainingObjectAt(
     direction: Direction = Direction.forwards
 ): vscode.Range | undefined {
     
-    // lets find if we are already in a bracket mode first?
-    // maybe first on line -- find left line first then right line
+    // console.log("current position")
+    // console.log(position)
     let leftBracket = undefined;
-    if (direction == Direction.forwards) {
-        leftBracket = getLeftBracket(document, position, Direction.backwards, new vscode.Range(position.with(undefined, 0), position.with(undefined, 99999)));
+    if (direction === Direction.forwards) {
+        const line_range = new vscode.Range(position.with(undefined, 0), position.with(undefined, 99999))
+        leftBracket = getLeftBracket(document, position, Direction.backwards, line_range);
+        // console.log("line_range")
+        // console.log(line_range)
+        // console.log("leftBracket")
+        // console.log(leftBracket)
+        
         if (!leftBracket) {
-            leftBracket = getLeftBracket(document, position, Direction.forwards);
+            leftBracket = getLeftBracket(document, position, Direction.forwards, line_range);
+            // console.log("leftBracket2")
+            // console.log(leftBracket)
         }
     }
     
+    // console.log("left1");
+    // console.log(leftBracket);
     if (!leftBracket) {
         leftBracket = getLeftBracket(document, position, Direction.backwards);
+        // console.log("leftBracket3")
+        // console.log(leftBracket)
     }
     
     let rightBracket = undefined;
-    if (leftBracket && direction == Direction.forwards) {
+    if (leftBracket && direction === Direction.forwards) {
         rightBracket = getRightBracket(document, leftBracket.position);
     }
     else {
         rightBracket = getRightBracket(document, position)
     }
+    // console.log("right");
+    // console.log(rightBracket);
     
-
     if (
         !leftBracket ||
         !rightBracket ||
         openingBrackets.indexOf(leftBracket.char) !==
             closingBrackets.indexOf(rightBracket.char)
     ) {
+        // console.log(`leftchar(${leftBracket?.char}), rightchar(${rightBracket?.char})`)
         return undefined;
     }
 
@@ -212,10 +223,10 @@ function getContainingObjectAt(
             rightBracket.position.translate(0, 1)
         );
     } else {
-        return new vscode.Range(
-            leftBracket.position.translate(0, 1),
-            rightBracket.position
-        );
+        const exclusive_range = new vscode.Range(leftBracket.position.translate(0, 1), rightBracket.position);
+        // console.log("exclusive_range")
+        // console.log(exclusive_range)
+        return exclusive_range
     }
 }
 
@@ -224,6 +235,7 @@ function getClosestObjectTo(
     position: vscode.Position,
     inclusive: boolean
 ): vscode.Range {
+    
     const leftBracket = iterCharacters(document, {
         startingPosition: position,
         direction: Direction.backwards,

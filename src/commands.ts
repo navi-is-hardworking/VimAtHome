@@ -118,7 +118,7 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.changeToBracketSubject",
         execute: async (manager) => {
-            await manager.changeToWordMode({
+            await manager.changeMode({
                 kind: "COMMAND",
                 subjectName: "BRACKETS",
             });
@@ -936,6 +936,12 @@ export let registeredCommands: ExtensionCommand[] = [
         },
     },
     {
+        id: "vimAtHome.splitBy",
+        execute: async (manager) => {
+            await manager.splitBy();
+        },
+    },
+    {
         id: "vimAtHome.splitOnSelection",
         execute: async (manager) => {
             await manager.SplitOnSelection();
@@ -1191,6 +1197,18 @@ export let registeredCommands: ExtensionCommand[] = [
         id: "vimAtHome.openTabLayoutMenu",
         execute: async () => {
             await tabLayoutManager.openTabLayoutMenu();
+        },
+    },
+    {
+        id: "vimAtHome.duplicateSubjectRight",
+        execute: async (manager) => {
+            await manager.executeSubjectCommand("duplicateObjectRight");
+        },
+    },
+    {
+        id: "vimAtHome.duplicateSubjectLeft",
+        execute: async (manager) => {
+            await manager.executeSubjectCommand("duplicateObjectLeft");
         },
     },
     

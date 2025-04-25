@@ -59,21 +59,11 @@ export const ModifyCommands: QuickCommand[] = [
         },
     },
     {
-        // todo replace with split
-        quickKey: char("s"),
-        label: "Transform to snake case",
-        async execute() {
-            await vscode.commands.executeCommand(
-                "editor.action.transformToSnakecase"
-            );
-        },
-    },
-    {
         quickKey: char("c"),
-        label: "Transform to camel case",
+        label: "toggleCopilot",
         async execute() {
             await vscode.commands.executeCommand(
-                "vimAtHome.transformToCamelCase"
+                "github.copilot.toggleCopilot"
             );
         },
     },
@@ -132,11 +122,11 @@ export const ModifyCommands: QuickCommand[] = [
         },
     },
     {
-        quickKey: char("o"),
-        label: "Toggle copilot",
+        quickKey: char("s"),
+        label: "split by char",
         async execute() {
             await vscode.commands.executeCommand(
-                "github.copilot.toggleCopilot"
+                "vimAtHome.splitBy"
             );
         },
     },
@@ -186,7 +176,7 @@ export const ModifyCommands: QuickCommand[] = [
         },
     },
     {
-        quickKey: char("s"),
+        quickKey: char("o"),
         label: "find highlight blocks",
         async execute() {
             await vscode.commands.executeCommand(

@@ -20,32 +20,12 @@ export default class InsideBracketSubject extends SubjectBase {
         selections.tryMap(this.context.editor, (selection) => {
             const startRange = this.subjectIO.getContainingObjectAt(
                 this.context.editor.document,
-                selection.start,
-            );
-
-            const endRange = this.subjectIO.getContainingObjectAt(
-                this.context.editor.document,
-                selection.end
-            );
-
-            const fixedRange =
-                // happening here because it sees a right bracket first
-                half === "LEFT"  && startRange ? new vscode.Range(startRange.start, selection.start) :
-                half === "RIGHT" && endRange ? new vscode.Range(selection.end, endRange.end) :
-                startRange && endRange
-                    ? startRange.union(endRange)
-                    : startRange
-                    ? startRange
-                    : endRange;
-
-            if (fixedRange && !fixedRange.isEmpty) {
-                return new vscode.Selection(fixedRange.end, fixedRange.start);
-            }
-
-            return this.subjectIO.getClosestObjectTo(
-                this.context.editor.document,
                 selection.start
             );
+            
+            if (startRange) {
+                return new vscode.Selection(startRange.end, startRange.start);
+            }
         });
     }
     

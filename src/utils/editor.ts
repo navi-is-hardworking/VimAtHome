@@ -462,6 +462,13 @@ export async function documentHasFunctionSymbols(document: vscode.TextDocument):
     return checkForFunctions(symbols);
 } 
 
+export function compareRanges(range1: vscode.Range, range2: vscode.Range): boolean {
+    return range1.start.line === range2.start.line &&
+            range1.end.line === range2.end.line &&
+            range1.start.character === range2.start.character &&
+            range1.end.character === range2.end.character
+}
+
 
 
 

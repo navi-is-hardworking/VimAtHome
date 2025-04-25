@@ -26,6 +26,7 @@ import { highlightManager } from "./commands";
 import { EditHistoryManager } from './handlers/EditHistoryManager';
 
 
+
 let outputChannel = vscode.window.createOutputChannel("Vah.Manager");
 
 const copyAsync = promisify((text: string) => ncp.copy(text));
@@ -116,7 +117,6 @@ export default class VimAtHomeManager {
         this.mode = await this.mode.changeTo(newMode);
         const half = newMode.kind === "INSERT" ? undefined : newMode.half;
         this.setUI();
-        
         
         if (this.editor.selection.active.line !== this.editor.selection.anchor.line 
             || lineUtils.lineIsSignificant(this.editor.document.lineAt(this.editor.selection.active.line))) {
@@ -239,7 +239,7 @@ export default class VimAtHomeManager {
     async openSpaceMenu() {
         this.extendAnchor.SelectToAnchorIfExtending(this.editor);
         const choice = await quickCommandPicker(quickMenus.SpaceCommands);
-
+        
         if (choice) {
             await choice.execute();
         }
@@ -280,11 +280,12 @@ export default class VimAtHomeManager {
     async openModifyMenu() {
         this.extendAnchor.SelectToAnchorIfExtending(this.editor);
         const choice = await quickCommandPicker(quickMenus.ModifyCommands);
+        
         if (choice) {
             await choice.execute();
         }
 
-        this.mode.fixSelection();
+        // this.mode.fixSelection();
     }
 
     async openViewMenu() {
@@ -1009,31 +1010,31 @@ export default class VimAtHomeManager {
         EditorUtils.replaceSelection(this.editor, clipText);
     }
 
-    async changeToBracketSubject() {
-        if (this.editor.selection.active.line == this.editor.selection.anchor.line) {
-            let line = this.editor.document.lineAt(this.editor.selection.active.line).text;
-            let index = 1;
-            if (line) 
-                for (index = this.editor.selection.active.character; index > 0; index--) {
-                    if ("({[".includes(line[index])) {
-                        let position = new vscode.Position(this.editor.selection.active.line, index);
-                        this.editor.selection = new vscode.Selection(position, position);
-                        break;
-                    }
-                }
-                for (index = this.editor.selection.active.character; index < line.length; index++) {
-                    if ("({[".includes(line[index])) {
-                        let position = new vscode.Position(this.editor.selection.active.line, index);
-                        this.editor.selection = new vscode.Selection(position, position);
-                        break;
-                    }
-                }
-        }
-        await this.changeMode({
-            kind: "COMMAND",
-            subjectName: "BRACKETS",
-        });
-    }
+    // async changeToBracketSubject() {
+    //     if (this.editor.selection.active.line == this.editor.selection.anchor.line) {
+    //         let line = this.editor.document.lineAt(this.editor.selection.active.line).text;
+    //         let index = 1;
+    //         if (line) 
+    //             for (index = this.editor.selection.active.character; index > 0; index--) {
+    //                 if ("({[".includes(line[index])) {
+    //                     let position = new vscode.Position(this.editor.selection.active.line, index);
+    //                     this.editor.selection = new vscode.Selection(position, position);
+    //                     break;
+    //                 }
+    //             }
+    //             for (index = this.editor.selection.active.character; index < line.length; index++) {
+    //                 if ("({[".includes(line[index])) {
+    //                     let position = new vscode.Position(this.editor.selection.active.line, index);
+    //                     this.editor.selection = new vscode.Selection(position, position);
+    //                     break;
+    //                 }
+    //             }
+    //     }
+    //     await this.changeMode({
+    //         kind: "COMMAND",
+    //         subjectName: "BRACKETS",
+    //     });
+    // }
 
     async changeToBlockSubject(newMode: EditorModeChangeRequest) {
         if (newMode.kind === "COMMAND" && newMode.half !== undefined) {
@@ -1768,10 +1769,55 @@ export default class VimAtHomeManager {
         editor.selection = new vscode.Selection(newPosition, newPosition);
     }
     
+    async splitBy(): Promise<void> {
+        this.extendAnchor.SelectToAnchorIfExtending(this.editor);
+        const editor = this.editor;
+        const document = editor.document;
+        const selection = editor.selection;
+        
+        if (!selection || selection.isEmpty) {
+            vscode.window.showInformationMessage("No text selected");
+            return;
+        }
+        
+        const selectedText = document.getText(selection);
+        const currentLine = document.lineAt(selection.start.line);
+        const indentMatch = currentLine.text.match(/^(\s*)/);
+        const baseIndent = indentMatch ? indentMatch[1] : '';
+        const additionalIndent = baseIndent + '    ';
+        
+        const splitStr = await vscode.window.showInputBox({
+            prompt: "Enter characters to split by",
+            placeHolder: "e.g. ',' or ' && '",
+        });
+
+        if (!splitStr) {
+            return;
+        }
+
+        const parts = selectedText.split(splitStr);
+        
+        let result = parts.map((part, index) => {
+            part = part.trim();
+            if (index === parts.length - 1) {
+                return additionalIndent + part;
+            }
+            return additionalIndent + part + splitStr;
+        }).join('\n');
+        
+        await editor.edit(editBuilder => {
+            editBuilder.replace(selection, '\n' + result + '\n' + baseIndent);
+        });
+        
+        const endLine = selection.start.line + parts.length + 1;
+        const endPosition = new vscode.Position(endLine, baseIndent.length);
+        editor.selection = new vscode.Selection(endPosition, endPosition);
+    }
+
+
     async GoToFunctionEdge(direction: common.Direction) {
         await EditorUtils.goToNearestSymbol(this.editor, direction);
     }
-    
 
 }
 

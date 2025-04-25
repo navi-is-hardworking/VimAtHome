@@ -15,6 +15,9 @@ export type SubjectActions = {
     swapWithObjectAbove(): Promise<void>;
     swapWithObjectToLeft(): Promise<void>;
     swapWithObjectToRight(): Promise<void>;
+    
+    duplicateObjectLeft(): Promise<void>;
+    duplicateObjectRight(): Promise<void>;
 
     nextOccurrenceOfObject(): Promise<void>;
     prevOccurrenceOfObject(): Promise<void>;

@@ -202,6 +202,7 @@ export default abstract class SubjectBase implements SubjectActions {
                 )
             );
         });
+        await this.fixSelection();
     }
 
     async prependNew(): Promise<void> {
@@ -315,7 +316,7 @@ export default abstract class SubjectBase implements SubjectActions {
                 this.context.editor.document,
                 selection.end
             );
-
+            
             const fixedRange =
                 half === "LEFT"  && startRange ? new vscode.Range(startRange.start, selection.start) :
                 half === "RIGHT" && endRange ? new vscode.Range(selection.end, endRange.end) :
@@ -331,7 +332,7 @@ export default abstract class SubjectBase implements SubjectActions {
 
             return this.subjectIO.getClosestObjectTo(
                 this.context.editor.document,
-                selection.start
+                selection.start,
             );
         });
     }
@@ -373,6 +374,81 @@ export default abstract class SubjectBase implements SubjectActions {
     ): Promise<vscode.Range | undefined> {
         return this.subjectIO.pullSubject(document, targetPosition, currentSelection);
     }
-
     
+    // todo make better
+    async duplicateObjectRight(): Promise<void> {
+        await this.context.editor.edit((e) => {
+            selections.tryMap(this.context.editor, (selection) => {
+                const currentObj = this.subjectIO.getContainingObjectAt(
+                    this.context.editor.document,
+                    selection.start
+                );
+                if (!currentObj) return selection;
+
+                const nextObj = this.subjectIO.iterHorizontally(
+                    this.context.editor.document, 
+                    {
+                        startingPosition: selection,
+                        direction: Direction.forwards,
+                    }
+                ).tryFirst();
+
+                if (!nextObj) {
+                    // get prev object... find separators, append to cur, duplicate
+                    const textToDuplicate = this.context.editor.document.getText(currentObj);
+                    e.insert(currentObj.end, textToDuplicate);
+                    return selection;
+                }
+
+                const textBetween = this.context.editor.document.getText(
+                    new vscode.Range(currentObj.end, nextObj.start)
+                );
+                const textToDuplicate = this.context.editor.document.getText(currentObj) + textBetween;
+                
+                e.insert(nextObj.start, textToDuplicate);
+            });
+        });
+        
+        await this.nextObjectRight();
+    }
+
+    async duplicateObjectLeft(): Promise<void> {
+        await this.context.editor.edit((e) => {
+            selections.tryMap(this.context.editor, (selection) => {
+                const currentObj = this.subjectIO.getContainingObjectAt(
+                    this.context.editor.document,
+                    selection.start
+                );
+                if (!currentObj) return selection;
+
+                const prevObj = this.subjectIO.iterHorizontally(
+                    this.context.editor.document, 
+                    {
+                        startingPosition: selection,
+                        direction: Direction.backwards,
+                    }
+                ).tryFirst();
+
+                if (!prevObj) {
+                    const textToDuplicate = this.context.editor.document.getText(currentObj);
+                    e.insert(currentObj.start, textToDuplicate);
+                    return new vscode.Selection(
+                        currentObj.start, 
+                        currentObj.start.translate(0, textToDuplicate.length)
+                    );
+                }
+
+                const textBetween = this.context.editor.document.getText(
+                    new vscode.Range(prevObj.end, currentObj.start)
+                );
+                const textToDuplicate = textBetween + this.context.editor.document.getText(currentObj);
+                
+                e.insert(prevObj.end, textToDuplicate);
+            });
+        });
+        
+        await this.nextObjectLeft();
+    }
+
+        
 }

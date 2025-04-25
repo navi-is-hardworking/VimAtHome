@@ -31,7 +31,7 @@ export default abstract class SubjectIOBase {
 
     getClosestObjectTo(
         document: vscode.TextDocument,
-        position: vscode.Position
+        position: vscode.Position,
     ): TextObject {
         const wordRange = seq([
             this.iterAll(document, {
