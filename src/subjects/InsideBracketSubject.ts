@@ -18,15 +18,42 @@ export default class InsideBracketSubject extends SubjectBase {
     
     async fixSelection(half?: "LEFT" | "RIGHT"): Promise<void> {
         selections.tryMap(this.context.editor, (selection) => {
-            const startRange = this.subjectIO.getContainingObjectAt(
-                this.context.editor.document,
-                selection.start
-            );
-            
-            if (startRange) {
-                return new vscode.Selection(startRange.end, startRange.start);
+            if (!half) {
+                const startRange = this.subjectIO.getContainingObjectAt(
+                    this.context.editor.document,
+                    selection.start
+                );
+                if (startRange) {
+                    return new vscode.Selection(startRange.end, startRange.start);
+                }
+            }
+            else if (half === "LEFT") {
+                const startRange = this.subjectIO.getContainingObjectAt(
+                    this.context.editor.document,
+                    selection.start
+                );
+                let fixedRange = undefined;
+                if (startRange) {
+                    fixedRange = new vscode.Range(startRange.start, selection.start)
+                }
+                if (fixedRange && !fixedRange.isEmpty) {
+                    return new vscode.Selection(fixedRange.end, fixedRange.start);
+                }
+            }
+            else if (half === "RIGHT") {
+                const endRange = this.subjectIO.getContainingObjectAt(
+                    this.context.editor.document,
+                    selection.end
+                );
+                let fixedRange = undefined;
+                if (endRange)
+                    fixedRange = new vscode.Range(selection.end, endRange.end)
+                if (fixedRange && !fixedRange.isEmpty) {
+                    return new vscode.Selection(fixedRange.end, fixedRange.start);
+                }
             }
         });
+        
     }
     
     async firstObjectInScope() {

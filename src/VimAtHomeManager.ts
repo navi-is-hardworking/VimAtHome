@@ -25,12 +25,10 @@ import {Calculator} from "./utils/calculator"
 import { highlightManager } from "./commands";
 import { EditHistoryManager } from './handlers/EditHistoryManager';
 
-
-
 let outputChannel = vscode.window.createOutputChannel("Vah.Manager");
-
 const copyAsync = promisify((text: string) => ncp.copy(text));
 let selectionHistory = new SelectionHistoryManager();
+
 let Term = new Terminal();
 
 export default class VimAtHomeManager {
@@ -1608,8 +1606,8 @@ export default class VimAtHomeManager {
         for (let i = startLine; i <= endLine; i++) {
             const line = editor.document.lineAt(i);
             const lineText = line.text;
-            
             const lineIndent = lineText.match(/^\s*/);
+            
             if (!lineIndent)
                 continue;
             const currentIndent = lineIndent[0];
