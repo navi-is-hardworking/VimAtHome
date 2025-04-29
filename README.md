@@ -7,23 +7,24 @@ I would recommend using the original but you are welcome to use this if you wish
 ```
 
 "vimAtHome.wordKeys": "em,.jkluiopwrsdfxcv",
-
-"vimAtHome.customWordRegex1": "tempword", // subword
+"vimAtHome.customWordRegex1": "tempword",
 "vimAtHome.customWordRegex2": "[A-Z]*[A-Za-z0-9][a-z0-9]*|[^A-Za-z0-9\\s]+", // subword
 "vimAtHome.customWordRegex3":  "(['\"`])(?:(?!\\1).)*\\1", // Whitespace 
 "vimAtHome.customWordRegex4":  "[a-zA-Z][^,|&?]+[^\\)\\s{}^,|&?]", // Arguments
 "vimAtHome.customWordRegex5": "(!?\\w)(->|[\\w\\._\\-:\\\\\/]|<(?=[^>]*>).*?>|\\(\\)|\\[(?=[^\\]]*\\]).*?\\]|)*", // bigword
 "vimAtHome.customWordRegex6": "(!?\\w)(->|[\\w\\._\\-:\\\\\/]|<(?=[^>]*>).*?>|\\([^;()]*\\)|\\[(?=[^\\]]*\\]).*?\\]|)*", // bigword
 "vimAtHome.customWordRegex7": "([a-zA-Z][\\w.\\-_>?:]*(?:<[^<>]*>)?(?:\\[(?:[^\\[\\]]|\\[[^\\[\\]]*\\])*\\]|\\((?:[^()]|\\([^()]*\\))*\\))*)",
+// "vimAtHome.customWordRegex7": "[^\\s]+",
 "vimAtHome.customWordRegex8": "(return)|(yield)",
 "vimAtHome.customWordRegex9": "[^;:=\\s][^;:=]+[^;:=\\s]",
-"vimAtHome.customWordRegex10": "[^\\s(),&|?:;]([^(),&|?:;]|\\(\\)|[^\\s(][(][^,&|;]+[)])+[^\\s(),&|?:;]",
+// "vimAtHome.customWordRegex10": "[^\\s(),&|?:;]([^(),&|?;]|\\(\\)|[^\\s(][(][^,&|;]+[)])+[^\\s(),&|?;]",
+"vimAtHome.customWordRegex10": "[^\\s(),&|?:;]([^(),&|?;]|\\(\\)|[^\\s(][(][^,&|;]+[)])+[^\\s(),&|?;]",
 "vimAtHome.customWordRegex11": "-?\\d*\\.?\\d+f?",
 "vimAtHome.customWordRegex12": "\\w+[^\\w]+\\w+",
 "vimAtHome.customWordRegex13": "[^,()]+",
 "vimAtHome.customWordRegex14": "([[^();\\s,&|?:;<=>!]]|\\(\\))+",
 
-"vimAtHome.color.word": "ffffff",
+"vimAtHome.color.word": "57f7ff",
 "vimAtHome.color.customWord1": "3381ff",
 "vimAtHome.color.customWord2": "3381ff",
 "vimAtHome.color.customWord3": "ffff00",
@@ -31,36 +32,38 @@ I would recommend using the original but you are welcome to use this if you wish
 "vimAtHome.color.customWord5": "f40000",
 "vimAtHome.color.customWord6": "ffff00",
 "vimAtHome.color.customWord7": "cf9700",
-"vimAtHome.verticalSkipCount": 4,
 
-"vimAtHome.color.command": "#6d0000",
+"vimAtHome.color.command": "#5614d0a0",
+// "vimAtHome.color.command": "#641a937a",
+// "vimAtHome.color.extend": "#26d24e2b",
+"vimAtHome.color.extend": "#008939a0",
 "terminal.integrated.shellIntegration.enabled": true,
 "GitVision.filterString": "52872",
-"editor.autoClosingBrackets": "never",
-"editor.autoClosingQuotes": "never",
-
-"vimAtHome.color.extend": "#09831566",
 
 "workbench.colorCustomizations": { 
     "editor.background": "#101010",
-    "editor.selectionBackground": "#1891fa4c",
-    "editor.inactiveSelectionBackground": "#65169693",
+    "editor.selectionBackground": "#3d1cb48e",
+    // "editor.selectionBackground": "#1890faf5",
+    "editor.inactiveSelectionBackground": "#5614d0a0",
     "editorOverviewRuler.wordHighlightTextForeground": "#1890fa00",
     "editor.wordHighlightBackground": "#1890fa00",
     "editor.wordHighlightStrongBackground": "#1890fa00",
     // "editor.selectionBackground": "#6d0000",
     "tab.border": "#ffffff",
-    "tab.activeBorder": "#ffffff",
-    "tab.activeBorderTop": "#ffffff",
-    "tab.activeBackground": "#2d2d2d",
+    "tab.activeBorder": "#1469066d",
+    "tab.activeBorderTop": "#1469066d",
+    "tab.activeBackground": "#39ba2252",
     "tab.inactiveForeground": "#ffffff",
     "tab.inactiveBackground": "#000000",
+    "tab.unfocusedActiveBackground": "#75757586",
     "scrollbarSlider.background": "#62a400",
     "editor.findMatchBackground": "#abf1420a",
     "editor.findMatchBorder": "#abf142",
+    "editorIndentGuide.background1": "#ffffff85",
+    "editorIndentGuide.activeBackground1": "#62ff1e",
 },
 
-
+```
 
 ```
 
@@ -597,16 +600,6 @@ I would recommend using the original but you are welcome to use this if you wish
         "key": "alt+9",
         "command": "-workbench.action.openEditorAtIndex9"
     },
-    {
-        "key": "shift+down",
-        "command": "vimAtHome.collapseToCenter",
-        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && vimAtHome.mode != 'EXTEND'"
-    },
-    {
-        "key": "shift+down",
-        "command": "vimAtHome.changeToInsertMode",
-        "when": "editorTextFocus && vimAtHome.mode == 'EXTEND'"
-    },
     // {
     //     "key": "shift+left",
     //     "command": "runCommands",
@@ -724,7 +717,7 @@ I would recommend using the original but you are welcome to use this if you wish
                 // "vimAtHome.repeatLastSkip",
                 // "vimAtHome.repeatLastSkip",
                 // "vimAtHome.repeatLastSkipOverLine"
-            ]   
+            ]
         },
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
@@ -1386,7 +1379,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "args": {
             "commands": [
                 // "vimAtHome.skipToChar"
-                
+
                 "vimAtHome.changeToInsertModePrepend",
                 "vimAtHome.changeToCharSubject",
                 "vimAtHome.skip"
@@ -1399,7 +1392,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "args": {
             "commands": [
                 // "vimAtHome.skipToCharReverse"
-                
+
                 "vimAtHome.changeToInsertModeAppend",
                 "cursorLeft",
                 "vimAtHome.changeToCharSubject",
@@ -1494,7 +1487,7 @@ I would recommend using the original but you are welcome to use this if you wish
     {
         "key": "ctrl+j e",
         "command": "vimAtHomeopullCustomWord4",
-        
+
     },
     {
         "key": "ctrl+j alt+e",
@@ -2259,12 +2252,12 @@ I would recommend using the original but you are welcome to use this if you wish
     },
     {
         "key": "shift+alt+left",
-        "command": "vimAtHome.changeToHalfBracketSubjectLeft",
+        "command": "vimAtHome.duplicateSubject",
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
     {
         "key": "shift+alt+right",
-        "command": "vimAtHome.changeToHalfBracketSubjectRight",
+        "command": "vimAtHome.duplicateSubject",
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
     // {
@@ -2310,7 +2303,7 @@ I would recommend using the original but you are welcome to use this if you wish
         },
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
-    
+
     {
         "key": "shift+pageDown",
         "command": "runCommands",
@@ -2321,7 +2314,7 @@ I would recommend using the original but you are welcome to use this if you wish
         },
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
-    
+
     {
         "key": "ctrl+shift+up",
         "command": "runCommands",
@@ -2413,7 +2406,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "when": "inQuickOpen"
     },
     {
-        
+
         "key": "ctrl+down",
         "command": "runCommands",
         "args": {
@@ -2607,17 +2600,6 @@ I would recommend using the original but you are welcome to use this if you wish
         "when": "editorTextFocus"
     },
     {
-        "key": "shift+enter",
-        "command": "runCommands",
-        "args": {
-            "commands": [
-                "vimAtHome.repeatLastSkipBackwards",
-                "editor.action.clipboardCopyAction",
-            ]
-        },
-        "when": "editorTextFocus && vimAtHome.mode == 'EXTEND' && vimAtHome.subject == CHAR"
-    },
-    {
         "key": "ctrl+alt+y",
         "command": "runCommands",
         "args": {
@@ -2774,13 +2756,13 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "vimAtHome.pasteBracket",
         "when": "editorTextFocus"
     },
-    
+
     {
         "key": "shift+f23",
         "command": "vimAtHome.pasteBracket",
         "when": "editorTextFocus"
     },
-    
+
     {
         "key": "ctrl+up",
         "command": "runCommands",
@@ -2928,7 +2910,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "vimAtHome.clearWaypoints",
         "when": "editorTextFocus"
     },
-    
+
     {
         "key": "ctrl+f3",
         "command": "vimAtHome.findNextExact",
@@ -2939,7 +2921,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "vimAtHome.findPrevExact",
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
-    
+
     {
         //[
         "key": "ctrl+]",
@@ -2951,7 +2933,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "vimAtHome.outdentSelection",
         "when": "editorTextFocus"
     },
-    
+
     {
         "key": "alt+up",
         "command": "vimAtHome.moveLinesUp",
@@ -3034,7 +3016,7 @@ I would recommend using the original but you are welcome to use this if you wish
     {
         "key": "ctrl+k ctrl+alt+left",
         "command": "workbench.action.navigateBackInEditLocations"
-        
+
     },
     {
         "key": "ctrl+k ctrl+alt+right",
@@ -3053,18 +3035,18 @@ I would recommend using the original but you are welcome to use this if you wish
     //     "command": "vimAtHome.firstSymbolBelow"
     // },
     // {
-    //     "key": "ctrl+k ctrl+alt+left",   
-    //     "command": "vimAtHome.goToNextEdit", 
-    //     "when": "editorTextFocus"   
+    //     "key": "ctrl+k ctrl+alt+left",
+    //     "command": "vimAtHome.goToNextEdit",
+    //     "when": "editorTextFocus"
     // },
     // {
     //     "key": "ctrl+k ctrl+alt+right",
-    //     "command": "vimAtHome.goToPrevEdit", 
+    //     "command": "vimAtHome.goToPrevEdit",
     //     "when": "editorTextFocus"
     // },
     // {
     //     "key": "f17",
-    //     "command": "vimAtHome.openPullMenu", 
+    //     "command": "vimAtHome.openPullMenu",
     //     "when": "editorTextFocus"
     // },
     {
@@ -3095,7 +3077,7 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "runCommands",
         "args": {
             "commands": [
-                "closeFindWidget", 
+                "closeFindWidget",
                 "workbench.action.closeQuickOpen",
                 "vimAtHome.changeToWordSubject"
             ]
@@ -3129,26 +3111,26 @@ I would recommend using the original but you are welcome to use this if you wish
     },
     {
         "key": "shift+[",
-        "command": "vimAtHome.nextEmptyAbove",
+        "command": "vimAtHome.goToStartOfFunction",
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
     {
         "key": "shift+]",
-        "command": "vimAtHome.nextEmptyBelow",
+        "command": "vimAtHome.goToEndOfFunction",
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
     {
         "key": "ctrl+;",
-        "command": "P.jumpToWordSubject",
+        "command": "vimAtHome.jumpToWordSubject",
         "when": "editorTextFocus"
     },
     {
         "key": "shift+enter",
         "command": "editor.action.inlineSuggest.trigger",
-        "when": "editorTextFocus && vimAtHome.mode != 'COMMAND'" 
+        "when": "editorTextFocus && vimAtHome.mode != 'COMMAND'"
     },
     // {
-    //     "key": "ctrl+shift+l",
+    //     "key": "ctrl+r",
     //     "command": "jupyter.runcurrentcell",
     //     "when": "editorTextFocus"
     // },
@@ -3162,9 +3144,16 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "-editor.debug.action.toggleInlineBreakpoint",
         "when": "editorTextFocus"
     },
-
-    
-    
+    // {
+    //     "key": "delete",
+    //     "command": "vimAtHome.findAllHighlights",
+    //     "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
+    // },
+    // {
+    //     "key": "f",
+    //     "command": "vimAtHome.splitBy",
+    //     "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
+    // },
     
 ]
 
