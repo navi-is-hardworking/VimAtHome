@@ -184,9 +184,12 @@ function getContainingObjectAt(
         
         if (!leftBracket) {
             // leftBracket = getLeftBracket(document, position, Direction.forwards, line_range);
-            leftBracket = getLeftBracket(document, position, Direction.forwards);
+            leftBracket = getLeftBracket(document, position, Direction.forwards, line_range);
             // console.log("leftBracket2")
             // console.log(leftBracket)
+        }
+        if (!leftBracket) {
+            leftBracket = getLeftBracket(document, position, Direction.backwards);
         }
     }
     
