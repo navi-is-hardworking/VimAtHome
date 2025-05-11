@@ -320,4 +320,8 @@ export default class JumpInterface implements vscode.Disposable {
         this.removeDecorations();
         this.context.editor.setDecorations(this.decorationType, jumpCodeDecorations);
     }
+    
+    cancel() {
+        this.dispose();
+    }
 }

@@ -46,5 +46,6 @@ export abstract class EditorMode implements vscode.Disposable {
     abstract collapseToCenter(mockSelection?: vscode.Selection | undefined): Promise<EditorModeChangeRequest | undefined>;
     abstract collapseToLeft(): Promise<EditorModeChangeRequest | undefined>;
     abstract collapseToRight(): Promise<EditorModeChangeRequest | undefined>;
+    abstract cancelActiveJumpOrSkip(): any;
 
 }

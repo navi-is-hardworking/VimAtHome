@@ -236,4 +236,6 @@ export default class ExtendMode extends EditorMode {
     async collapseToCenter(): Promise<modes.EditorModeChangeRequest | undefined> { return undefined; }
     async collapseToLeft(): Promise<modes.EditorModeChangeRequest | undefined> { return undefined; };
     async collapseToRight(): Promise<modes.EditorModeChangeRequest | undefined> { return undefined; };
+    cancelActiveJumpOrSkip() {}
+    
 }

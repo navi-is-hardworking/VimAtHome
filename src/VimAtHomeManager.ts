@@ -1816,6 +1816,11 @@ export default class VimAtHomeManager {
     async GoToFunctionEdge(direction: common.Direction) {
         await EditorUtils.goToNearestSymbol(this.editor, direction);
     }
+    
+    async cancelJumpOrSkip() {
+        this.mode.cancelActiveJumpOrSkip();
+    }
+
 
 }
 

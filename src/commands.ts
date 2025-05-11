@@ -10,6 +10,7 @@ import * as cacheCommands from "./CacheCommands";
 import { addSubjectCommand } from "./utils/quickMenus"
 import { WaypointManager } from './handlers/WaypointManager';
 import { TabLayoutManager } from './handlers/TabGroupManager';
+import { FirstLetterPreview } from "./utils/firstLetterPreview";
 
 const tabLayoutManager = new TabLayoutManager();
 
@@ -291,6 +292,7 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.changeToInsertMode", 
         execute: async (manager: VimAtHomeManager) => {
+            await manager.cancelJumpOrSkip();
             await manager.changeMode({ kind: "INSERT" });
         },
     },

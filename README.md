@@ -77,7 +77,7 @@ I would recommend using the original but you are welcome to use this if you wish
                 "vimAtHome.scrollToCursor",
             ]
         },
-        "when": "editorTextFocus"
+        "when": "editorTextFocus && !terminalFocus"
     },
     {
         "key": "f16",
@@ -89,7 +89,7 @@ I would recommend using the original but you are welcome to use this if you wish
                 "vimAtHome.scrollToCursor",
             ]
         },
-        "when": "!editorTextFocus"
+        "when": "!editorTextFocus && !terminalFocus"
     },
     {
         "key": "shift+f19",
@@ -628,16 +628,6 @@ I would recommend using the original but you are welcome to use this if you wish
     //     "command": "vimAtHome.changeToInsertMode",
     //     "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     // },
-    {
-        "key": "shift+right",
-        "command": "vimAtHome.changeToInsertMode",
-        "when": "editorTextFocus && vimAtHome.mode == 'EXTEND'"
-    },
-    {
-        "key": "shift+left",
-        "command": "vimAtHome.changeToInsertMode",
-        "when": "editorTextFocus && vimAtHome.mode == 'EXTEND'"
-    },
     // {
     //     "key": "ctrl+left",
     //     "command": "vimAtHome.goToFirstSubjectInScope",
@@ -2260,18 +2250,6 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "vimAtHome.duplicateSubject",
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
-    // {
-    //     "key": "shift+left",
-    //     "command": "runCommands",
-    //     "args": {
-    //         "commands": [
-    //             "vimAtHome.changeToInsertModePrepend",
-    //             "cursorRight",
-    //             "vimAtHome.changeToCustomWord1",
-    //         ]
-    //     },
-    //     "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && vimAtHome.subject == 'WORD'"
-    // },
     {
         "key": "shift+left",
         "command": "runCommands",
@@ -3156,5 +3134,7 @@ I would recommend using the original but you are welcome to use this if you wish
     // },
     
 ]
+
+
 
 ```

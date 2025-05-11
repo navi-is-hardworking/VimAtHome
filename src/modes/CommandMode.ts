@@ -28,6 +28,9 @@ export default class CommandMode extends modes.EditorMode {
     readonly decorationTypeTop: vscode.TextEditorDecorationType;
     readonly decorationTypeMid: vscode.TextEditorDecorationType;
     readonly decorationTypeBottom: vscode.TextEditorDecorationType;
+    
+    private activeJumpInterface?: JumpInterface;
+    private activeInlineInput?: InlineInput;
 
     get statusBarText(): string {
         const lastSkip = common.getLastSkip();
@@ -260,7 +263,7 @@ export default class CommandMode extends modes.EditorMode {
                 resolve();
             };
             
-            const inlineInput = new InlineInput({
+            this.activeInlineInput = new InlineInput({
                 textEditor: this.context.editor,
                 onInput: handleInput,
                 onCancel: async () => {
@@ -269,11 +272,13 @@ export default class CommandMode extends modes.EditorMode {
                 }
             });
             
-            inlineInput.updateStatusBar(
+            this.activeInlineInput.updateStatusBar(
                 `Skip ${direction} to ${this.subject.displayName} by first character`,
                 0
             );
         });
+
+        this.activeInlineInput = undefined;
     }
     
     async skipOver(direction: common.Direction): Promise<void> {
@@ -315,7 +320,7 @@ export default class CommandMode extends modes.EditorMode {
             .map((range) => range.start)
             .toArray();
             
-        const jumpInterface = new JumpInterface(this.context);
+        this.activeJumpInterface = new JumpInterface(this.context);
         let jumpType = this.subject.jumpPhaseType;
         
         if (this.subject.name === "WORD") {
@@ -329,7 +334,7 @@ export default class CommandMode extends modes.EditorMode {
     
         common.setLazyPassSubjectName(this.subject.name);
         let size: number = this.getSubjectName() === "CHAR" ? 0 : 1;
-        const jumpPosition = await jumpInterface.jump({
+        const jumpPosition = await this.activeJumpInterface.jump({
             kind: jumpType,
             locations: seq(jumpLocations)},);
     
@@ -348,7 +353,7 @@ export default class CommandMode extends modes.EditorMode {
             .map((range) => range.start)
             .toArray();
             
-            const jumpInterface = new JumpInterface(this.context);
+            this.activeJumpInterface = new JumpInterface(this.context);
             let jumpType = tempSubject.jumpPhaseType;
             if (tempSubject.name === "WORD") {
                 let wordDefinitionIndex = getWordDefinitionIndex();
@@ -360,7 +365,7 @@ export default class CommandMode extends modes.EditorMode {
             }
             
         common.setLazyPassSubjectName(subjectName);
-        const jumpPosition = await jumpInterface.jump({
+        const jumpPosition = await this.activeJumpInterface.jump({
             kind: jumpType,
             locations: seq(jumpLocations)},);
 
@@ -381,7 +386,7 @@ export default class CommandMode extends modes.EditorMode {
             .map((range) => range.start)
             .toArray();
 
-        const jumpInterface = new JumpInterface(this.context);
+        this.activeJumpInterface = new JumpInterface(this.context);
         let jumpType = tempSubject.jumpPhaseType;
 
         if (tempSubject.name === "WORD") {
@@ -393,7 +398,7 @@ export default class CommandMode extends modes.EditorMode {
             }
         }
 
-        const jumpPosition = await jumpInterface.jump({
+        const jumpPosition = await this.activeJumpInterface.jump({
             kind: jumpType,
             locations: seq(jumpLocations)},);
 
@@ -426,8 +431,8 @@ export default class CommandMode extends modes.EditorMode {
         .map(([range, _]) => range.start)
         .toArray();
         // outputchannel.appendLine(`zoomJump: ${jumpLocations.length} locations found`);
-        const jumpInterface = new JumpInterface(this.context);
-        const jumpPosition = await jumpInterface.zoomJump({ // testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest
+        this.activeJumpInterface = new JumpInterface(this.context);
+        const jumpPosition = await this.activeJumpInterface.zoomJump({ // testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest
             locations: seq(jumpLocations),
         });
     
@@ -615,6 +620,20 @@ export default class CommandMode extends modes.EditorMode {
         }
         common.SetTextChanging(false);
         return ret;
+    }
+    
+    cancelActiveJumpOrSkip() {
+        if (this.activeJumpInterface) {
+            this.activeJumpInterface.cancel();
+            this.activeJumpInterface = undefined;
+        }
+        if (this.activeInlineInput) {
+            this.activeInlineInput.destroy();
+            this.activeInlineInput = undefined;
+            FirstLetterPreview.getInstance().clearDecorations(this.context.editor);
+        }
+        
+        vscode.commands.executeCommand('workbench.action.closeQuickOpen');
     }
 }
     
