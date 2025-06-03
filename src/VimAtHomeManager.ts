@@ -1647,17 +1647,51 @@ export default class VimAtHomeManager {
         // EditorUtils.replaceSelection(this.editor, result);
     }
     
+    async ClearAllHighlights() {
+
+    }
+    
+    async highlightSelection() {
+        // if highlight exists, then we want to clear all highlights.
+        // if not exists, then clear and add
+        // if multiple highlights, then just clear first add all (checking is too tedious)
+        
+        // if (highlightManager.doesHighlightExist(this.editor.selection)
+        
+        if (this.editor.selections.length > 1) {
+            highlightManager.clearAllHighlights();
+            this.AddSelectionToHighlights();
+        } 
+        else {
+            let text = this.editor.document.getText(this.editor.selection);
+            if (highlightManager.doesHighlightExist(text)) {
+                highlightManager.clearAllHighlights();
+                await vscode.commands.executeCommand("vimAtHome.changeToWordSubject");
+            }
+            else {
+                highlightManager.clearAllHighlights();
+                this.AddSelectionToHighlights();
+            }
+        }
+
+    }
+    
     async AddSelectionToHighlights() {
         this.extendAnchor.SelectToAnchorIfExtending(this.editor); 
-        let text = this.editor.document.getText(this.editor.selection);
-        let added: boolean = await highlightManager.addSelectionAsHighlight(text);
+        
+        let added: boolean = false;
+        this.editor.selections.forEach((selection)=>{
+            let text = this.editor.document.getText(selection);
+            console.log(`selection = ${text}`);
+            added = highlightManager.addSelectionAsHighlight(text) || added;
+        });
+        
+        highlightManager.updateHighlights();
         if (added) {
             await vscode.commands.executeCommand("vimAtHome.changeToCustomWord1");
         }
-        else {
-            if (highlightManager.countHighlights() === 0) {
-                await vscode.commands.executeCommand("vimAtHome.changeToWordSubject");
-            }
+        else if (highlightManager.countHighlights() === 0) {
+            await vscode.commands.executeCommand("vimAtHome.changeToWordSubject");
         }
     }
     

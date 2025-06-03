@@ -2023,11 +2023,16 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "vimAtHome.deleteLineBelow",
         "when": "editorTextFocus"
     },
-    {
-        "key": "right",
-        "command": "editor.action.inlineSuggest.acceptNextWord",
-        "when": "inlineSuggestionVisible && !editorReadonly"
-    },
+    // {
+    //     "key": "right",
+    //     "command": "editor.action.inlineSuggest.acceptNextWord",
+    //     "when": "inlineSuggestionVisible && !editorReadonly"
+    // },
+    // {
+    //     "key": "tab",
+    //     "command": "editor.action.inlineSuggest.acceptNextWord",
+    //     "when": "inlineSuggestionVisible && !editorReadonly"
+    // },
     {
         "key": "end",
         "command": "editor.action.inlineSuggest.acceptNextLine",
@@ -2889,16 +2894,16 @@ I would recommend using the original but you are welcome to use this if you wish
         "when": "editorTextFocus"
     },
 
-    {
-        "key": "ctrl+f3",
-        "command": "vimAtHome.findNextExact",
-        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
-    },
-    {
-        "key": "ctrl+shift+f3",
-        "command": "vimAtHome.findPrevExact",
-        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
-    },
+    // {
+    //     "key": "ctrl+f3",
+    //     "command": "vimAtHome.findNextExact",
+    //     "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
+    // },
+    // {
+    //     "key": "ctrl+shift+f3",
+    //     "command": "vimAtHome.findPrevExact",
+    //     "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
+    // },
 
     {
         //[
@@ -3064,12 +3069,12 @@ I would recommend using the original but you are welcome to use this if you wish
     },
     {
         "key": "ctrl+shift+f3",
-        "command": "vimAtHome.addClipboardToHighlights",
+        "command": "vimAtHome.addSelectionToHighlights",
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
     {
         "key": "ctrl+f3",
-        "command": "vimAtHome.addSelectionToHighlights",
+        "command": "vimAtHome.highlightSelection",
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
     },
     {
@@ -3122,7 +3127,33 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "-editor.debug.action.toggleInlineBreakpoint",
         "when": "editorTextFocus"
     },
+    {
+        "key": "tab",
+        "command": "-editor.action.inlineSuggest.commit",
+        "when": "inlineEditIsVisible && tabShouldAcceptInlineEdit && !editorHoverFocused && !editorTabMovesFocus && !suggestWidgetVisible || inlineSuggestionHasIndentationLessThanTabSize && inlineSuggestionVisible && !editorHoverFocused && !editorTabMovesFocus && !suggestWidgetVisible || inlineEditIsVisible && inlineSuggestionHasIndentationLessThanTabSize && inlineSuggestionVisible && !editorHoverFocused && !editorTabMovesFocus && !suggestWidgetVisible || inlineEditIsVisible && inlineSuggestionVisible && tabShouldAcceptInlineEdit && !editorHoverFocused && !editorTabMovesFocus && !suggestWidgetVisible"
+    },
+    {
+        "key": "tab",
+        "command": "-editor.action.inlineSuggest.commit",
+        "when": "inInlineEditsPreviewEditor"
+    },
     // {
+    //     "key": "shift+enter",
+    //     "command": "editor.action.inlineSuggest.commit",
+    //     "when": "vimAtHome.mode == 'INSERT'"
+    // },
+    // {
+    //     "key": "shift+enter",
+    //     "command": "acceptSelectedSuggestion",
+    //     "when": "suggestWidgetHasFocusedSuggestion && suggestWidgetVisible && textInputFocus"
+    // },
+    {
+        "key": "tab",
+        "command": "-acceptSelectedSuggestion",
+        "when": "suggestWidgetHasFocusedSuggestion && suggestWidgetVisible && textInputFocus"
+    },
+    // {
+    
     //     "key": "delete",
     //     "command": "vimAtHome.findAllHighlights",
     //     "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
@@ -3134,6 +3165,8 @@ I would recommend using the original but you are welcome to use this if you wish
     // },
     
 ]
+
+
 
 
 

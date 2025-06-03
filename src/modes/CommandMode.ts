@@ -633,7 +633,7 @@ export default class CommandMode extends modes.EditorMode {
             FirstLetterPreview.getInstance().clearDecorations(this.context.editor);
         }
         
-        vscode.commands.executeCommand('workbench.action.closeQuickOpen');
+        // vscode.commands.executeCommand('workbench.action.closeQuickOpen');
     }
 }
     

@@ -61,6 +61,7 @@ export function getNextLineOfChangeOfIndentation(
     currentLine: vscode.TextLine
 ) {
     const diff = changeToDiff(change);
+    let lastLine = undefined
 
     for (const line of iterLines(document, {
         startingPosition: currentLine.range.start,
@@ -77,7 +78,11 @@ export function getNextLineOfChangeOfIndentation(
         ) {
             return line;
         }
+        else if (!line.isEmptyOrWhitespace) {
+            lastLine = line
+        }
     }
+    return lastLine
 }
 
 export function getRelativeIndentation(

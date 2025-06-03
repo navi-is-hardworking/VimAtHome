@@ -11,6 +11,7 @@ import { addSubjectCommand } from "./utils/quickMenus"
 import { WaypointManager } from './handlers/WaypointManager';
 import { TabLayoutManager } from './handlers/TabGroupManager';
 import { FirstLetterPreview } from "./utils/firstLetterPreview";
+import * as selections from "./utils/selectionsAndRanges";
 
 const tabLayoutManager = new TabLayoutManager();
 
@@ -714,7 +715,7 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.clearAllHighlights",
         execute: async () => {
-            highlightManager.clearAllHighlightsDirectly();
+            highlightManager.clearAllHighlights();
         },
     },
 
@@ -1148,6 +1149,12 @@ export let registeredCommands: ExtensionCommand[] = [
         },
     },
     {
+        id: "vimAtHome.highlightSelection",
+        execute: async (manager) => {
+            await manager.highlightSelection();
+        },
+    },
+    {
         id: "vimAtHome.addSelectionToHighlights",
         execute: async (manager) => {
             await manager.AddSelectionToHighlights();
@@ -1259,6 +1266,8 @@ export function addCustomWord(index: number, key: string) {
 export function deactivate() {
     highlightManager.dispose();
 }
+
+
 
 
 

@@ -39,8 +39,23 @@ export class HighlightManager {
         }
     }
     
-    public async addSelectionAsHighlight(word: string): Promise<boolean>  {
+    public doesHighlightExist(word: string): boolean {
         if (word) {
+            let existingIndex: number | undefined;
+            for (const [index, existingWord] of this.highlightedWords) {
+                if (existingWord === word) {
+                    existingIndex = index;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    public addSelectionAsHighlight(word: string): boolean {
+        console.log(`if word: ${word}`);
+        if (word) {
+            console.log(`processing word: ${word}`);
             let existingIndex: number | undefined;
             for (const [index, existingWord] of this.highlightedWords) {
                 if (existingWord === word) {
@@ -48,16 +63,18 @@ export class HighlightManager {
                     break;
                 }
             }
+            
             if (existingIndex !== undefined) {
+                console.log(`deleting word: ${word}`);
                 this.highlightedWords.delete(existingIndex);
-                this.updateHighlights();
                 return false;
             } else {
+                console.log(`adding word: ${word}`);
                 const index = this.getNextAvailableIndex();
                 if (index !== -1) {
                     this.highlightedWords.set(index, word);
-                    this.updateHighlights();
                 }
+                console.log(`new set: ${this.highlightedWords.size}`);
             }
         }
         return true;
@@ -90,7 +107,7 @@ export class HighlightManager {
         quickPick.show();
     }
     
-    private clearAllHighlights() {
+    public clearAllHighlights() {
         this.highlightedWords.clear();
         this.updateHighlights();
     }
@@ -140,11 +157,6 @@ export class HighlightManager {
 
     public dispose() {
         this.disposables.forEach(d => d.dispose());
-    }
-    
-    public clearAllHighlightsDirectly() {
-        this.highlightedWords.clear();
-        this.updateHighlights();
     }
     
     public countHighlights() {
