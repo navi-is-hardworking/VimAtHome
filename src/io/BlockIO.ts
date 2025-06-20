@@ -95,7 +95,7 @@ function iterBlockStarts(
                     ) {
                         const point = new vscode.Position(
                             candidateLine.lineNumber,
-                            candidateLine.firstNonWhitespaceCharacterIndex
+                            candidateLine.firstNonWhitespaceCharacterIndex,
                             // 0
                         );
 
@@ -117,7 +117,7 @@ function findContainingBlockStart(
             startingPosition: positionInBlock,
             direction: common.Direction.backwards,
             currentInclusive: true,
-            indentationLevel: "any-indentation",
+            indentationLevel: "same-indentation",
         }).tryFirst() ?? new vscode.Position(0, 0)
     );
 }
@@ -177,6 +177,7 @@ function getContainingBlock(
     let tempStart = document.lineAt(blockStart.line);
     if (tempStart.firstNonWhitespaceCharacterIndex !== tempStart.text.length) { // does not start with whitepace
         const startChar = tempStart.text.charAt(tempStart.firstNonWhitespaceCharacterIndex);
+        
         if (startChar !== "/" && startChar !== "#") { // if start is not a comment then we don't want end to be comment either
             var i = blockEnd.line;
             for (; i > blockStart.line; i--) {
@@ -192,6 +193,7 @@ function getContainingBlock(
                     break;
                 }
             }
+            
             blockEnd = new vscode.Position(i, document.lineAt(i).text.length);
         }
     }

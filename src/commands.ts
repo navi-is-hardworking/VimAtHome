@@ -411,14 +411,16 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.skip",
         execute: async (manager) => {
-            // TODO: cache direction
+            // if (manager.getSubjectName() === "LINE") {
+            //     await vscode.commands.executeCommand("change");
+            // }
             await manager.skip(Direction.forwards);
         },
     },
     {
         id: "vimAtHome.skipBackwards",
         execute: async (manager) => {
-            // TODO: cache direction
+            
             await manager.skip(Direction.backwards);
         },
     },
@@ -640,6 +642,24 @@ export let registeredCommands: ExtensionCommand[] = [
         id: "vimAtHome.pullBlockSubject",
         execute: async (manager: VimAtHomeManager) => {
             manager.pullSubject('BLOCK');
+        },
+    },
+    {
+        id: "vimAtHome.toggleQuotes",
+        execute: async (manager: VimAtHomeManager) => {
+            manager.toggleQuotes();
+        },
+    },
+    {
+        id: "vimAtHome.openTerminal",
+        execute: async () => {
+            const activeEditor = vscode.window.activeTextEditor;
+            if (activeEditor) {
+                const terminal = vscode.window.createTerminal({
+                    name: "File Directory Terminal"
+                });
+                terminal.show();
+            }
         },
     },
     {

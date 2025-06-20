@@ -107,7 +107,7 @@ heap -> {
 
 ///// edit hisotry manager fixes /////
 
-- only start recording when in insert mode. Being in insert mode, then whenever i make an edit, that location is stored as a line number only
+- Only start recording when in insert mode. Being in insert mode, then whenever i make an edit, that location is stored as a line number only
 - When storing locations, if the current location is with range +-1 line of another stored edit, that stored edit is removed (as the current will overwrite it)
 
 ? How to deal with lines getting deleted?
@@ -130,3 +130,14 @@ fixSelection for word mode
 
 double forward
 
+///////
+
+fix edit history, 
+fix collapse to work on multi selection
+
+Fix markers to make them persistant across sessions and, track line syntax so they move with changes
+
+////
+
+rework collapsing selections to be done inside IO
+when jumping from line mode, select word at line end first;

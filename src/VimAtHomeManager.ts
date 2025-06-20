@@ -108,6 +108,7 @@ export default class VimAtHomeManager {
         // if (this.mode.getSubjectName() === "WORD" && getWordDefinitionIndex() === 0) {
         //     this.extendAnchor.EndExtendMode();
         // }
+        
         common.setVirtualColumn(this.editor.selection);
         setWordDefinition(0);
         
@@ -118,7 +119,7 @@ export default class VimAtHomeManager {
         
         if (this.editor.selection.active.line !== this.editor.selection.anchor.line 
             || lineUtils.lineIsSignificant(this.editor.document.lineAt(this.editor.selection.active.line))) {
-            this.mode.fixSelection(half);
+            await this.mode.fixSelection(half);
         }
         await this.setDecorations();
     }
@@ -140,6 +141,7 @@ export default class VimAtHomeManager {
         }
         
         if (this.mode.name === "COMMAND") {
+            console.log("attempting to record selection: ", this.editor.document.getText(this.editor.selection))
             selectionHistory.recordSelection(this.editor, this.mode.getSubjectName());
         }
         
@@ -218,7 +220,7 @@ export default class VimAtHomeManager {
         }
     }
 
-    setUI() {
+    async setUI() {
         this.statusBar.text = this.mode.statusBarText;
 
         if (this.editor) {
@@ -325,6 +327,27 @@ export default class VimAtHomeManager {
     }
 
     async skip(direction: common.Direction) {
+        
+        if (this.mode.getSubjectName() == "LINE") {
+            if (direction == "forwards") {
+                const position = this.editor.selection.active;
+                const newPosition = position.with(position.line, this.editor.document.lineAt(position.line).firstNonWhitespaceCharacterIndex);
+                const newSelection = new vscode.Selection(newPosition, newPosition);
+                this.editor.selection = newSelection;
+            }
+            else {
+                const position = this.editor.selection.active;
+                const newPosition = position.with(position.line, this.editor.document.lineAt(position.line).text.length);
+                const newSelection = new vscode.Selection(newPosition, newPosition);
+                this.editor.selection = newSelection;
+            }
+            await this.changeToWordMode({
+                kind: "COMMAND",
+                subjectName: "WORD",
+            });
+            await new Promise(resolve => setTimeout(resolve, 50));
+        }
+        
         this.extendAnchor.SetSelectionAnchor(this.editor);
         await this.mode.skip(direction);
         if (common.getLastSkip()?.subject !== this.mode.getSubjectName()) {
@@ -578,26 +601,16 @@ export default class VimAtHomeManager {
     }
     
     async collapseToLeft() {
-        
-        if (this.editor.selections.length > 1) {
-            EditorUtils.collapseToFirstSelection(this.editor);
-            return;
-        }
-        
         let changeRequest = await this.mode.collapseToLeft();
         if (changeRequest)
             this.changeMode(changeRequest)
     }
     
     async collapseToRight() {
-        if (this.editor.selections.length > 1) {
-            EditorUtils.collapseToLastSelection(this.editor);
-            return;
-        }
-
         let changeRequest = await this.mode.collapseToRight();
-        if (changeRequest)
+        if (changeRequest) {
             this.changeMode(changeRequest)
+        }
     }
 
     // do ctrl+back in block mode to get nearest encapsulating function
@@ -1036,7 +1049,6 @@ export default class VimAtHomeManager {
 
     async changeToBlockSubject(newMode: EditorModeChangeRequest) {
         if (newMode.kind === "COMMAND" && newMode.half !== undefined) {
-            
             let lineSelection = this.editor.selection.active.line;
             const lineRange = new vscode.Range(
                 new vscode.Position(lineSelection, 0),
@@ -1536,7 +1548,12 @@ export default class VimAtHomeManager {
     }
     
     async metaSelectStart() {
-        if (this.mode.getSubjectName() == "BLOCK") {
+        
+        if (this.editor.selections.length > 1) {
+            EditorUtils.collapseToFirstSelection(this.editor);
+            return;
+        }
+        else if (this.mode.getSubjectName() == "BLOCK") {
             const editor = this.editor;
             const document = editor.document;
             const selection = editor.selection;
@@ -1552,16 +1569,22 @@ export default class VimAtHomeManager {
             }
         
             editor.selections = selections;
+            console.log("selection count after meta select: ", editor.selections.length);
             await this.changeMode( {kind: "INSERT"} );
         }
         else {
             this.extendAnchor.SelectToAnchorIfExtending(this.editor);
             await vscode.commands.executeCommand("editor.action.addSelectionToPreviousFindMatch");
         }
+        
     }
     
     async metaSelectEnd() {
-        if (this.mode.getSubjectName() == "BLOCK") {
+        if (this.editor.selections.length > 1) {
+            EditorUtils.collapseToLastSelection(this.editor);
+            return;
+        }
+        else if (this.mode.getSubjectName() == "BLOCK") {
             const editor = this.editor;
             const document = editor.document;
             const selection = editor.selection;
@@ -1853,6 +1876,18 @@ export default class VimAtHomeManager {
     
     async cancelJumpOrSkip() {
         this.mode.cancelActiveJumpOrSkip();
+    }
+    
+    async toggleQuotes() {
+        
+        // await editor.edit(editBuilder => {
+        //     editBuilder.replace(selection, '\n' + result + '\n' + baseIndent);
+        // });
+        
+    }
+    
+    getSubjectName() {
+        return this.mode.getSubjectName();
     }
 
 

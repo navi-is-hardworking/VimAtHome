@@ -26,7 +26,7 @@ class SelectionHistoryEntry {
 }
 
 class FileSelectionHistory {
-    private maxHistorySize: number = 10;
+    private maxHistorySize: number = 20;
     private history: SelectionHistoryEntry[] = [];
     private currentIndex: number = -1;
     private navigationIndex: number = -1;
@@ -42,11 +42,18 @@ class FileSelectionHistory {
     }
     
     public recordSelection(selection: vscode.Selection, subjectName?: SubjectName) {
-        if (Date.now() - this.lastNavigationTime < 500) {
+        if (Date.now() - this.lastNavigationTime < 250) {
             return;
         }
         
         const newEntry = new SelectionHistoryEntry(selection, Date.now(), subjectName);
+        if (this.currentIndex >= 0 && this.currentIndex < this.history.length && this.history[this.currentIndex].equals(newEntry)) {
+            return;
+        }
+        
+        if (this.navigationIndex !== this.currentIndex && this.navigationIndex !== -1) {
+            this.currentIndex = this.navigationIndex;
+        }
         
         this.currentIndex = (this.currentIndex + 1) % this.maxHistorySize;
         this.history[this.currentIndex] = newEntry;
@@ -57,10 +64,8 @@ class FileSelectionHistory {
         this.lastNavigationTime = Date.now();
         
         if (this.currentIndex === -1 || !this.history[this.navigationIndex].subjectName) return;
-        let newNavigationIndex = (this.navigationIndex - 1) % this.maxHistorySize;
-        if (newNavigationIndex < 0) {
-            newNavigationIndex = this.maxHistorySize - 1;
-        }
+        let newNavigationIndex = (this.navigationIndex - 1 + this.maxHistorySize) % this.maxHistorySize;
+        
         if (newNavigationIndex == this.currentIndex || !this.history[this.navigationIndex].subjectName || !this.history[newNavigationIndex].subjectName) {
             return undefined;
         }
