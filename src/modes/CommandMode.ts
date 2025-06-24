@@ -229,7 +229,8 @@ export default class CommandMode extends modes.EditorMode {
         await this.subject.fixSelection(half);
     }
     
-    async skip(direction: common.Direction): Promise<void> {
+    async skip(direction: common.Direction, skipSubject: SubjectName | undefined = undefined): Promise<void> {
+        
         await new Promise<void>((resolve) => {
             const handleInput = async (_: string, char: common.Char) => {
                 let finalDirection = direction;
@@ -249,7 +250,21 @@ export default class CommandMode extends modes.EditorMode {
                         common.setLastSkip(skip);
                         await newMode.subject.skip(finalDirection, skip);
                     }
-                } else {
+                } 
+                else if (skipSubject && skipSubject != this.subject.name) {
+                    const newMode = await this.changeTo({ kind: "COMMAND", subjectName: skipSubject });
+                    if (newMode instanceof CommandMode) {
+                        const skip: common.Skip = {
+                            kind: "SkipTo",
+                            char,
+                            subject: skipSubject,
+                            direction: finalDirection
+                        };
+                        common.setLastSkip(skip);
+                        await newMode.subject.skip(finalDirection, skip);
+                    }
+                }
+                else {
                     const skip: common.Skip = {
                         kind: "SkipTo",
                         char,

@@ -411,9 +411,6 @@ export let registeredCommands: ExtensionCommand[] = [
     {
         id: "vimAtHome.skip",
         execute: async (manager) => {
-            // if (manager.getSubjectName() === "LINE") {
-            //     await vscode.commands.executeCommand("change");
-            // }
             await manager.skip(Direction.forwards);
         },
     },
@@ -1240,6 +1237,18 @@ export let registeredCommands: ExtensionCommand[] = [
             await manager.executeSubjectCommand("duplicateObjectLeft");
         },
     },
+    {
+        id: "vimAtHome.pageUp",
+        execute: async (manager) => {
+            await manager.PageUp();
+        },
+    },
+    {
+        id: "vimAtHome.pageDown",
+        execute: async (manager) => {
+            await manager.PageDown();
+        },
+    }
     
 ];
 

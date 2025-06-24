@@ -160,3 +160,12 @@ export function IsTextChanging(): boolean {
 export function SetTextChanging(value: boolean) {
     isTextChanging = value;
 }
+
+export let isSkipping: boolean = false;
+export function IsSkipping(): boolean {
+    return isSkipping;
+}
+
+export function SetSkipping(value: boolean) {
+    isSkipping = value;
+}

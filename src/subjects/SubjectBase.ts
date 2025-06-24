@@ -306,6 +306,7 @@ export default abstract class SubjectBase implements SubjectActions {
     }
 
     async fixSelection(half?: "LEFT" | "RIGHT"): Promise<void> {
+        
         selections.tryMap(this.context.editor, (selection) => {
             const startRange = this.subjectIO.getContainingObjectAt(
                 this.context.editor.document,
@@ -335,6 +336,7 @@ export default abstract class SubjectBase implements SubjectActions {
                 selection.start,
             );
         });
+        
     }
 
     equals(other: SubjectBase) {

@@ -105,9 +105,10 @@ export default class VimAtHomeManager {
     }
     
     async changeToWordMode(newMode: EditorModeChangeRequest) {
-        // if (this.mode.getSubjectName() === "WORD" && getWordDefinitionIndex() === 0) {
-        //     this.extendAnchor.EndExtendMode();
-        // }
+        if (this.mode.getSubjectName() === "WORD" && getWordDefinitionIndex() === 0) {
+            this.extendAnchor.EndExtendMode();
+            return;
+        }
         
         common.setVirtualColumn(this.editor.selection);
         setWordDefinition(0);
@@ -136,12 +137,11 @@ export default class VimAtHomeManager {
     async onDidChangeTextEditorSelection(
         event: vscode.TextEditorSelectionChangeEvent
     ) {
-        if (common.IsTextChanging()) {
-            return;
-        }
+        // if (common.IsTextChanging()) {
+        //     return;
+        // }
         
         if (this.mode.name === "COMMAND") {
-            console.log("attempting to record selection: ", this.editor.document.getText(this.editor.selection))
             selectionHistory.recordSelection(this.editor, this.mode.getSubjectName());
         }
         
@@ -327,7 +327,8 @@ export default class VimAtHomeManager {
     }
 
     async skip(direction: common.Direction) {
-        
+        common.SetSkipping(true);
+        let skipSubject = this.mode.getSubjectName();
         if (this.mode.getSubjectName() == "LINE") {
             if (direction == "forwards") {
                 const position = this.editor.selection.active;
@@ -341,18 +342,16 @@ export default class VimAtHomeManager {
                 const newSelection = new vscode.Selection(newPosition, newPosition);
                 this.editor.selection = newSelection;
             }
-            await this.changeToWordMode({
-                kind: "COMMAND",
-                subjectName: "WORD",
-            });
-            await new Promise(resolve => setTimeout(resolve, 50));
+            skipSubject = "WORD";
         }
         
         this.extendAnchor.SetSelectionAnchor(this.editor);
-        await this.mode.skip(direction);
+        await this.mode.skip(direction, skipSubject);
         if (common.getLastSkip()?.subject !== this.mode.getSubjectName()) {
             await this.changeMode({ subjectName: common.getLastSkip()?.subject, kind: "COMMAND" });
         }
+        common.SetSkipping(false);
+        console.log("leaving skip");
         this.setUI();
     }
     
@@ -1548,12 +1547,7 @@ export default class VimAtHomeManager {
     }
     
     async metaSelectStart() {
-        
-        if (this.editor.selections.length > 1) {
-            EditorUtils.collapseToFirstSelection(this.editor);
-            return;
-        }
-        else if (this.mode.getSubjectName() == "BLOCK") {
+        if (this.mode.getSubjectName() == "BLOCK") {
             const editor = this.editor;
             const document = editor.document;
             const selection = editor.selection;
@@ -1580,11 +1574,7 @@ export default class VimAtHomeManager {
     }
     
     async metaSelectEnd() {
-        if (this.editor.selections.length > 1) {
-            EditorUtils.collapseToLastSelection(this.editor);
-            return;
-        }
-        else if (this.mode.getSubjectName() == "BLOCK") {
+        if (this.mode.getSubjectName() == "BLOCK") {
             const editor = this.editor;
             const document = editor.document;
             const selection = editor.selection;
@@ -1888,6 +1878,36 @@ export default class VimAtHomeManager {
     
     getSubjectName() {
         return this.mode.getSubjectName();
+    }
+    
+    async PageUp() {
+        if (this.editor.selections.length > 1) {
+            EditorUtils.collapseToFirstSelection(this.editor);
+            return;
+        }
+        else {
+            let cur_selection = this.editor.selection;
+            this.editor.selection = new vscode.Selection(
+                cur_selection.start.with(cur_selection.start.line-25, cur_selection.start.character),
+                cur_selection.end.with(cur_selection.start.line-25, cur_selection.start.character),
+            );
+        }
+        this.mode.fixSelection();
+    }
+    
+    async PageDown() {
+        if (this.editor.selections.length > 1) {
+            EditorUtils.collapseToLastSelection(this.editor);
+            return;
+        }
+        {
+            let cur_selection = this.editor.selection;
+            this.editor.selection = new vscode.Selection(
+                cur_selection.start.with(cur_selection.start.line+25, cur_selection.start.character),
+                cur_selection.end.with(cur_selection.start.line+25, cur_selection.start.character),
+            );
+        }
+        this.mode.fixSelection();
     }
 
 

@@ -3,6 +3,7 @@
 import { commands, Disposable, StatusBarAlignment, StatusBarItem, TextEditor, window } from 'vscode';
 import { Char } from '../common';
 import * as vscode from "vscode";
+import { IsSkipping, SetSkipping } from '../common';
 
 const cancellationChars = new Set('\n');
 const subscriptions: Disposable[] = [];
@@ -18,7 +19,15 @@ export class InlineInput {
     }) {
         subscriptions.push(
             commands.registerCommand('type', this._onInput),
-            window.onDidChangeTextEditorSelection(this._onCancel),
+            window.onDidChangeTextEditorSelection((e) => {
+                // Don't cancel if we're in the middle of a text-changing operation
+                if (IsSkipping()) {
+                    console.log("ignoring the skip.")
+                    SetSkipping(false);
+                    return;
+                }
+                this._onCancel();
+            })
         );
         
         vscode.commands.executeCommand('setContext', 'vimAtHome.mode', "INSERT");
