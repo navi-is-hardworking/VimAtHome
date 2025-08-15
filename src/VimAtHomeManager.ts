@@ -11,7 +11,7 @@ import { SubjectName } from "./subjects/SubjectName";
 import * as modifications from "./utils/modifications";
 import { splitRange } from "./utils/decorations";
 import * as lineUtils from "./utils/lines";
-import { getWordDefinition, getVerticalSkipCount, setWordDefinition, getWordDefinitionIndex, getWordDefinitionByIndex } from "./config";
+import { getWordDefinition, getVerticalSkipCount, setWordDefinition, setCharDefinition, getWordDefinitionIndex, getWordDefinitionByIndex } from "./config";
 import * as cacheCommands from "./CacheCommands";
 import SelectionAnchor from "./selectionAnchors";
 import { splitByRegex } from "./utils/selectionsAndRanges";
@@ -327,7 +327,7 @@ export default class VimAtHomeManager {
     }
 
     async skip(direction: common.Direction) {
-        common.SetSkipping(true);
+        common.SetSkipping(false);
         let skipSubject = this.mode.getSubjectName();
         if (this.mode.getSubjectName() == "LINE") {
             if (direction == "forwards") {
@@ -355,9 +355,35 @@ export default class VimAtHomeManager {
         this.setUI();
     }
     
+    
     async skipToChar(direction: common.Direction) {
-        await this.changeMode({kind: "COMMAND", subjectName: "CHAR"});
-        await this.skip(direction);
+        
+        common.SetSkipping(true);
+        
+        if (this.mode.name == "INSERT") {
+            this.mode = await this.mo.changeTo({ subjectName: "CHAR", kind: "COMMAND" });
+        }
+        
+        this.editor.selection = (direction == "forwards") ? 
+            new vscode.Selection(
+                this.editor.selection.start,
+                this.editor.selection.start
+            ) :
+            new vscode.Selection(
+                this.editor.selection.end,
+                this.editor.selection.end
+            );
+            
+        this.extendAnchor.SetSelectionAnchor(this.editor);
+        await this.mode.skip(direction, "CHAR");
+        
+        if (common.getLastSkip()?.subject !== this.mode.getSubjectName()) {
+            await this.changeMode({ subjectName: common.getLastSkip()?.subject, kind: "COMMAND" });
+        }
+        
+        common.SetSkipping(false);
+        console.log("leaving skip");
+        this.setUI();
     }
     
     async skipOver(direction: common.Direction) {

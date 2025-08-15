@@ -2,6 +2,8 @@ import { config } from "process";
 import { getExtendColor } from "./config";
 import * as vscode from "vscode";
 import * as ranges from "./utils/selectionsAndRanges";
+import { Dir } from "fs";
+import { Direction } from "./common";
 
 export default class SelectionAnchor {
     private cachedSelection: vscode.Selection | undefined;
@@ -102,6 +104,30 @@ export default class SelectionAnchor {
         }
     }
 
+    SetSelectionAnchorAtEnd(editor: vscode.TextEditor, direction: Direction) {
+        if (this.extendModeEnabled) return;
+        
+        let selection = editor.selection; 
+        if (!selection) return;
+        
+        if (direction == "forwards") {
+            selection = new vscode.Selection(
+                selection.start,
+                selection.start
+            );
+        }
+        else {
+            selection = new vscode.Selection(
+                selection.end,
+                selection.end
+            );
+        }
+        
+        editor.setDecorations(this.anchorDecorationType, []);
+        this.cachedSelection = selection;
+        editor.setDecorations(this.anchorDecorationType, [ranges.selectionToRange(editor.selection)]);
+    }
+    
     SetSelectionAnchor(editor: vscode.TextEditor) {
         if (this.extendModeEnabled) return;
         
@@ -109,7 +135,6 @@ export default class SelectionAnchor {
         if (!selection) return;
         
         editor.setDecorations(this.anchorDecorationType, []);
-        
         this.cachedSelection = selection;
         editor.setDecorations(this.anchorDecorationType, [ranges.selectionToRange(editor.selection)]);
     }

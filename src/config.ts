@@ -151,6 +151,7 @@ export function setWordDefinition(selection: number): void {
     if (selection >= 0 && selection < wordDefinitions.length)
         currentWordDefinition = selection;
 }
+
 export function getWordDefinitionByIndex(index: number): RegExp | undefined {
     if (index == -1) {
         return /.{1}/;

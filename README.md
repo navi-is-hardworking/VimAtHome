@@ -148,7 +148,7 @@ I would recommend using the original but you are welcome to use this if you wish
     {
         "key": "ctrl+shift+alt+left",
         "command": "vimAtHome.addSubjectLeft",
-        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'",
     },
     {
         "key": "ctrl+l",
@@ -693,19 +693,19 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "vimAtHome.repeatLastSkip",
         "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || editorTextFocus && vimAtHome.mode == 'EXTEND'"
     },
-    {
-        "key": "shift+enter",
-        "command": "runCommands",
-        "args": {
-            "commands": [
-                "vimAtHome.repeatLastSkipBackwards",
-                // "vimAtHome.repeatLastSkip",
-                // "vimAtHome.repeatLastSkip",
-                // "vimAtHome.repeatLastSkipOverLine"
-            ]
-        },
-        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
-    },
+    // {
+    //     "key": "shift+enter",
+    //     "command": "runCommands",
+    //     "args": {
+    //         "commands": [
+    //             "vimAtHome.repeatLastSkipBackwards",
+    //             // "vimAtHome.repeatLastSkip",
+    //             // "vimAtHome.repeatLastSkip",
+    //             // "vimAtHome.repeatLastSkipOverLine"
+    //         ]
+    //     },
+    //     "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
+    // },
     {
         "key": "ctrl+;",
         "command": "vimAtHome.jump",
@@ -793,7 +793,7 @@ I would recommend using the original but you are welcome to use this if you wish
                 "cursorDown"
             ]
         }
-    }
+    },
     // {
     //     "key": "shift+f20",
     //     "command": "runCommands",
@@ -1237,42 +1237,42 @@ I would recommend using the original but you are welcome to use this if you wish
         "key": "ctrl+t",
         "command": "workbench.action.openPreviousEditorFromHistory"
     },
-    {
-        "key": "alt+ctrl+shift+1",
-        "command": "workbench.action.openEditorAtIndex1"
-    },
-    {
-        "key": "alt+ctrl+shift+2",
-        "command": "workbench.action.openEditorAtIndex2"
-    },
-    {
-        "key": "alt+ctrl+shift+3",
-        "command": "workbench.action.openEditorAtIndex3"
-    },
-    {
-        "key": "alt+ctrl+shift+4",
-        "command": "workbench.action.openEditorAtIndex4"
-    },
-    {
-        "key": "alt+ctrl+shift+5",
-        "command": "workbench.action.openEditorAtIndex5"
-    },
-    {
-        "key": "alt+ctrl+shift+6",
-        "command": "workbench.action.openEditorAtIndex6"
-    },
-    {
-        "key": "alt+ctrl+shift+7",
-        "command": "workbench.action.openEditorAtIndex7"
-    },
-    {
-        "key": "alt+ctrl+shift+8",
-        "command": "workbench.action.openEditorAtIndex8"
-    },
-    {
-        "key": "alt+ctrl+shift+9",
-        "command": "workbench.action.openEditorAtIndex9"
-    },
+    // {
+    //     "key": "alt+ctrl+shift+1",
+    //     "command": "workbench.action.openEditorAtIndex1"
+    // },
+    // {
+    //     "key": "alt+ctrl+shift+2",
+    //     "command": "workbench.action.openEditorAtIndex2"
+    // },
+    // {
+    //     "key": "alt+ctrl+shift+3",
+    //     "command": "workbench.action.openEditorAtIndex3"
+    // },
+    // {
+    //     "key": "alt+ctrl+shift+4",
+    //     "command": "workbench.action.openEditorAtIndex4"
+    // },
+    // {
+    //     "key": "alt+ctrl+shift+5",
+    //     "command": "workbench.action.openEditorAtIndex5"
+    // },
+    // {
+    //     "key": "alt+ctrl+shift+6",
+    //     "command": "workbench.action.openEditorAtIndex6"
+    // },
+    // {
+    //     "key": "alt+ctrl+shift+7",
+    //     "command": "workbench.action.openEditorAtIndex7"
+    // },
+    // {
+    //     "key": "alt+ctrl+shift+8",
+    //     "command": "workbench.action.openEditorAtIndex8"
+    // },
+    // {
+    //     "key": "alt+ctrl+shift+9",
+    //     "command": "workbench.action.openEditorAtIndex9"
+    // },
     {
         "key": "ctrl+shift+f1",
         "command": "vimAtHome.openGoToMenu"
@@ -1379,30 +1379,31 @@ I would recommend using the original but you are welcome to use this if you wish
         },
     },
     {
-        "key": "ctrl+shift+f",
+        "key": "ctrl+o",
         "command": "runCommands",
         "args": {
             "commands": [
-                // "vimAtHome.skipToChar"
-                "vimAtHome.changeToInsertModePrepend",
-                "vimAtHome.changeToCharSubject",
-                "vimAtHome.skip"
+                "vimAtHome.skipToChar"
+                // "vimAtHome.changeToInsertModePrepend",
+                // "vimAtHome.changeToCharSubject",
+                // "vimAtHome.skip"
             ],
         },
+        // "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
-        "key": "ctrl+shift+s",
+        "key": "ctrl+i",
         "command": "runCommands",
         "args": {
             "commands": [
-                // "vimAtHome.skipToCharReverse"
-
-                "vimAtHome.changeToInsertModeAppend",
-                "cursorLeft",
-                "vimAtHome.changeToCharSubject",
-                "vimAtHome.skipBackwards"
+                "vimAtHome.skipToCharReverse"
+                // "vimAtHome.changeToInsertModeAppend",
+                // "cursorLeft",
+                // "vimAtHome.changeToCharSubject",
+                // "vimAtHome.skipBackwards"
             ],
         },
+        // "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     {
         "key": "ctrl+j alt+a",
@@ -1784,7 +1785,7 @@ I would recommend using the original but you are welcome to use this if you wish
                 "vimAtHome.goPrevSelection",
             ]
         },
-        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' && vimAtHome.mode == 'EXTEND'"
+        "when": "editorTextFocus && vimAtHome.mode == 'COMMAND' || vimAtHome.mode == 'EXTEND'"
     },
     // {
     //     "key": "shift+enter",
@@ -2381,25 +2382,6 @@ I would recommend using the original but you are welcome to use this if you wish
         "when": "inQuickOpen"
     },
     {
-
-        "key": "pageDown",
-        "command": "runCommands",
-        "args": {
-            "commands": [
-                {
-                    "command": "cursorMove",
-                    "args": {
-                        "to": "down",
-                        "by": "line",
-                        "value": 25
-                    }
-                },
-                // "vimAtHome.scrollToCursor",
-            ]
-        },
-       "when": "editorTextFocus"
-    },
-    {
         "key": "ctrl+up",
         "command": "runCommands",
         "args": {
@@ -2698,7 +2680,7 @@ I would recommend using the original but you are welcome to use this if you wish
     // },
     {
         "key": "alt+shift+f20",
-        "when": "editorTextFocus && EXTEND == 'COMMAND' && vimAtHome.mode == 'EXTEND'"
+        "when": "editorTextFocus && EXTEND == 'COMMAND' && vimAtHome.mode == 'EXTEND'",
     },
     {
         "key": "ctrl+f",
@@ -2740,20 +2722,12 @@ I would recommend using the original but you are welcome to use this if you wish
 
     {
         "key": "pageUp",
-        "command": "runCommands",
-        "args": {
-            "commands": [
-                {
-                    "command": "cursorMove",
-                    "args": {
-                        "to": "up",
-                        "by": "line",
-                        "value": 25
-                    }
-                },
-                // "vimAtHome.scrollToCursor",
-            ]
-        },
+        "command": "vimAtHome.pageUp",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "pageDown",
+        "command": "vimAtHome.pageDown",
         "when": "editorTextFocus"
     },
     // {
@@ -3148,6 +3122,15 @@ I would recommend using the original but you are welcome to use this if you wish
         "key": "ctrl+m",
         "command": "-editor.action.toggleTabFocusMode"
     },
+    {
+        "key": "ctrl+shift+t",
+        "command": "-mergeEditor.toggleBetweenInputs",
+        "when": "isMergeEditor"
+    },
+    {
+        "key": "ctrl+shift+t",
+        "command": "-workbench.action.reopenClosedEditor"
+    },
     // {
     
     //     "key": "delete",
@@ -3172,6 +3155,7 @@ I would recommend using the original but you are welcome to use this if you wish
     // },
 
 ]
+
 
 
 
