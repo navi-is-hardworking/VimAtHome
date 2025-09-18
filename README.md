@@ -425,6 +425,7 @@ I would recommend using the original but you are welcome to use this if you wish
 
 ```
 
+```
 [
     {
         "key": "f16",
@@ -3490,7 +3491,6 @@ I would recommend using the original but you are welcome to use this if you wish
         "command": "-workbench.action.reopenClosedEditor"
     },
     // {
-    
     //     "key": "delete",
     //     "command": "vimAtHome.findAllHighlights",
     //     "when": "editorTextFocus && vimAtHome.mode == 'COMMAND'"
@@ -3513,8 +3513,6 @@ I would recommend using the original but you are welcome to use this if you wish
     // },
 
 ]
-
-
 
 
 

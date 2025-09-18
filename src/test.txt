@@ -1,0 +1,1036 @@
+{
+  "security.workspace.trust.untrustedFiles": "open",
+  "cloudcode.project": "triple-skein-407917",
+  "remote.SSH.remotePlatform": {
+    "gcp-vm": "linux",
+    "rh8_juplnxvm16": "linux",
+    "rh8_juplnxvm15": "linux",
+    "IGM01_RIF": "linux"
+  },
+  "git.confirmSync": false,
+  "terminal.integrated.defaultProfile.windows": "Git Bash",
+  "editor.renderWhitespace": "all",
+  "GitVision.highlightColor": "rgba(34, 89, 150, 0.50)",
+  "GitVision.findRenamedFiles": true,
+  "GitVision.debugLog": true,
+  "jupyter.askForKernelRestart": false,
+  "telemetry.telemetryLevel": "off",
+  "gitlens.telemetry.enabled": false,
+  "cloudcode.enableTelemetry": false,
+  "notebook.output.wordWrap": true,
+  "csharp.semanticHighlighting.enabled": false,
+  "explorer.autoReveal": false,
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
+  },
+  "workbench.editorAssociations": {
+    "*.html": "default"
+  },
+  "remote.autoForwardPortsSource": "hybrid",
+  "interactiveWindow.executeWithShiftEnter": true,
+  "editor.accessibilitySupport": "off",
+  "C_Cpp.enhancedColorization": "enabled",
+  
+  "editor.semanticHighlighting.enabled": true,
+  "editor.tokenColorCustomizations": {
+    "textMateRules": [
+      {
+        "scope": "variable.other.global.cpp",
+        "settings": {
+          "foreground": "#dfb272"
+        }
+      },
+      {
+        "scope": "variable.parameter.cpp",
+        "settings": {
+          "foreground": "#ac90ff",
+        }
+      },
+      {
+        "scope": "entity.name.variable.parameter.cs",
+        "settings": {
+          "foreground": "#ac90ff",
+        }
+      },
+      {
+        "scope": "entity.name.variable.field.cs",
+        "settings": {
+          "foreground": "#90ffc9",
+        }
+      },
+      {
+        "scope": "entity.name.variable",
+        "settings": {
+          "foreground": "#ac90ff",
+        }
+      },
+      {
+        "scope": "variable.other.local.cpp",
+        "settings": {
+          "foreground": "#8dd5f4"
+        }
+      },
+      {
+        "scope": "meta.body.function.definition.cpp",
+        "settings": {
+          "foreground": "#8dd5f4"
+        }
+      },
+      {
+        "scope": [
+          "variable.other.property.cpp"
+        ],
+        "settings": {
+          "foreground": "#ade2ce"
+        }
+      },
+      // {
+      //     "scope": [
+      //         "entity.name.variable.parameter.cs"
+      //     ],
+      //     "settings": {
+      //         "foreground": "#AC90FF",
+      //         // "fontStyle": "underline"
+      //     }
+      // },
+      // {
+      //     "scope": "variable.parameter",
+      //     "settings": {
+      //         "foreground": "#a58dff",
+      //         "fontStyle": "underline"
+      //     }
+      // },
+      // {
+      //     "scope": "variable.declaration",
+      //     "settings": {
+      //         "foreground": "#a58dff",
+      //         "fontStyle": "underline"
+      //     }
+      // },
+      {
+        "scope": "variable.other.property",
+        "settings": {
+          "foreground": "#8793ffe9"
+        }
+      },
+      {
+        "scope": "entity.name.type.cs",
+        "settings": {
+          "foreground": "#4EC9B0"
+        }
+      },
+      {
+        "scope": "entity.name.type.class.cs",
+        "settings": {
+          "foreground": "#4EC9B0",
+          "fontStyle": "bold"
+        }
+      },
+      {
+        "scope": "entity.name.variable.field.cs",
+        "settings": {
+          "foreground": "#fd738f"
+        }
+      },
+      {
+        "scope": "variable.parameter.preprocessor.cpp",
+        "settings": {
+          "foreground": "#a58dff"
+        }
+      },
+      {
+        "scope": "meta.parens.cpp",
+        "settings": {
+          "foreground": "#a58dff"
+        }
+      },
+      {
+        "scope": "keyword.operator.cast.static_cast.cpp",
+        "settings": {
+          "foreground": "#c0cd47"
+        }
+      },
+      {
+        "scope": "variable.other.object.*",
+        "settings": {
+          "foreground": "#ff8dbe"
+        }
+      },
+      {
+        "scope": "entity.name.function.cs",
+        "settings": {
+          "foreground": "#c0cd47"
+        }
+      },
+      {
+        "scope": "variable.other.object.property.cs",
+        "settings": {
+          "foreground": "#c94e92"
+        }
+      },
+      {
+        "scope": "variable.other.property",
+        "settings": {
+          "foreground": "#45eb95",
+        }
+      },
+      {
+        "scope": "variable.parameter.function-call.python",
+        "settings": {
+          "foreground": "#45eb95",
+        }
+      },
+      
+      {
+        "scope": "variable.parameter.ts",
+        "settings": {
+          "foreground": "#AC90FF"
+        }
+      },
+      {
+        "scope": "variable.other.constant.property.ts",
+        "settings": {
+          "foreground": "#45eb95"
+        }
+      },
+      // {
+      //     "scope": "variable.other.constant.object.ts",
+      //     "settings": {
+      //         "foreground": "#FFFFFF",
+      //         "fontStyle": "underline",
+      //     }
+      // },
+      {
+        "scope": "variable.other.go",
+        "settings": {
+          "foreground": "#fd738f"
+        }
+      }
+    ]
+  },
+  
+  "editor.semanticTokenColorCustomizations": {
+    "rules": {
+      "enumMember": {
+        "foreground": "#fd738f", // TODO
+        // "fontStyle": "underline",
+      },
+      "parameter": {
+        "foreground": "#a58dff", // TODO
+        // "fontStyle": "underline",.
+      },
+      "parameter.declaration": {
+        // "foreground": "#d9ff03", // TODO
+        "fontStyle": "underline",
+      },
+      "method": {
+        "foreground": "#DCDCAA",
+      },
+      "method.declaration": {
+        "fontStyle": "underline",
+      },
+      "method.builtin": {
+        // "foreground": "#a0d7ff", // TODO
+        // "fontStyle": "underline",
+      },
+      "variable": {
+        // "foreground": "#a0d7ff", // TODO
+        // "fontStyle": "underline",
+      },
+      "variable.declaration": {
+        "foreground": "#76b4fb", // TODO
+        "fontStyle": "underline",
+      },
+      "variable.readonly.local": {
+        "foreground": "#FFFFFF", // TODO
+      },
+      "variable.declaration.readonly.local": {
+        "foreground": "#FFFFFF", // TODO
+        "fontStyle": "underline",
+      },
+      "property": {
+        "foreground": "#45eb7f", // TODO
+        // "fontStyle": "bold",
+      },
+      "property.declaration": {
+        "foreground": "#45eb95", // TODO
+        "fontStyle": "underline",
+      },
+      "class.typeHint": {
+        // "foreground": "#45eb95", // TODO
+        "fontStyle": "italic",
+      },
+    },
+  },
+  
+  // "editor.tokenColorCustomizations": {
+  //     "textMateRules": [
+  //         {
+  //             "scope": "variable.parameter.function-call.python",
+  //             "settings": {
+  //                 "foreground": "#e80707"
+  //             }
+  //         },
+  //         {
+  //             "scope": "variable.parameter.function.language.python",
+  //             "settings": {
+  //                 "foreground": "#dfb272"
+  //             }
+  //         },
+  //     ]
+  // },
+  
+  "GitVision.enableRealtimeHighlighting": true,
+  "GitVision.trimEmptyCommits": true,
+  "GitVision.highlightColor": "rgba(100, 80, 200, 0.25)",
+  "git.openRepositoryInParentFolders": "never",
+  "telemetry.telemetryLevel": "off",
+  "extensions.ignoreRecommendations": true,
+  "diffEditor.ignoreTrimWhitespace": true,
+  "terminal.integrated.stickyScroll.enabled": true,
+  "GitVision.debugLog": true,
+  "center-editor-window.threeStateToggle": true,
+  "`editor`.foldingStrategy": "indentation",
+  
+  "gitlens.telemetry.enabled": false,
+  "docker-explorer.enableTelemetry": false,
+  "editor.cursorWidth": 4,
+  "terminal.integrated.fontSize": 19,
+  "gitlens.ai.experimental.generateCommitMessage.enabled": false,
+  "vimAtHome.scrollStep": 3,
+  "vimAtHome.jump.characters": "kjdflsahgionurvcwexmbptyz456123789]{}\"<>$%^!@#_()&*/KJDFLSAHGIONURVCWEXMBPTYZ",
+  "editor.lineNumbers": "off",
+  "editor.renderLineHighlight": "all",
+  "search.seedWithNearestWord": true,
+  "editor.find.autoFindInSelection": "multiline",
+  
+  "bookmark.saveBookmarksInProject": true,
+  "bookmarks.keepBookmarksOnLineDelete": true,
+  "git.enableSmartCommit": true,
+  "editor.find.seedSearchStringFromSelection": "never",
+  "workbench.editor.wrapTabs": true,
+  "workbench.editor.highlightModifiedTabs": true,
+  "workbench.editor.tabSizingFixedMaxWidth": 100,
+  "window.density.editorTabHeight": "compact",
+  
+  "window.titleBarStyle": "custom",
+  "editor.stickyScroll.maxLineCount": 2,
+  "github.copilot.enable": {
+    "*": false,
+    "plaintext": false,
+    "markdown": false,
+    "scminput": false
+  },
+  
+  "vimAtHome.wordKeys": "em,.jkluiopwrsdfxcv",
+  "vimAtHome.customWordRegex1": "tempword",
+  "vimAtHome.customWordRegex2": "[A-Z]*[A-Za-z0-9][a-z0-9]*|[^A-Za-z0-9\\s]+", // subword
+  "vimAtHome.customWordRegex3":  "(['\"`])(?:(?!\\1).)*\\1", // Whitespace 
+  "vimAtHome.customWordRegex4":  "[^\\s]+", // Arguments
+  "vimAtHome.customWordRegex5": "(!?[\\$\\w])(->|[\\w\\._\\-:\\\\\/]|<(?=[^>]*>).*?>|\\(\\)|\\[(?=[^\\]]*\\]).*?\\]|)*", // bigword
+  "vimAtHome.customWordRegex6": "(!?\\w)(->|[\\w\\._\\-:\\\\\/]|<(?=[^>]*>).*?>|\\([^;()]*\\)|\\[(?=[^\\]]*\\]).*?\\]|)*", // bigword
+  "vimAtHome.customWordRegex7": "([a-zA-Z][\\w.\\-_>?:]*(?:<[^<>]*>)?(?:\\[(?:[^\\[\\]]|\\[[^\\[\\]]*\\])*\\]|\\((?:[^()]|\\([^()]*\\))*\\))*)",
+  // "vimAtHome.customWordRegex7": "[^\\s]+",
+  "vimAtHome.customWordRegex8": "(return)|(yield)",
+  "vimAtHome.customWordRegex9": "[^;:=\\s][^;:=]+[^;:=\\s]",
+  // "vimAtHome.customWordRegex10": "[^\\s(),&|?:;]([^(),&|?;]|\\(\\)|[^\\s(][(][^,&|;]+[)])+[^\\s(),&|?;]",
+  "vimAtHome.customWordRegex10": "[^\\s(),&|?:;]([^(),&|?;]|\\(\\)|[^\\s(][(][^,&|;]+[)])+[^\\s(),&|?;]",
+  "vimAtHome.customWordRegex11": "-?\\d*\\.?\\d+f?",
+  "vimAtHome.customWordRegex12": "\\w+[^\\w]+\\w+",
+  "vimAtHome.customWordRegex13": "[^,()]+",
+  "vimAtHome.customWordRegex14": "([[^();\\s,&|?:;<=>!]]|\\(\\))+",
+  
+  "vimAtHome.color.word": "57f7ff",
+  "vimAtHome.color.customWord1": "3381ff",
+  "vimAtHome.color.customWord2": "3381ff",
+  "vimAtHome.color.customWord3": "ffff00",
+  "vimAtHome.color.customWord4": "cf9700",
+  "vimAtHome.color.customWord5": "f40000",
+  "vimAtHome.color.customWord6": "ffff00",
+  "vimAtHome.color.customWord7": "cf9700",
+  
+  "vimAtHome.color.command": "#5614d0a0",
+  // "vimAtHome.color.command": "#641a937a",
+  // "vimAtHome.color.extend": "#26d24e2b",
+  "vimAtHome.color.extend": "#008939a0",
+  "terminal.integrated.shellIntegration.enabled": true,
+  
+  "workbench.colorCustomizations": { 
+    "editor.background": "#101010",
+    "editor.selectionBackground": "#3d1cb48e",
+    // "editor.selectionBackground": "#1890faf5",
+    "editor.inactiveSelectionBackground": "#5614d0a0",
+    "editorOverviewRuler.wordHighlightTextForeground": "#1890fa00",
+    "editor.wordHighlightBackground": "#1890fa00",
+    "editor.wordHighlightStrongBackground": "#1890fa00",
+    // "editor.selectionBackground": "#6d0000",
+    "tab.border": "#ffffff",
+    "tab.activeBorder": "#1469066d",
+    "tab.activeBorderTop": "#1469066d",
+    "tab.activeBackground": "#39ba2252",
+    "tab.inactiveForeground": "#ffffff",
+    "tab.inactiveBackground": "#000000",
+    "tab.unfocusedActiveBackground": "#75757586",
+    "scrollbarSlider.background": "#62a400",
+    "editor.findMatchBackground": "#abf1420a",
+    "editor.findMatchBorder": "#abf142",
+    "editorIndentGuide.background1": "#ffffff85",
+    "editorIndentGuide.activeBackground1": "#62ff1e",
+  },
+  
+  "editor.autoClosingBrackets": "never",
+  "editor.autoClosingQuotes": "never",
+  "gitlens.views.worktrees.files.layout": "tree",
+  "workbench.editor.editorActionsLocation": "hidden",
+  "workbench.editor.revealIfOpen": true,
+  "vimAtHome.defaultSubject": "LINE",
+  "csharp.format.enable": false,
+  "dotnet.automaticallyCreateSolutionInWorkspace": false,
+  "hungryDelete.enableSmartBackspace": false,
+  "vimAtHome.color.bracket": "ff6bf3",
+  
+  "csharp.format.newLine.elseCatch": false,
+  "csharp.format.newLine.beforeOpenBrace.block": false,
+  "csharp.format.newLine.beforeOpenBrace.method": false,
+  "csharp.format.newLine.beforeOpenBrace.anonymousMethod": false,
+  "csharp.format.newLine.beforeOpenBrace.controlBlock": false,
+  "gitlens.mode.active": "zen",
+  "files.autoSave": "afterDelay",
+  "GitVision.includeWhitespaceBlame": true,
+  
+  "GitVision.alwaysShowUncommittedChanges": true,
+  
+  "go.useLanguageServer": true,
+  "gopls": {
+    "analyses": {
+      "unusedparams": true,
+      "unusedvariable": true,
+      "unusedwrite": true
+    },
+    "staticcheck": true
+  },
+  "[go]": {
+    "editor.diagnosticSeverity": {
+      "unnecessary": "warning",
+      "variable": "warning"
+    }
+  },
+  "diffEditor.renderSideBySide": true,
+  
+  
+  "GitVision.ignorePatterns": [
+    "**/*.unity",
+    "**/*.meta",
+    "**/bin/**",
+    "**/obj/**"
+  ],
+  
+  "window.zoomLevel": -0.8,
+  "editor.fontSize": 16.5,
+  
+  "hediet.vscode-drawio.resizeImages": null,
+  "window.customMenuBarAltFocus": false,
+  "cSpell.userWords": [
+    "memorys",
+    "Skybox"
+  ],
+  
+  "files.autoSaveDelay": 500,
+  "editor.acceptSuggestionOnCommitCharacter": false,
+  
+  "editor.cursorSurroundingLines": 20,
+  "workbench.editor.tabsLocation": "left",
+  
+  "workbench.editor.tabSizing": "shrink",
+  "task.quickOpen.history": 15,
+  "workbench.localHistory.mergeWindow": 50,
+  "workbench.editor.preferHistoryBasedLanguageDetection": true,
+  "search.quickOpen.history.filterSortOrder": "recency",
+  "editsHistory.maxHistory": 25,
+  "github.copilot.editor.enableAutoCompletions": false,
+  "terminal.integrated.suggest.cdPath": "relative",
+  "terminal.integrated.confirmOnKill": "never",
+  "terminal.integrated.shellIntegration.history": 1000,
+  "zenMode.fullScreen": false,
+  "git.blame.editorDecoration.enabled": false,
+  "workbench.layoutControl.enabled": false,
+  "window.commandCenter": false,
+  
+  "[plaintext]": {
+    "editor.suggest.showSnippets": false,
+    "editor.suggest.showWords": false,
+    "editor.acceptSuggestionOnCommitCharacter": false,
+    "editor.acceptSuggestionOnEnter": "off"
+  },
+  
+  "editor.lineHeight": 23,
+  "terminal.integrated.environmentChangesRelaunch": false,
+  "cmake.ctest.allowParallelJobs": true,
+  "cmake.revealLog": "error",
+  "editor.formatOnType": false,
+  "[csharp]": {
+    "editor.formatOnType": false
+  },
+  "GitVision.showBasicInfoMessages": false,
+  "dotnetAcquisitionExtension.enableTelemetry": false,
+  "docker.lsp.telemetry": "off",
+  "telemetry.feedback.enabled": false,
+  
+  "editor.wordWrap": "on",
+  "editor.wordWrapColumn": 80,
+  
+  // How many spaces do you wish the indentation was? The extension will *try* to match this.
+  // "stretchySpaces.targetIndentation": 6,
+  // "stretchySpaces.includedLanguages": [],
+  // "stretchySpaces.excludedLanguages": [],
+  // "stretchySpaces.alignAsterisks": true,
+  // "stretchySpaces.updateDelay": 100,
+  
+  "vim.easymotion": true,
+  "vim.surround": true,
+  "vim.hlsearch": true,
+  "vim.sneak": true,
+  "vim.sneakUseIgnorecaseAndSmartcase": true,
+  "vim.replaceWithRegister": true,
+  
+  "vim.smartcase": true,
+  "vim.useSystemClipboard": true,
+  "vim.useCtrlKeys": true,
+  "vim.incsearch": true,
+  "vim.highlightedyank.enable": true,
+  "vim.highlightedyank.duration": 100,
+  "vim.camelCaseMotion.enable": true,
+  "vim.easymotionJumpToAnywhereRegex": "[^\\w]{1}[\\w]",
+  "vim.autoindent": false,
+  "vim.searchHighlightColor": "rgb(250, 150, 50, 0.15)",
+  // "vim.searchHighlightTextColor": "#00000000",
+  // "vim.searchMatchColor": "#00000000",
+  // "vim.searchMatchTextColor": "#00000000",
+  "extensions.experimental.affinity": {
+    "vscodevim.vim": 1
+  },
+  
+  "vim.easymotionKeys": "sdfjklweruioxcm,.agh;ypzvq456$%^]{}JKLMOIU123789!@#&*/\"<>_()",
+  "vim.handleKeys": {
+    // "<S-Enter>": true,
+    "<C-f>": false,
+    "<C-b>": false,
+    "<C-w>": false,
+    // "<C-c>": false,
+    "<C-v>": false,
+    "<C-w>": false,
+    "<C-1>": false,
+    // "<C-d>": true,
+    "<C-S-f5>": false,
+    "<C-j>": true,
+    "<C-y>": false,
+    "<C-c>": true,
+  },
+  
+  "vim.insertModeKeyBindingsNonRecursive": [
+    { "before": ["<C-c>"], "after": ["<esc>"] }
+  ],
+  
+  "vim.normalModeKeyBindingsNonRecursive": [
+    { "before": ["<C-c>"], "after": ["<esc>"] },
+    
+    { "before": ["<C-l>"], "after": ["^", "V", "<leader>", "<leader>", "<leader>", "b", "d", "j", "k"] },          // i -> leftArrow
+    { "before": [","], "after": ["<leader>", "<leader>", "<leader>", "b", "d", "j", "k"] },          // i -> leftArrowjj
+    { "before": ["<space>"], "after": ["m", "q", "s"] },          // i -> leftArrow
+    { "before": ["S"], "after": ["m", "q", "S"] },          // i -> leftArrow
+    // { "before": ["q"], "after": ["<leader>", "<leader>", "<leader>", "j"] },          // i -> leftArrow
+    
+    { "before": ["<Left>"], "after": ["i"] },
+    { "before": ["<Right>"], "after": ["a"] },
+    { "before": ["<Backspace>"], "after": ["c", "l"] },
+    { "before": ["h"], "after": ["a"]},
+    
+    { "before": ["@"], "after": ["*"]},
+    
+    { "before": ["i"], "after": ["k"] },
+    { "before": ["l"], "after": ["e"] },
+    // { "before": ["l"], "after": [ "<leader>", "<leader>", "<leader>", "j", "j"] },
+    { "before": ["j"], "after": ["b"] },
+    { "before": ["k"], "after": ["j"]},
+    { "before": ["w"], "after": ["<Left>"]},
+    { "before": ["e"], "after": ["<Right>"]},
+    
+    // { "before": ["_"], "after": ["<leader>", "b"]},
+    // { "before": [")"], "after": ["<leader>", "w"]},
+    
+    // { "before": ["h"], "after": ["/", "[", "^", "\\", "w", "]", "\\", "w"] },
+    
+    
+    { "before": ["}"], "after": ["editor"] },
+    { "before": ["^"], "after": ["E"] },
+    { "before": ["$"], "after": ["B"] },
+    // { "before": ["*"], "after": ["5", "k"] },
+    // { "before": ["%"], "after": ["5", "j"] },
+    { "before": ["*"], "after": ["{"] },
+    { "before": ["%"], "after": ["}"] },
+    { "before": ["#"], "after": ["2", "0", "j"] },
+    { "before": ["!"], "after": ["2", "0", "k"] },
+    { "before": ["o"], "after": ["V"]},
+    { "before": ["<Down>"], "after": ["o"]},
+    { "before": ["<Up>"], "after": ["O"]},
+    
+    // { "before": ["m"], "after": ["z", "."]},
+    { "before": ["s"], "after": ["F"] },
+    // { "before": ["y"], "after": ["\"", "q", "y"]},
+    // { "before": ["p"], "after": ["\"", "q", "p"]},
+    { "before": ["<F20>"], "after": ["s"] },
+    { "before": ["enter"], "after": ["l"] },
+    { "before": ["="], "after": ["\""] },
+    
+    // { "before": ["-"], "commands": [{"command": "cursorBottom"}] },
+    // { "before": ["+"], "commands": [{"command": "cursorTop"}] },
+    { "before": ["<S-Enter>"], "commands": [{"command": "cursorUndo"}] },
+    // { "before": ["h"], "commands": [{"command": "editor.action.smartSelect.expand"}] },
+    { "before": ["}"], "commands": [{"command": "editor.action.indentLines"}] },
+    { "before": ["]"], "commands": [{"command": "editor.action.outdentLines"}] },
+    { "before": ["<C-a>"], "commands": [{"command": "editor.action.selectAll"}] },
+    
+    { "before": ["a"], "commands": [{"command": "quickMenu.1"}] },
+    // { "before": ["q"], "commands": [{"command": "quickMenu.2"}] },
+    
+    { "before": ["+"], "after": ["`"] },
+    
+    { "before": ["f", "a"], "after": ["s", "a", "<enter>"] },
+    
+    {
+      "before": ["("],
+      "commands": [
+        {
+          "command": "editor.action.moveLinesUpAction"
+        }
+      ]
+    },
+    {
+      "before": ["{"],
+      "commands": [
+        {
+          "command": "editor.action.moveLinesDownAction"
+        }
+      ]
+    },
+    // { "before": ["<C-l>"], "after": ["<leader>", "<leader>", ] }
+    
+    { "before": ["f", "a"], "after": ["s", "a", "<enter>"] },
+    { "before": ["f", "b"], "after": ["s", "b", "<enter>"] },
+    { "before": ["f", "c"], "after": ["s", "c", "<enter>"] },
+    { "before": ["f", "d"], "after": ["s", "d", "<enter>"] },
+    { "before": ["f", "e"], "after": ["s", "e", "<enter>"] },
+    { "before": ["f", "f"], "after": ["s", "f", "<enter>"] },
+    { "before": ["f", "g"], "after": ["s", "g", "<enter>"] },
+    { "before": ["f", "h"], "after": ["s", "h", "<enter>"] },
+    { "before": ["f", "i"], "after": ["s", "i", "<enter>"] },
+    { "before": ["f", "j"], "after": ["s", "j", "<enter>"] },
+    { "before": ["f", "k"], "after": ["s", "k", "<enter>"] },
+    { "before": ["f", "l"], "after": ["s", "l", "<enter>"] },
+    { "before": ["f", "m"], "after": ["s", "m", "<enter>"] },
+    { "before": ["f", "n"], "after": ["s", "n", "<enter>"] },
+    { "before": ["f", "o"], "after": ["s", "o", "<enter>"] },
+    { "before": ["f", "p"], "after": ["s", "p", "<enter>"] },
+    { "before": ["f", "q"], "after": ["s", "q", "<enter>"] },
+    { "before": ["f", "r"], "after": ["s", "r", "<enter>"] },
+    { "before": ["f", "s"], "after": ["s", "s", "<enter>"] },
+    { "before": ["f", "t"], "after": ["s", "t", "<enter>"] },
+    { "before": ["f", "u"], "after": ["s", "u", "<enter>"] },
+    { "before": ["f", "v"], "after": ["s", "v", "<enter>"] },
+    { "before": ["f", "w"], "after": ["s", "w", "<enter>"] },
+    { "before": ["f", "x"], "after": ["s", "x", "<enter>"] },
+    { "before": ["f", "y"], "after": ["s", "y", "<enter>"] },
+    { "before": ["f", "z"], "after": ["s", "z", "<enter>"] },
+    { "before": ["f", "A"], "after": ["s", "A", "<enter>"] },
+    { "before": ["f", "B"], "after": ["s", "B", "<enter>"] },
+    { "before": ["f", "C"], "after": ["s", "C", "<enter>"] },
+    { "before": ["f", "D"], "after": ["s", "D", "<enter>"] },
+    { "before": ["f", "E"], "after": ["s", "E", "<enter>"] },
+    { "before": ["f", "F"], "after": ["s", "F", "<enter>"] },
+    { "before": ["f", "G"], "after": ["s", "G", "<enter>"] },
+    { "before": ["f", "H"], "after": ["s", "H", "<enter>"] },
+    { "before": ["f", "I"], "after": ["s", "I", "<enter>"] },
+    { "before": ["f", "J"], "after": ["s", "J", "<enter>"] },
+    { "before": ["f", "K"], "after": ["s", "K", "<enter>"] },
+    { "before": ["f", "L"], "after": ["s", "L", "<enter>"] },
+    { "before": ["f", "M"], "after": ["s", "M", "<enter>"] },
+    { "before": ["f", "N"], "after": ["s", "N", "<enter>"] },
+    { "before": ["f", "O"], "after": ["s", "O", "<enter>"] },
+    { "before": ["f", "P"], "after": ["s", "P", "<enter>"] },
+    { "before": ["f", "Q"], "after": ["s", "Q", "<enter>"] },
+    { "before": ["f", "R"], "after": ["s", "R", "<enter>"] },
+    { "before": ["f", "S"], "after": ["s", "S", "<enter>"] },
+    { "before": ["f", "T"], "after": ["s", "T", "<enter>"] },
+    { "before": ["f", "U"], "after": ["s", "U", "<enter>"] },
+    { "before": ["f", "V"], "after": ["s", "V", "<enter>"] },
+    { "before": ["f", "W"], "after": ["s", "W", "<enter>"] },
+    { "before": ["f", "X"], "after": ["s", "X", "<enter>"] },
+    { "before": ["f", "Y"], "after": ["s", "Y", "<enter>"] },
+    { "before": ["f", "Z"], "after": ["s", "Z", "<enter>"] },
+    { "before": ["f", "1"], "after": ["s", "1", "<enter>"] },
+    { "before": ["f", "2"], "after": ["s", "2", "<enter>"] },
+    { "before": ["f", "3"], "after": ["s", "3", "<enter>"] },
+    { "before": ["f", "4"], "after": ["s", "4", "<enter>"] },
+    { "before": ["f", "5"], "after": ["s", "5", "<enter>"] },
+    { "before": ["f", "6"], "after": ["s", "6", "<enter>"] },
+    { "before": ["f", "7"], "after": ["s", "7", "<enter>"] },
+    { "before": ["f", "8"], "after": ["s", "8", "<enter>"] },
+    { "before": ["f", "9"], "after": ["s", "9", "<enter>"] },
+    { "before": ["f", "0"], "after": ["s", "0", "<enter>"] },
+    { "before": ["f", "`"], "after": ["s", "`", "<enter>"] },
+    { "before": ["f", "-"], "after": ["s", "-", "<enter>"] },
+    { "before": ["f", "="], "after": ["s", "=", "<enter>"] },
+    { "before": ["f", "["], "after": ["s", "[", "<enter>"] },
+    { "before": ["f", "]"], "after": ["s", "]", "<enter>"] },
+    { "before": ["f", "\\"], "after": ["s", "\\", "<enter>"] },
+    { "before": ["f", ";"], "after": ["s", ";", "<enter>"] },
+    { "before": ["f", "'"], "after": ["s", "'", "<enter>"] },
+    { "before": ["f", ","], "after": ["s", ",", "<enter>"] },
+    { "before": ["f", "."], "after": ["s", ".", "<enter>"] },
+    { "before": ["f", "/"], "after": ["s", "/", "<enter>"] },
+    { "before": ["f", "!"], "after": ["s", "!", "<enter>"] },
+    { "before": ["f", "@"], "after": ["s", "@", "<enter>"] },
+    { "before": ["f", "#"], "after": ["s", "#", "<enter>"] },
+    { "before": ["f", "$"], "after": ["s", "$", "<enter>"] },
+    { "before": ["f", "%"], "after": ["s", "%", "<enter>"] },
+    { "before": ["f", "^"], "after": ["s", "^", "<enter>"] },
+    { "before": ["f", "&"], "after": ["s", "&", "<enter>"] },
+    { "before": ["f", "*"], "after": ["s", "*", "<enter>"] },
+    { "before": ["f", "("], "after": ["s", "(", "<enter>"] },
+    { "before": ["f", ")"], "after": ["s", ")", "<enter>"] },
+    { "before": ["f", "_"], "after": ["s", "_", "<enter>"] },
+    { "before": ["f", "+"], "after": ["s", "+", "<enter>"] },
+    
+    { "before": ["s", "a"], "after": ["S", "a", "<enter>"] },
+    { "before": ["s", "b"], "after": ["S", "b", "<enter>"] },
+    { "before": ["s", "c"], "after": ["S", "c", "<enter>"] },
+    { "before": ["s", "d"], "after": ["S", "d", "<enter>"] },
+    { "before": ["s", "e"], "after": ["S", "e", "<enter>"] },
+    { "before": ["s", "f"], "after": ["S", "f", "<enter>"] },
+    { "before": ["s", "g"], "after": ["S", "g", "<enter>"] },
+    { "before": ["s", "h"], "after": ["S", "h", "<enter>"] },
+    { "before": ["s", "i"], "after": ["S", "i", "<enter>"] },
+    { "before": ["s", "j"], "after": ["S", "j", "<enter>"] },
+    { "before": ["s", "k"], "after": ["S", "k", "<enter>"] },
+    { "before": ["s", "l"], "after": ["S", "l", "<enter>"] },
+    { "before": ["s", "m"], "after": ["S", "m", "<enter>"] },
+    { "before": ["s", "n"], "after": ["S", "n", "<enter>"] },
+    { "before": ["s", "o"], "after": ["S", "o", "<enter>"] },
+    { "before": ["s", "p"], "after": ["S", "p", "<enter>"] },
+    { "before": ["s", "q"], "after": ["S", "q", "<enter>"] },
+    { "before": ["s", "r"], "after": ["S", "r", "<enter>"] },
+    { "before": ["s", "s"], "after": ["S", "s", "<enter>"] },
+    { "before": ["s", "t"], "after": ["S", "t", "<enter>"] },
+    { "before": ["s", "u"], "after": ["S", "u", "<enter>"] },
+    { "before": ["s", "v"], "after": ["S", "v", "<enter>"] },
+    { "before": ["s", "w"], "after": ["S", "w", "<enter>"] },
+    { "before": ["s", "x"], "after": ["S", "x", "<enter>"] },
+    { "before": ["s", "y"], "after": ["S", "y", "<enter>"] },
+    { "before": ["s", "z"], "after": ["S", "z", "<enter>"] },
+    { "before": ["s", "A"], "after": ["S", "A", "<enter>"] },
+    { "before": ["s", "B"], "after": ["S", "B", "<enter>"] },
+    { "before": ["s", "C"], "after": ["S", "C", "<enter>"] },
+    { "before": ["s", "D"], "after": ["S", "D", "<enter>"] },
+    { "before": ["s", "E"], "after": ["S", "E", "<enter>"] },
+    { "before": ["s", "F"], "after": ["S", "F", "<enter>"] },
+    { "before": ["s", "G"], "after": ["S", "G", "<enter>"] },
+    { "before": ["s", "H"], "after": ["S", "H", "<enter>"] },
+    { "before": ["s", "I"], "after": ["S", "I", "<enter>"] },
+    { "before": ["s", "J"], "after": ["S", "J", "<enter>"] },
+    { "before": ["s", "K"], "after": ["S", "K", "<enter>"] },
+    { "before": ["s", "L"], "after": ["S", "L", "<enter>"] },
+    { "before": ["s", "M"], "after": ["S", "M", "<enter>"] },
+    { "before": ["s", "N"], "after": ["S", "N", "<enter>"] },
+    { "before": ["s", "O"], "after": ["S", "O", "<enter>"] },
+    { "before": ["s", "P"], "after": ["S", "P", "<enter>"] },
+    { "before": ["s", "Q"], "after": ["S", "Q", "<enter>"] },
+    { "before": ["s", "R"], "after": ["S", "R", "<enter>"] },
+    { "before": ["s", "S"], "after": ["S", "S", "<enter>"] },
+    { "before": ["s", "T"], "after": ["S", "T", "<enter>"] },
+    { "before": ["s", "U"], "after": ["S", "U", "<enter>"] },
+    { "before": ["s", "V"], "after": ["S", "V", "<enter>"] },
+    { "before": ["s", "W"], "after": ["S", "W", "<enter>"] },
+    { "before": ["s", "X"], "after": ["S", "X", "<enter>"] },
+    { "before": ["s", "Y"], "after": ["S", "Y", "<enter>"] },
+    { "before": ["s", "Z"], "after": ["S", "Z", "<enter>"] },
+    { "before": ["s", "1"], "after": ["S", "1", "<enter>"] },
+    { "before": ["s", "2"], "after": ["S", "2", "<enter>"] },
+    { "before": ["s", "3"], "after": ["S", "3", "<enter>"] },
+    { "before": ["s", "4"], "after": ["S", "4", "<enter>"] },
+    { "before": ["s", "5"], "after": ["S", "5", "<enter>"] },
+    { "before": ["s", "6"], "after": ["S", "6", "<enter>"] },
+    { "before": ["s", "7"], "after": ["S", "7", "<enter>"] },
+    { "before": ["s", "8"], "after": ["S", "8", "<enter>"] },
+    { "before": ["s", "9"], "after": ["S", "9", "<enter>"] },
+    { "before": ["s", "0"], "after": ["S", "0", "<enter>"] },
+    { "before": ["s", "`"], "after": ["S", "`", "<enter>"] },
+    { "before": ["s", "~"], "after": ["S", "~", "<enter>"] },
+    { "before": ["s", "!"], "after": ["S", "!", "<enter>"] },
+    { "before": ["s", "@"], "after": ["S", "@", "<enter>"] },
+    { "before": ["s", "#"], "after": ["S", "#", "<enter>"] },
+    { "before": ["s", "$"], "after": ["S", "$", "<enter>"] },
+    { "before": ["s", "%"], "after": ["S", "%", "<enter>"] },
+    { "before": ["s", "^"], "after": ["S", "^", "<enter>"] },
+    { "before": ["s", "&"], "after": ["S", "&", "<enter>"] },
+    { "before": ["s", "*"], "after": ["S", "*", "<enter>"] },
+    { "before": ["s", "("], "after": ["S", "(", "<enter>"] },
+    { "before": ["s", ")"], "after": ["S", ")", "<enter>"] },
+    { "before": ["s", "-"], "after": ["S", "-", "<enter>"] },
+    { "before": ["s", "_"], "after": ["S", "_", "<enter>"] },
+    { "before": ["s", "="], "after": ["S", "=", "<enter>"] },
+    { "before": ["s", "+"], "after": ["S", "+", "<enter>"] },
+    { "before": ["s", "["], "after": ["S", "[", "<enter>"] },
+    { "before": ["s", "{"], "after": ["S", "{", "<enter>"] },
+    { "before": ["s", "]"], "after": ["S", "]", "<enter>"] },
+    { "before": ["s", "}"], "after": ["S", "}", "<enter>"] },
+    { "before": ["s", "\\"], "after": ["S", "\\", "<enter>"] },
+    { "before": ["s", "|"], "after": ["S", "|", "<enter>"] },
+    { "before": ["s", ";"], "after": ["S", ";", "<enter>"] },
+    { "before": ["s", ":"], "after": ["S", ":", "<enter>"] },
+    { "before": ["s", "'"], "after": ["S", "'", "<enter>"] },
+    { "before": ["s", "\""], "after": ["S", "\"", "<enter>"] },
+    { "before": ["s", ","], "after": ["S", ",", "<enter>"] },
+    { "before": ["s", "<"], "after": ["S", "<", "<enter>"] },
+    { "before": ["s", "."], "after": ["S", ".", "<enter>"] },
+    { "before": ["s", ">"], "after": ["S", ">", "<enter>"] },
+    { "before": ["s", "/"], "after": ["S", "/", "<enter>"] },
+    { "before": ["s", "?"], "after": ["S", "?", "<enter>"] },
+    
+    
+    // { "before": ["P", "w"], "after": ["v", "i", "w", "p"] }
+    // { "before": ["P", "W"], "after": ["v", "i", "W", "p"] }
+    // { "before": ["P", "("], "after": ["v", "i", "(", "p"] } //)
+    // { "before": ["P", "{"], "after": ["v", "i", "{", "p"] }
+    // { "before": ["P", "'"], "after": ["v", "i", "'", "p"] }
+    // { "before": ["P", "\""], "after": ["v", "i", "\"", "p"] }
+    // { "before": ["P", "["], "after": ["v", "i", "[", "p"] }
+    
+    { "before": ["P"], "after": ["p"] },
+    
+    { "before": ["g", "p"], "after": ["g", "r"] },
+    // { "before": ["g", "j"], "commands": [{"command": "workbench.action.previousEditor"}] },
+    // { "before": ["g", "l"], "commands": [{"command": "workbench.action.nextEditor"}] },
+    // { "before": ["g", "o"], "commands": [{"command": "workbench.action.closeEditorsToTheRight"}] },
+    
+    // { "before": ["g", "i"], "commands": [{"command": "editor.action.copyLinesUpAction"}] },
+    // { "before": ["g", "k"], "commands": [{"command": "editor.action.copyLinesDownAction"}] },
+    // { "before": ["g", "/"], "commands": [{"command": "editor.action.commentLine"}] },
+    
+    { "before": ["J"], "commands": [{"command": "workbench.action.previousEditor"}] },
+    { "before": ["L"], "commands": [{"command": "workbench.action.nextEditor"}] },
+    { "before": ["O"], "commands": [{"command": "workbench.action.closeEditorsToTheRight"}] },
+    { "before": ["M"], "commands": [{"command": "workbench.action.navigateBack"}] },
+    { "before": [">"], "commands": [{"command": "workbench.action.navigateForward"}] },
+    
+    // { "before": ["i"], "commands": [{"command": "editor.action.copyLinesUpAction"}] },
+    // { "before": ["k"], "commands": [{"command": "editor.action.copyLinesDownAction"}] },
+    
+    // { "before": ["b"], "after": ["T", "{", "v", "t", "}"] }
+    // { "before": ["b", "h"], "after": [ "/", "{", ".", "*", "}" , "<enter>"] },
+    
+    { "before": ["b", "h"], "after": [
+      "/", "\\", "[", "[", "^", "\\", "]", "]", "*", "\\", "]", "<enter>"
+    ]},
+    { "before": ["b", "k"], "after": [
+      "/", "\\", "{", "[", "^", "\\", "}", "]", "*", "\\", "}", "<enter>"
+    ]},
+    { "before": ["b", "i"], "after": [
+      "/", "\\", "(", "[", "^", "\\", ")", "]", "*", "\\", ")", "<enter>"
+    ]},
+    { "before": ["b", "w"], "after": [
+      "/", "\\", "w", "+", "<enter>"
+    ]},
+    { "before": ["b", "l"], "after": [
+      "/", "\"", //"
+      "[", "^", "\"", //"
+      "]", "*", "\"", //"
+      "<enter>"
+    ]},
+    { "before": ["b", "n"], "after": [
+      ":", "n", "o", "h", "<enter>"
+    ]},
+    
+    // { "before": ["<C-y>"], "after": ["<C-r>"] },
+    
+    { "before": ["P"], "after": ["g", "r"] },
+    { "before": ["p"], "after": ["\"", "0", "g", "r"] },
+    { "before": ["p", "p"], "after": ["p"] },
+    { "before": ["p", "j"], "after": ["\"", "0", "P"] },
+    { "before": ["p", "l"], "after": ["\"", "0", "p"] },
+    { "before": ["p", "i"], "after": ["O", "x", "<esc>", "v", "\"", "0", "p"] },
+    { "before": ["p", "k"], "after": ["o", "x", "<esc>", "v", "\"", "0", "p"] },
+    
+    { "before": ["d", "x"], "after": ["d", "`", "q"] },
+    { "before": ["y", "x"], "after": ["y", "`", "q"] },
+    { "before": ["c", "x"], "after": ["y", "`", "q"] },
+    // TODO: delete above below
+    
+    { "before": ["u"], "commands": [{"command": "undo"}] },
+    
+    { "before": ["<Home>"], "after": ["^"] },
+    { "before": ["<End>"], "after": ["$"] },
+    
+    { "before": ["1", "a"], "commands": [{"command": "workbench.action.openEditorAtIndex1"}] },
+    { "before": ["2", "a"], "commands": [{"command": "workbench.action.openEditorAtIndex2"}] },
+    { "before": ["3", "a"], "commands": [{"command": "workbench.action.openEditorAtIndex3"}] },
+    { "before": ["4", "a"], "commands": [{"command": "workbench.action.openEditorAtIndex4"}] },
+    { "before": ["5", "a"], "commands": [{"command": "workbench.action.openEditorAtIndex5"}] },
+    { "before": ["6", "a"], "commands": [{"command": "workbench.action.openEditorAtIndex6"}] },
+    { "before": ["7", "a"], "commands": [{"command": "workbench.action.openEditorAtIndex7"}] },
+    { "before": ["8", "a"], "commands": [{"command": "workbench.action.openEditorAtIndex8"}] },
+    { "before": ["9", "a"], "commands": [{"command": "workbench.action.openEditorAtIndex9"}] },
+    { "before": ["0", "a"], "commands": [{"command": "workbench.action.openEditorAtIndex0"}] },
+    
+    { "before": ["I"], "commands": [{"command": "moveDownIndent.up"}] },
+    { "before": ["K"], "commands": [{"command": "moveDownIndent.down"}] },
+    // { "before": ["b", "h"], "after": [ "S", "{", "<enter>", "v", "s", "}", "<enter>" ] }
+    // { "before": ["b", "j"], "after": [ "s", "(", "<enter>", "v", "s", ")", "<enter>" ] }
+    // { "before": ["b", "k"], "after": [ "s", "[", "<enter>", "v", "s", "]", "<enter>" ] }
+    // test (test, test) test
+  ],
+  
+  
+  "vim.operatorPendingModeKeyBindingsNonRecursive": [
+    
+    { "before": ["<Left>"], "after": ["i"] },          // i -> leftArrow
+    { "before": ["<Right>"], "after": ["a"] },         // a -> rightArrow
+    { "before": ["i"], "after": ["k"] },
+    { "before": ["l"], "after": ["w"] },
+    { "before": ["j"], "after": ["b"] },
+    { "before": ["k"], "after": ["j"]},
+    { "before": ["h"], "after": ["i"]},
+    { "before": ["h", "h"], "after": ["i", "i"]},
+    
+    // { "before": ["a"], "after": ["i"]},
+    
+    { "before": ["}"], "after": ["editor"] },
+    { "before": ["^"], "after": ["E"] },
+    { "before": ["$"], "after": ["B"] },
+    { "before": ["%"], "after": ["}"] },
+    { "before": ["*"], "after": ["{"] },
+    { "before": ["#"], "after": ["2", "0", "j"] },
+    { "before": ["!"], "after": ["2", "0", "k"] },
+    { "before": ["o"], "after": ["}"]},
+    { "before": ["w"], "after": ["<Left>"]},
+    
+    // { "before": ["m"], "after": ["z", "."]},
+    // { "before": ["s"], "after": ["F"] },
+    
+    { "before": ["<F20>"], "after": ["s"] },
+    { "before": ["enter"], "after": ["l"] },
+    { "before": ["<S-enter>"], "commands": [{"command": "cursorUndo"}] },
+    { "before": ["<space>"], "after": ["`", "q"] },          // i -> leftArrow
+    { "before": ["m"], "after": ["`"] },          // i -> leftArrow
+    { "before": ["p"], "after": ["i", "p"] },          // i -> leftArrow
+    
+    // test
+    
+    { "before": ["w"], "after": ["i", "w"] },
+    { "before": ["W"], "after": ["i", "W"] },
+    { "before": ["{"], "after": ["i", "{"] },
+    { "before": ["("], "after": ["i", "("] },
+    { "before": ["["], "after": ["i", "["] },
+    { "before": ["\""], "after": ["i", "\""] },
+    { "before": ["'"], "after": ["i", "'"] },
+    
+    { "before": ["c"], "after": ["l"] },
+    { "before": ["x"], "after": ["h"] },
+    
+    { "before": ["<space>"], "after": ["z"] },
+    
+    // { "before": ["P"], "after": ["g", "r"] }
+    // { "before": ["g", "p"], "after": ["g", "r"] }
+    
+    // { "before": ["q"], "after": ["`", "q"] }
+    
+    { "before": ["."], "after": ["i", "i"]},
+    
+    // { "before": ["."], "after": ["i", "i"]},
+    
+    { "before": ["<S-enter>"], "commands": [{"command": "cursorUndo"}] },
+    { "before": ["<Home>"], "after": ["^"] },
+    { "before": ["<End>"], "after": ["$"] },
+    
+  ],
+  
+  "vim.visualModeKeyBindingsNonRecursive": [
+    { "before": ["<space>"], "after": ["<leader>", "<leader>"] },          // i -> leftArrow
+    { "before": ["<C-l>"], "after": ["<leader>", "<leader>", "b", "d", "j", "k"] },          // i -> leftArrow
+    { "before": [","], "after": ["<leader>", "<leader>", "<leader>", "b", "d", "j", "k"] },          // i -> leftArrow
+    
+    { "before": ["<Left>"], "after": ["i"] },          // i -> leftArrow
+    { "before": ["<Right>"], "after": ["a"] },         // a -> rightArrow
+    { "before": ["i"], "after": ["k"] },
+    { "before": ["l"], "after": ["e"] },
+    { "before": ["j"], "after": ["b"] },
+    { "before": ["k"], "after": ["j"]},
+    { "before": ["h"], "after": ["i"]},
+    
+    { "before": ["."], "after": ["i", "i"]},
+    
+    { "before": ["h", "h"], "after": ["i", "i"]},
+    
+    { "before": ["I"], "commands": [{"command": "moveDownIndent.up"}] },
+    { "before": ["K"], "commands": [{"command": "moveDownIndent.down"}] },
+    
+    { "before": ["w"], "after": ["h"]},
+    { "before": ["e"], "after": ["l"]},
+    
+    { "before": ["}"], "after": ["editor"] },
+    { "before": ["^"], "after": ["E"] },
+    { "before": ["$"], "after": ["B"] },
+    { "before": ["%"], "after": ["}"] },
+    { "before": ["*"], "after": ["{"] },
+    // { "before": ["m"], "after": ["z", "."]},
+    
+    // before": ["s"], "after": ["F"] },
+    { "before": ["<space>"], "after": ["s"] },
+    { "before": ["<Backspace>"], "after": ["c"] },
+    
+    { "before": ["<F20>"], "after": ["s"] },
+    { "before": ["enter"], "after": ["l"] },
+    { "before": ["<S-enter>"], "commands": [{"command": "cursorUndo"}] },
+    
+    { "before": ["*"], "after": ["5", "k"] },
+    { "before": ["%"], "after": ["5", "j"] },
+    { "before": ["#"], "after": ["2", "0", "j"] },
+    { "before": ["!"], "after": ["2", "0", "k"] },
+    
+    // { "before": ["<C-d>"], "after": ["2", "0", "k"] },
+    
+    {
+      "before": ["("],
+      "commands": [
+        {
+          "command": "editor.action.moveLinesUpAction"
+        }
+      ]
+    },
+    {
+      "before": ["{"],
+      "commands": [
+        {
+          "command": "editor.action.moveLinesDownAction"
+        }
+      ]
+    },
+    { "before": ["enter"], "after": ["l"] },
+    
+    { "before": ["}"], "commands": [{"command": "editor.action.indentLines"}] },
+    { "before": ["]"], "commands": [{"command": "editor.action.outdentLines"}] },
+    { "before": [">"], "commands": [{"command": "editor.action.addSelectionToNextFindMatch"}] },
+    // { "before": ["/"], "commands": [{"command": "editor.action.commentLine"}] },
+    
+    { "before": ["p"], "after": ["\"", "0", "p"] },
+    { "before": ["P"], "after": ["p"] },
+    { "before": ["="], "after": ["\""] },
+    
+    { "before": ["&"], "after": ["#"] },
+    // { "before": ["/"], "after": ["*"] },
+    { "before": ["<Home>"], "after": ["^"] },
+    { "before": ["<End>"], "after": ["$"] },
+    
+    { "before": ["v"], "after": ["V"] },
+  ],
+  
+}
